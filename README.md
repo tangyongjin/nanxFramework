@@ -1,0 +1,1 @@
+For enterprise use,stand version of cloud
