@@ -4,7 +4,7 @@
 $config['webroot']	= 'c:/www3/';
 $config['zipfile']='src_package/nanx_deploy.zip'; 
 $config['subfolder']='cloud';
-$config['base_url']	='http://127.0.0.1/cloud/standard';$config['index_page'] = 'index.php';
+$config['base_url']	='http://127.0.0.1/cloud/standx';$config['index_page'] = 'index.php';
 $config['uri_protocol']	= 'AUTO';
 $config['url_suffix'] = '';
 $config['language']	= 'english';
