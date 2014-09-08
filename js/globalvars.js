@@ -1,4 +1,4 @@
-APP_PREFIX='standard';URL_ROOT='http://127.0.0.1/cloud/standx/';TMP_DIR=URL_ROOT+'tmp/';
+APP_PREFIX='standx';URL_ROOT='http://127.0.0.1/cloud/standx/';TMP_DIR=URL_ROOT+'tmp/';
 AJAX_ROOT=URL_ROOT+'index.php/';
 HELP_DIR=AJAX_ROOT+'Dbdocu/gethelp/';
 TREE_URL=AJAX_ROOT+'tree/';

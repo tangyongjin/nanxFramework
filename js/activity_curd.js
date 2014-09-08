@@ -837,7 +837,7 @@ Act.prototype.getPublicBtns=function(){
             },
             ctCls:'x-btn-over',
             handler:function(){
-                that.addData(that)
+                that.addData()
             }
         });
     }
@@ -1218,27 +1218,24 @@ Act.prototype.getLayoutWidth=function(x)
   return w;
 }
 
-Act.prototype.addData=function(curdObj){
+Act.prototype.addData=function( ){
     var that=this;
     if (Ext.getCmp('add_win')){
         Ext.getCmp('add_win').close();
     }
-
-    if ((curdObj.cfg)&&(curdObj.cfg.col)){
-        var default_cfg={
-            col:curdObj.cfg.col,
-            default_value:curdObj.cfg.value
-        };
-    } else{
-        var default_cfg=null;
-    }
+ 
+    
     this.fixLayout('add');
+    
+   
+
     var x=this.getLayoutedForms(this.layoutCfg,'add',null);
-    var w=this.getLayoutWidth(x);
+    console.log(x);
+    var width=this.getLayoutWidth(x);
     var add_form = new Ext.form.FormPanel({
         xtype:'form',
         id:'add_form',
-        width:w,
+        width:width,
         table:this.table,
         actcode:this.actcode,
         fileUpload:true,

@@ -285,10 +285,17 @@ class MUI extends CI_Model
      if (!empty($user)) {
      	   $s=$this->session->all_userdata();
          $staff_name        = $this->session->userdata('staff_name');
+         $inner_table_value        = $this->session->userdata('inner_table_value');
+         $inner_table_column       = $this->session->userdata('inner_table_column');
+          
+         
          date_default_timezone_set('PRC');
          $date=date('Y年-m月-d日');
          $current_user_info ="<a class=tbar_a href=# id=userpanel>$user/$staff_name</a>";
          $current_user_info.="<span style='display:none;' id=whoami>$user</span>"; 
+         $current_user_info.="<span style='display:none;' id=inner_table_value>$inner_table_value</span>"; 
+         $current_user_info.="<span style='display:none;' id=inner_table_column>$inner_table_column</span>"; 
+         
          $sms_info =    '<a class=tbar_a  href=# id=send_sms>'.$this->lang->line('sms').'</a>';
          
          

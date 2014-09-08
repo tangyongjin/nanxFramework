@@ -130,11 +130,15 @@ class Home extends CI_Controller {
 	   $this->session->set_userdata('user_activity',$activity);
   
   
-	   $sql="select staff_name from nanx_user where user='".$user."'";
-	   $r=$this->db->query($sql)->result_array();
-	   $staff=$r[0]['staff_name'];
-	   $this->session->set_userdata('staff_name',$staff);
+	   $sql="select  *  from nanx_user where user='".$user."'";
+	   $user=$this->db->query($sql)->row_array();
 	   
+	   $this->session->set_userdata('staff_name',$user['staff_name']);
+	   $this->session->set_userdata('inner_table',$user['inner_table']);
+	   $this->session->set_userdata('inner_table_column',$user['inner_table_column']);
+	   $this->session->set_userdata('inner_table_value',$user['inner_table_value']);
+	   
+	    
 	   
 	   
      $page_title=$this->MSystempara->getCfgItem('PAGE_TITLE');

@@ -1,7 +1,6 @@
 <?php  if ( ! defined('BASEPATH')) exit('No direct script access allowed');
 
-
-$config['webroot']	= 'c:/www3/';
+$config['webroot']	= '/Library/WebServer/Documents/cloud/standx/';
 $config['zipfile']='src_package/nanx_deploy.zip'; 
 $config['subfolder']='cloud';
 $config['base_url']	='http://127.0.0.1/cloud/standx';$config['index_page'] = 'index.php';

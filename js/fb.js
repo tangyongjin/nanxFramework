@@ -20,7 +20,7 @@
         } 
 });
 
-
+ 
  Ext.ns('Fb');
 
  var Fb = {};
@@ -304,19 +304,19 @@
          xtype: "StarHtmleditor",
          fieldLabel: label,
          id: id,
-         value: value,
+         value:oneFieldCfg.editor_cfg.default_v,
          width: 680
      };
      return htmlEditor;
  }
 
- Fb.getDateEditor = function(oneFieldCfg, rowOriginalValue, readonly_flag) {
+ Fb.getDateEditor = function(oneFieldCfg,   readonly_flag) {
      var dateEditor = {
          fieldLabel: oneFieldCfg['display_cfg'].field_c,
          id: oneFieldCfg['field_e'],
          width: 200,
          height: 25,
-         value: rowOriginalValue,
+         value:oneFieldCfg.editor_cfg.default_v,
          xtype: 'datefield',
          format: 'Y-m-d',
          readOnly: readonly_flag,
@@ -325,13 +325,13 @@
      return dateEditor;
  }
 
- Fb.getTimeEditor = function(oneFieldCfg, rowOriginalValue, readonly_flag) {
+ Fb.getTimeEditor = function(oneFieldCfg,  readonly_flag) {
      var timeEditor = {
          fieldLabel: oneFieldCfg['display_cfg'].field_c,
          id: oneFieldCfg['field_e'],
          width: 200,
          height: 25,
-         value: rowOriginalValue,
+         value:oneFieldCfg.editor_cfg.default_v,
          xtype: 'timepickerfield',
          readOnly: readonly_flag,
          blankText: i18n.not_allow_blank
@@ -339,13 +339,13 @@
      return timeEditor;
  }
 
- Fb.getDatetimeEditor = function(oneFieldCfg, rowOriginalValue, readonly_flag) {
+ Fb.getDatetimeEditor = function(oneFieldCfg,readonly_flag) {
      var dateTimeEditor = {
          fieldLabel: oneFieldCfg['display_cfg'].field_c,
          id: oneFieldCfg['field_e'],
          width: 200,
          height: 25,
-         value: rowOriginalValue,
+         value:oneFieldCfg.editor_cfg.default_v,
          xtype: 'datetimefield',
          readOnly: readonly_flag,
          blankText: i18n.not_allow_blank
@@ -353,13 +353,13 @@
      return dateTimeEditor;
  }
 
- Fb.getTextAreaEditor = function(oneFieldCfg, rowOriginalValue, readonly_flag) {
+ Fb.getTextAreaEditor = function(oneFieldCfg, readonly_flag) {
      textAreaEditor = {
          fieldLabel: oneFieldCfg['display_cfg'].field_c,
          id: oneFieldCfg['field_e'],
          width: 660,
          height: 60,
-         value: rowOriginalValue,
+         value:oneFieldCfg.editor_cfg.default_v,
          xtype: 'textarea',
          readOnly: readonly_flag,
          blankText: i18n.not_allow_blank
@@ -790,7 +790,13 @@
  {
  }
 
- Fb.getBasicCombo = function(cfg, store) {
+ Fb.getBasicCombo = function(cfg, store,_readOnly) {
+ 
+   if ( _readOnly== undefined) {  
+         _readOnly=false;  
+    }  
+ 
+ 
      var combox_cfg = {
          id: cfg.id,
          triggerAction: 'all',
@@ -800,6 +806,7 @@
          fieldLabel: cfg.label,
          forceSelection: true,
          editable: false,
+         readOnly:_readOnly,
          name: cfg.id,
          width:cfg.width?cfg.width:200,
          allowBlank: cfg.hasOwnProperty('allowBlank') ? cfg.allowBlank : true,
@@ -953,14 +960,14 @@
      return f_width * 1.0;
  }
 
- Fb.getDefaultEditor = function(oneFieldCfg, rowOriginalValue, readonly_flag) {
+ Fb.getDefaultEditor = function(oneFieldCfg,readonly_flag) {
      var f_width = Fb.getFieldWidth(oneFieldCfg);
      var defaultEditor = {
          fieldLabel: oneFieldCfg['display_cfg'].field_c,
          id: oneFieldCfg['field_e'],
          width: f_width,
          height: 25,
-         value: rowOriginalValue,
+         value:oneFieldCfg.editor_cfg.default_v,
          readOnly: readonly_flag,
          xtype: 'textfield',
          blankText: i18n.not_allow_blank
@@ -968,11 +975,19 @@
      return defaultEditor;
  }
 
- Fb.getTriggerEditor = function(op_type, editCfg, row) {
+ Fb.getTriggerEditor = function(  editCfg, row,readonly_flag) {
+ 	  
+ 	  
      ghost_field = 'ghost_' + editCfg['field_e'];
      if (row) {
          editCfg.ini = row.json[ghost_field];
-     };
+     }else
+     {
+       editCfg.ini=editCfg.editor_cfg.default_v;
+     }
+       
+         
+     
      var fields = [editCfg.editor_cfg.trigger_cfg.list_field, editCfg.editor_cfg.trigger_cfg.value_field];
      var table = editCfg.editor_cfg.trigger_cfg.combo_table;
      var filter_cfg = {
@@ -991,19 +1006,27 @@
      }
      editCfg.group_id = editCfg.editor_cfg.trigger_cfg.group_id;
      editCfg.detail_btn = true;
-     return this.getBasicCombo(editCfg, combo_store);
+     return this.getBasicCombo(editCfg, combo_store,readonly_flag);
  }
 
-
- Fb.getFieldEditor = function(op_type, editCfg, row) {
-     var rowOriginalValue = null;
-     var whoami = document.getElementById('whoami');
+Fb.getWhoami=function()
+{
+      var whoami = document.getElementById('whoami');
      if (!whoami) {
          whoami = 'admin';
      } else {
          whoami = whoami.innerHTML;
      }
 
+   var inner_table_column = document.getElementById('inner_table_column').innerHTML;
+   var inner_table_value= document.getElementById('inner_table_value').innerHTML;
+//   return whoami;
+  return inner_table_value;
+}
+
+  Fb.determineOriginalValue = function(op_type, editCfg, row) {
+    
+     var rowOriginalValue = null;
      if (op_type == 'update') {
          rowOriginalValue = row.get(editCfg['field_e']);
      }
@@ -1014,17 +1037,18 @@
              rowOriginalValue = new Date();
          }
      }
-     var readonly_flag = false;
-     var skip_flag = false;
-     if (editCfg['field_e'] == 'pid') {
-         readonly_flag = true;
-     }
+      
+ 
 
-     if (editCfg['editor_cfg']['is_produce_col'] == 1) {
-         readonly_flag = true;
+
+     if (editCfg.editor_cfg.is_produce_col == 1) {
+         whoami=this.getWhoami();
          if (op_type == 'add') {
+              alert('set to whoami'+whoami);
              rowOriginalValue = whoami;
+           
          }
+         
          if (op_type == 'update') {
              rowOriginalValue = row.get(editCfg['field_e']);
              if (!rowOriginalValue.length > 0) {
@@ -1034,24 +1058,34 @@
 
          if (op_type == 'batchUpdate') {
              rowOriginalValue = whoami;
-             readonly_flag = false;
+             
          }
      }
-      
+   editCfg.editor_cfg.default_v=rowOriginalValue;
+ }
 
-     if ((editCfg['field_e'] == 'pid') && (op_type == 'add')) {
-         skip_flag = true;
+
+ Fb.getFieldEditor = function(op_type, editCfg, row) {
+   
+ 	 this.determineOriginalValue(op_type, editCfg, row);
+     var readonly_flag = false;
+     var skip_flag = false;
+     if (editCfg['field_e']=='pid'){
+         readonly_flag = true;
      }
-     if (skip_flag) {
-         return null;
-     }
+
+     if (editCfg.editor_cfg.is_produce_col == 1){ readonly_flag = true;} 
+     if ((editCfg['field_e'] == 'pid') && (op_type == 'add')) {skip_flag = true;}
+     if (skip_flag){return null;}
+     
      if ((editCfg['field_e'] == this.gridFilter) && (op_type == 'add')) {
+         
          return [this.getInheritEditor(editCfg, this.filterValue, true)];
      }
     
       
      if (!Ext.isEmpty(editCfg.editor_cfg.trigger_cfg)) {
-         return [Fb.getTriggerEditor(op_type, editCfg, row)];
+         return [Fb.getTriggerEditor(  editCfg, row, readonly_flag )];
      } 
      
 
@@ -1059,29 +1093,33 @@
          var cfg = {
              label: editCfg.display_cfg.field_c,
              name: editCfg['field_e'],
-             value: rowOriginalValue
+             value: editCfg.editor_cfg.default_v
          };
          return [this.getAttachmentEditor(cfg)];
      }
+
      if (editCfg.editor_cfg.edit_as_html == 1) {
-         return [this.getHtmlEditor(editCfg['field_e'], editCfg['display_cfg'].field_c, rowOriginalValue)];
+         return [this.getHtmlEditor(editCfg['field_e'], editCfg['display_cfg'].field_c)];
      }
+
      if (editCfg.editor_cfg.datetime == 'datetime') {
-         return [this.getDatetimeEditor(editCfg, rowOriginalValue, readonly_flag)];
+         return [this.getDatetimeEditor(editCfg, readonly_flag)];
      }
+
      if (editCfg.editor_cfg.datetime == 'date') {
-         return [this.getDateEditor(editCfg, rowOriginalValue, readonly_flag)];
+         return [this.getDateEditor(editCfg,  readonly_flag)];
      }
 
      if (editCfg.editor_cfg.datetime == 'time') {
-         return [this.getTimeEditor(editCfg, rowOriginalValue, readonly_flag)];
+         return [this.getTimeEditor(editCfg, readonly_flag)];
      }
 
      if (editCfg['edit_type'] == 'textarea') {
-         return [this.getTextAreaEditor(editCfg, rowOriginalValue, readonly_flag)];
+         return [this.getTextAreaEditor(editCfg,readonly_flag)];
      }
+
      if ((editCfg['edit_type'] == null) || (editCfg['edit_type'] == '')) {
-         return [this.getDefaultEditor(editCfg, rowOriginalValue, readonly_flag)];
+         return [this.getDefaultEditor(editCfg, readonly_flag)];
      }
 
  }
@@ -1752,6 +1790,8 @@
              break;
 
          case 'combo_list':
+         
+         
              item.displayField = 'text';
              item.valueField = 'value';
              var store = Fb.buildTreeStore(item);
