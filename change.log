@@ -3,4 +3,11 @@ nanx_user table 增加字段:
   inner_table
   inner_table_column
   inner_table_value
-  new funct
+
+1:add function determineOriginalValue
+2:add function getWhoami
+ whoami should be one of these two :
+    a:login userid
+    b:another reference table  data col id
+3: modify getXXXfield function. no need to send defalut value.
+   default value is set in  editorCfg.
