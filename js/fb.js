@@ -56,6 +56,16 @@
 
  
 
+Fb.toggle_combo=function(togglefalg)
+{
+
+   var current_form = Ext.getCmp('back_opform');
+   var cbs = current_form.findByType(['combo']);
+   for (var i = 0; i < cbs.length; i++){
+       if (togglefalg){cbs[i].enable(); }else{cbs[i].disable(); }
+   }
+}
+
  Fb.getFileType=function(name)
  {    
       var pictype = ['gif', 'bmp', 'png', 'jpg', 'jpeg', 'tif'];
@@ -792,6 +802,10 @@
 
  Fb.getBasicCombo = function(cfg, store,_readOnly) {
  
+   console.log('same in  getBasicCombo');
+   console.log(cfg);
+
+
    if ( _readOnly== undefined) {  
          _readOnly=false;  
     }  
@@ -1720,24 +1734,28 @@ Fb.getWhoami=function()
 
          case 'radio_group':
              var rg = [];
+             console.log(item);
              for (i = 0; i < item.items.length; i++) {
                  if (item.items[i].hasfollow) {
                      item.items[i].listeners = {
                          afterrender: function() {
                              var rd = Ext.get(this.id);
-                             var field = '&nbsp;&nbsp;<input name=' + this.id + '_input style="margin-top:6px;" class="x-form-text x-form-field">';
+                             var field = '&nbsp;&nbsp;<input name=' + this.id + '_input style="margin-top:6px;"   class="x-form-text x-form-field">';
                              rd.parent().createChild(field);
                          }
                      }
                  }
+
                  rg.push(item.items[i]);
              }
+
              var f = new Ext.form.RadioGroup({
+                 reference_group_id:111111222222,
                  fieldLabel: item.label,
                  labelStyle: 'white-space:nowrap;',
                  layout: 'form',
                  style: {
-                     'margin-left': '20px',
+                     'margin-left': '0px',
                      'margin-top': '10px'
                  },
                  columns: 1,
@@ -1795,6 +1813,7 @@ Fb.getWhoami=function()
              item.displayField = 'text';
              item.valueField = 'value';
              var store = Fb.buildTreeStore(item);
+             console.log(item);
              var f = Fb.getBasicCombo(item, store);
              break;
          
