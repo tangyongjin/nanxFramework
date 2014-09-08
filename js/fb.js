@@ -58,7 +58,7 @@
 
 Fb.toggle_combo=function(togglefalg)
 {
-
+   //enable or disable all combo in form
    var current_form = Ext.getCmp('back_opform');
    var cbs = current_form.findByType(['combo']);
    for (var i = 0; i < cbs.length; i++){
