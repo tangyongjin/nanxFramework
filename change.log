@@ -11,3 +11,6 @@ nanx_user table 增加字段:
     b:another reference table  data col id
 3: modify getXXXfield function. no need to send defalut value.
    default value is set in  editorCfg.
+
+
+4:add force not check
