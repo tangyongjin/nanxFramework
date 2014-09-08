@@ -1936,10 +1936,6 @@ Act.prototype.FormAction=function(form){
         console.log(form);
         if((form.uptasks==0)&&(form.upload_errcount==0))
         {
-          
-           console.log ('all finished ok,doning --->');
-           console.log (form.uptasks);
-           console.log(form.upload_errcount);
            
            
             var formData=Fb.getFormData(form);

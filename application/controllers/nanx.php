@@ -531,7 +531,8 @@ class Nanx extends CI_Controller
                 'successmsg' => 'success_set',
                 'tbused' => 'nanx_biz_column_editor_cfg',
                 'dbcmdtype' => 'update_or_insert',
-                'paracfg' => array('is_produce_col' => 'is_produce_col'),
+                'paracfg' => array('is_produce_col' => 'is_produce_col','combo_table'=>'combo_table','list_field'=>'list_field',
+                    'value_field'=>'value_field'),
                 'wherecfg' => array('base_table' => 'hostby', 'field_e' => 'nodevalue')),
 
             'set_use_html_editor' => array(
@@ -830,6 +831,16 @@ class Nanx extends CI_Controller
         {
             $data_fixed = $this->getDefalultValue($data_received);
         }
+
+         if ($opcode == 'set_to_me')
+        {
+          if  (strlen( $data_fixed[0]['combo_table']  )==0){
+            $data_fixed[0]['combo_table']='nanx_user';
+            $data_fixed[0]['list_field']='staff_name';
+            $data_fixed[0]['value_field']='pid';
+            }
+         }
+       
         return $data_fixed;
     }
 
@@ -1227,6 +1238,10 @@ class Nanx extends CI_Controller
     function getDefalultValue($para)
     {
         $res = array();
+
+        
+         
+
         if ($para['f_def_fix'] == 1)
         {
             $res['default_v'] = $para['f_def_fix_input'];

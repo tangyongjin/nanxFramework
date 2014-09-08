@@ -793,7 +793,14 @@ var contextMenu = [
                 title:i18n.set_to_me,
                 opcode:'set_to_me',
                 place:'context',
-                itemcfg:[{
+                itemcfg:[
+                 {
+                 item_type:'field',
+                 hidden:true,
+                 id:'force_not_check'
+                 },
+
+                {
                     item_type:'field',
                     label:i18n.field,
                     readonly:true,
@@ -816,7 +823,7 @@ var contextMenu = [
                     {
                         xtype:'radio',
                         boxLabel:i18n.current_time,
-                        id:'f_def_datetime',
+                        id:'f_ref_to_user',
                         name:'f_def',
                         listeners:{
                             check: function() {
@@ -830,7 +837,7 @@ var contextMenu = [
                     {
                         xtype:'radio',
                         boxLabel:i18n.no_fixed_value,
-                        id:'f_def_null',
+                        id:'f_ref_to_inner_table',
                         name:'f_def',
                          listeners:{
                             check: function() {

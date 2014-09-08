@@ -1175,10 +1175,12 @@ Fb.getWhoami=function()
  }
 
  Fb.getFormData = function(form) {
-     if (!form.getForm().isValid()) {
+
+     if (!form.getForm().isValid()  &&  !Ext.getCmp('force_not_check')   ) {
          Ext.Msg.alert(i18n.error, i18n.check_input);
          return false;
      }
+
      var fmdata = {};
      var formel = form.getEl();
      var ipts = formel.query('input');
