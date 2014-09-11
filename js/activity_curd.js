@@ -70,6 +70,8 @@ Act.prototype.init_all = function(cfg) {
     this.border = cfg.hasOwnProperty('border') ? cfg.border : false;
     this.scroable = cfg.hasOwnProperty('scroable') ? cfg.scroable : false;  
     this.nosm = cfg.hasOwnProperty('nosm')?cfg.nosm:false;     
+    this.single_selection = cfg.hasOwnProperty('singleSelect')?cfg.singleSelect:false;     
+    
     this.grid_h = cfg.hasOwnProperty('grid_h') ? cfg.grid_h:null;
      
        
@@ -111,6 +113,10 @@ Act.prototype.init_all = function(cfg) {
 
 
 Act.prototype.setcfg = function(ret) {
+
+
+    console.log(ret);
+
     this.actcode = ret.activity_code;
     this.activity_type = ret.activity_type;
     this.table = ret.base_table;
@@ -301,7 +307,12 @@ Act.prototype.createActivityGridPanel=function(){
         }
     };
     
+    console.log(this.cfg);
+
+
     if(!this.nosm){gridcfg.sm=this.sm;}
+    
+
     this.gridPanel=(this.cfg.edit_type==='noedit')?new Ext.grid.GridPanel(gridcfg):new Ext.grid.EditorGridPanel(gridcfg);
     this.gridPanel.getStore().on('load',function(ds){
        this.autoHeader();
@@ -320,6 +331,9 @@ Act.prototype.createActivityGridPanel=function(){
         }
     });
 }
+
+
+
 
 Act.prototype.getGridPanel=function(){
    console.log('called  getGridPanel');
@@ -399,9 +413,14 @@ Act.prototype.handleCellClick=function(grid,rowIndex,columnIndex,e){
 
 
 Act.prototype.createSM =function(){
-     
+    
+    console.log(this.cfg);
+    var is_singleSelect = this.cfg.hasOwnProperty('singleSelect') ? this.cfg.singleSelect :false;
+    console.log(is_singleSelect);
+
     var checksm=new Ext.grid.CheckboxSelectionModel({
         checkOnly:true,
+        singleSelect:is_singleSelect,
         listeners:{
             selectionchange:function(c){
                 if (['grid_NANX_TBL_DATA','grid_NANX_TBL_STRU','grid_NANX_TBL_INDEX'].indexOf(this.grid.id)==-1){
@@ -1763,8 +1782,11 @@ Act.prototype.showWindow = function(){
         this.cfg.host.doLayout();
     }
 
-    if (this.cfg.showwhere == 'container'  )
- {
+   
+
+
+  if (this.cfg.showwhere == 'container'  )
+    {
       this.gridPanel.getTopToolbar().hide();
       if(!(this.cfg.grid_id=='grid_PIC'))
         { 
@@ -1777,6 +1799,7 @@ Act.prototype.showWindow = function(){
         this.gridPanel.setHeight(this.grid_h||h);
         console.log(this);
     }
+
 }
  
 

@@ -501,7 +501,38 @@ var contextMenu = [
         }]
     }, {
         category: ['biz_table'],
-        menus:[{
+        menus:[
+        {
+            title:'user_connection', 
+            place:'context',
+            opcode:'user_connection',
+            itemcfg:[
+            {
+                item_type:'field',
+                label:i18n.business_table_name,
+                value:'#text',
+                readonly:true
+            },{       item_type:'combo_list',
+                        id:'field_e',
+                        label:'基础列',
+                        level:1,
+                        value:'#value',
+                        category_to_use:'biz_cols' 
+                },
+                {
+                    item_type:'raw_table',
+                    grid_h:260,
+                    code:'preview_activity',
+                    value:'#table',
+                    showwhere:'autowin',
+                    'edit_type':'noedit'
+                }
+
+
+
+                ]
+        },
+        {
             title:i18n.select_table, 
             place:'context',
             opcode:'set_biz_table_ref',

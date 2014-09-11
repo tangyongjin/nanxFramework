@@ -661,6 +661,7 @@ Fb.toggle_combo=function(togglefalg)
      var ds = new Ext.data.JsonStore(ds_cfg);
      ds.load();
 
+
      var singleCol = new Ext.grid.GridPanel({
          'title': grid_cfg.gridlabel,
          id: grid_cfg.grid_ext_id,
@@ -928,6 +929,8 @@ Fb.toggle_combo=function(togglefalg)
  }
 
  Fb.buildTreeStore = function(treecfg) {
+     console.log(treecfg);
+     
      baseParaObj = {};
      baseParaObj.category_to_use = treecfg.category_to_use;
      baseParaObj.value = treecfg.value;
@@ -1221,7 +1224,18 @@ Fb.getWhoami=function()
      }
     
      var extradata = getGridExtraData();
-     if (extradata) {
+    
+     console.log(extradata);
+     //mustHaveOneRow
+     if (extradata.mustHaveOneRow && 0==extradata.row_count)
+     {
+       alert('must have one and only one row');
+       return; 
+     }
+
+
+
+     if (extradata){
          fmdata.extradata = extradata;
      }
      
@@ -1454,13 +1468,16 @@ Fb.getWhoami=function()
                  var layout = 'absolute';
              }
              var f = Fb.getBackendFormItem(items, i, node);
-             if (f.isArray) {
+             if (f){
+                if (f.isArray){
                  for (var j = 0; j < f.length; j++) {
                      forms.push(f[j]);
                  }
              } else {
                  forms.push(f);
              }
+           }
+              
          }
      }
 
@@ -1632,6 +1649,35 @@ Fb.getWhoami=function()
              };
              if(item.inputType){f.inputType=item.inputType;}
              break;
+
+
+
+         case 'raw_table':
+              var container_id = 'raw_table_' + Ext.id();
+              var f = new Ext.Container({
+                 layout: 'absolute',
+                 height: item.grid_h,
+                 autoScroll: true,
+                 border:true,
+                 width:400,
+                 id:container_id,
+                 x:105,
+                 y:3
+             });
+               
+                new Act({
+            edit_type:'edit',
+            code:'NANX_TBL_DATA',
+            table:item.value,
+            transfer:false,
+            singleSelect:true,
+            grid_id:'raw_table_grid_id',
+            showwhere:'container',
+            renderto: container_id
+                    });
+             break;
+
+
 
          case 'StarHtmleditor':
              var html = {
@@ -2042,21 +2088,45 @@ Fb.validate_password_input = function(v) {
          gridid = 'x_grid_for_dnd';
      }
 
+
+    if (Ext.getCmp('raw_table_grid_id')) {
+         gridid = 'raw_table_grid_id';
+     }
+ 
+
+
      if (!Ext.getCmp(gridid)) {
          return null;
      }
 
      var ds = Ext.getCmp(gridid).getStore();
+     
+     var destGrid=Ext.getCmp(gridid);
+     console.log(destGrid.selModel.singleSelect);
+
+
+     if(destGrid.selModel.singleSelect)
+     {
+      var singleSelectGrid=true;   
+      var items=destGrid.getSelectionModel().getSelections();
+     }
+     else
+     {
+     var singleSelectGrid=false;
      var items = ds.data.items;
+     }
+   
+
      var griddata = [];
      for (var i = 0; i < items.length; i++) {
          var c = items[i].data;
          griddata.push(c);
      }
 
-     var cm = Ext.getCmp(gridid).getColumnModel();
+     var cm =destGrid.getColumnModel();
      var col_count = cm.getColumnCount();
      return {
+         mustHaveOneRow:singleSelectGrid,
          data: griddata,
          col_count: col_count,
          row_count: items.length
