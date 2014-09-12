@@ -90,8 +90,15 @@ class Nanx extends CI_Controller {
 				'successmsg' => 'success_set_form_layout',
 				'tbused'     => 'nanx_activity_biz_layout',
 				'dbcmdtype'  => 'delete_and_insert',
-				'paracfg'    => array(),
-				'wherecfg' => array('activity_code' => 'hostby')),
+				'paracfg'    => array('extradata' => 'extradata'),
+				'wherecfg'                        => array('activity_code' => 'hostby')),
+
+			'connect_user' => array(
+				'successmsg' => 'success_set_form_layout',
+				'tbused'     => 'nanx_who_is_who',
+				'dbcmdtype'  => 'delete_and_insert',
+				'paracfg'    => array('extradata' => 'extradata'),
+				'wherecfg'                        => array('inner_table' => 'table', 'inner_table_pid' => 'inner_table_pid')),
 
 			'user_sms' => array(
 				'successmsg' => 'success_send_sms',
@@ -456,7 +463,7 @@ class Nanx extends CI_Controller {
 				'successmsg' => 'success_set',
 				'tbused'     => 'nanx_activity_field_special_display_cfg',
 				'dbcmdtype'  => 'update_or_insert',
-				'paracfg'    => array('field_width' => 'field_width', ),
+				'paracfg'    => array('field_width' => 'field_width'),
 				'wherecfg'                          => array('base_table' => 'hostby', 'field_e' => 'nodevalue')),
 
 			'set_field_default_value' => array(
@@ -770,8 +777,16 @@ class Nanx extends CI_Controller {
 	function getFixedData($action_cfg, $data_received) {
 		$opcode     = $action_cfg['opcode'];
 		$data_fixed = $this->getDataArray($action_cfg, $data_received);
+
 		if ($opcode == 'set_form_layout') {
 			$data_fixed = $this->getFormLayoutData($data_received);
+		}
+
+		if ($opcode == 'connect_user') {
+			$data_fixed = $this->getConnectionInfo($data_received);
+
+			return array($data_fixed);
+
 		}
 
 		if ($opcode == 'add_trigger_group') {
@@ -822,7 +837,9 @@ class Nanx extends CI_Controller {
 		$tbused     = $action_cfg['tbused'];
 		$dbcmdtype  = $action_cfg['dbcmdtype'];
 		$data_fixed = $this->getFixedData($action_cfg, $data_received);
-		$wherecfg   = $this->getWhereCfg($action_cfg, $data_received);
+
+		// getwhre config can be two types, now or later
+		$wherecfg = $this->getWhereCfg($action_cfg, $data_received);
 
 		if ($dbcmdtype == 'insert') {
 			if (count($data_fixed) > 0) {
@@ -860,6 +877,10 @@ class Nanx extends CI_Controller {
 		}
 
 		if ($dbcmdtype == 'delete_and_insert') {
+
+			echo "where";
+			debug($wherecfg);
+
 			$this->db->delete($tbused, $wherecfg);
 			if (count($data_fixed) > 0) {
 				$this->db->insert_batch($tbused, $data_fixed);
@@ -1051,12 +1072,28 @@ class Nanx extends CI_Controller {
 		return array($data_fixed);
 	}
 
+	function getConnectionInfo($para) {
+		echo "aaa";
+		$info                = array();
+		$info['inner_table'] = $para['table'];
+		$info['user']        = $para['field_e'];
+		//	$info['inner_table_pid'] = $para[''];
+
+		$onr_row = $para['extradata']->data[0];
+		$pid     = $onr_row->pid;
+
+		$info['inner_table_pid'] = $pid;
+		debug($info);
+		return $info;
+	}
+
 	function getFormLayoutData($para) {
-		$rawtb         = $para['table'];
-		$activity_code = $para['hostby'];
-		$col_count     = $para['extradata']->col_count;
-		$row_count     = $para['extradata']->row_count;
-		$layout        = array();
+
+		$rawtb              = $para['table'];
+		$opcode_with_randno = $para['hostby'];
+		$col_count          = $para['extradata']->col_count;
+		$row_count          = $para['extradata']->row_count;
+		$layout             = array();
 		for ($i = 0; $i < $row_count; $i++) {
 			$row = array();
 			for ($j = 0; $j < $col_count; $j++) {
@@ -1088,7 +1125,7 @@ class Nanx extends CI_Controller {
 			$field_list = substr($field_list, 0, -1);
 
 			$record = array(
-				'activity_code' => $activity_code,
+				'activity_code' => $opcode_with_randno,
 				'raw_table'     => $rawtb,
 				'row'           => $i,
 				'field_list'    => $field_list);

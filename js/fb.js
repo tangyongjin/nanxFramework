@@ -2124,6 +2124,8 @@ Fb.validate_password_input = function(v) {
      }
 
      var cm =destGrid.getColumnModel();
+     console.log(cm);
+     
      var col_count = cm.getColumnCount();
      return {
          mustHaveOneRow:singleSelectGrid,

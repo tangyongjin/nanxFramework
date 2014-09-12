@@ -503,22 +503,22 @@ var contextMenu = [
         category: ['biz_table'],
         menus:[
         {
-            title:'user_connection', 
+            title:'connect_user', 
             place:'context',
-            opcode:'user_connection',
+            opcode:'connect_user',
             itemcfg:[
             {
                 item_type:'field',
                 label:i18n.business_table_name,
                 value:'#text',
                 readonly:true
-            },{       item_type:'combo_list',
+            },{         item_type:'combo_list',
                         id:'field_e',
                         label:'基础列',
                         level:1,
                         value:'#value',
-                        category_to_use:'biz_cols' 
-                },
+                        category_to_use:'system_users' 
+               },
                 {
                     item_type:'raw_table',
                     grid_h:260,
@@ -527,9 +527,6 @@ var contextMenu = [
                     showwhere:'autowin',
                     'edit_type':'noedit'
                 }
-
-
-
                 ]
         },
         {
