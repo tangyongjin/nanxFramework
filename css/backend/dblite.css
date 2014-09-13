@@ -253,6 +253,13 @@ background-image:url(backimgs/icons/redtable.png) !important;
 .menu_upload_pic{
 	background-image:url(backimgs/icons/menu_upload_pic.png) !important;
 }
+
+
+.menu_chain{
+	background-image:url(backimgs/icons/menu_chain.png) !important;
+}
+
+
 .menu_pic_management{
 	background-image:url(backimgs/icons/menu_pic.png) !important;
 }

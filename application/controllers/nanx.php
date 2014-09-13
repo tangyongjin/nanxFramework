@@ -94,11 +94,12 @@ class Nanx extends CI_Controller {
 				'wherecfg'                        => array('activity_code' => 'hostby')),
 
 			'connect_user' => array(
-				'successmsg' => 'success_set_form_layout',
+				'successmsg' => 'success_connect_user',
 				'tbused'     => 'nanx_who_is_who',
 				'dbcmdtype'  => 'delete_and_insert',
 				'paracfg'    => array('extradata' => 'extradata'),
-				'wherecfg'                        => array('inner_table' => 'table', 'inner_table_pid' => 'inner_table_pid')),
+				'when_get_where'                  => 'later',
+				'wherecfg'                        => array('inner_table' => 'inner_table', 'inner_table_pid' => 'inner_table_pid')),
 
 			'user_sms' => array(
 				'successmsg' => 'success_send_sms',
@@ -839,7 +840,11 @@ class Nanx extends CI_Controller {
 		$data_fixed = $this->getFixedData($action_cfg, $data_received);
 
 		// getwhre config can be two types, now or later
-		$wherecfg = $this->getWhereCfg($action_cfg, $data_received);
+		if (array_key_exists('when_get_where', $action_cfg) && $action_cfg['when_get_where'] == 'later') {
+			$wherecfg = $this->getWhereCfg($action_cfg, $data_fixed[0]);
+		} else {
+			$wherecfg = $this->getWhereCfg($action_cfg, $data_received);
+		}
 
 		if ($dbcmdtype == 'insert') {
 			if (count($data_fixed) > 0) {
@@ -877,9 +882,6 @@ class Nanx extends CI_Controller {
 		}
 
 		if ($dbcmdtype == 'delete_and_insert') {
-
-			echo "where";
-			debug($wherecfg);
 
 			$this->db->delete($tbused, $wherecfg);
 			if (count($data_fixed) > 0) {
@@ -1073,7 +1075,7 @@ class Nanx extends CI_Controller {
 	}
 
 	function getConnectionInfo($para) {
-		echo "aaa";
+
 		$info                = array();
 		$info['inner_table'] = $para['table'];
 		$info['user']        = $para['field_e'];
@@ -1083,7 +1085,7 @@ class Nanx extends CI_Controller {
 		$pid     = $onr_row->pid;
 
 		$info['inner_table_pid'] = $pid;
-		debug($info);
+
 		return $info;
 	}
 

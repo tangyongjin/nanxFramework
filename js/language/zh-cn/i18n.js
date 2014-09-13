@@ -298,5 +298,6 @@ add_trigger:'增加',
 group_item:'项目',
 backup_system:'系统备份',
 backup_system_name:'系统备份文件名',
+connect_user:'与登录用户对应关系',
 zzz:'zzz'
 } 

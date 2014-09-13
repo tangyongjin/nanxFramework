@@ -503,30 +503,26 @@ var contextMenu = [
         category: ['biz_table'],
         menus:[
         {
-            title:'connect_user', 
+            title:i18n.connect_user, 
             place:'context',
             opcode:'connect_user',
             itemcfg:[
-            {
-                item_type:'field',
-                label:i18n.business_table_name,
-                value:'#text',
-                readonly:true
-            },{         item_type:'combo_list',
-                        id:'field_e',
-                        label:'基础列',
-                        level:1,
-                        value:'#value',
-                        category_to_use:'system_users' 
-               },
-                {
+             {
                     item_type:'raw_table',
                     grid_h:260,
                     code:'preview_activity',
                     value:'#table',
                     showwhere:'autowin',
                     'edit_type':'noedit'
-                }
+                },
+                {       item_type:'combo_list',
+                        id:'field_e',
+                        label:'选择用户',
+                        level:1,
+                        value:'#value',
+                        category_to_use:'system_users' 
+               }
+                 
                 ]
         },
         {
@@ -1923,6 +1919,7 @@ var Category = {
     getCSSbyOpcode:function(opcode)
     {
      if(opcode.indexOf('add_')>=0){return 'menu_add';}
+     if(opcode.indexOf('connect_')>=0){return 'menu_chain';}
      if(opcode.indexOf('create_')>=0){return 'menu_add';}
      if(opcode.indexOf('remove_')>=0){return 'menu_del';}
      if(opcode.indexOf('rename_')>=0){return 'menu_update';}

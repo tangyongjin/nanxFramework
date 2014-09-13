@@ -298,5 +298,6 @@ add_trigger:'&nbsp;&nbsp;&nbsp;&nbsp;Add&nbsp;&nbsp;&nbsp;&nbsp',
 group_item:'Item',
 backup_system:'System backup',
 backup_system_name:'Backup Filename',
+connect_user:'Equal to user',
 zzz:'zzz'
 }
