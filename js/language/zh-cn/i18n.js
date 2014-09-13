@@ -299,5 +299,6 @@ group_item:'项目',
 backup_system:'系统备份',
 backup_system_name:'系统备份文件名',
 connect_user:'与登录用户对应关系',
+select_system_user:'选择用户',
 zzz:'zzz'
 } 

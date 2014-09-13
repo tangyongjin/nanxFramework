@@ -1662,7 +1662,7 @@ Fb.getWhoami=function()
                  width:400,
                  id:container_id,
                  x:105,
-                 y:3
+                 y:0
              });
                
                 new Act({

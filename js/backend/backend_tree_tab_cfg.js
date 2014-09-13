@@ -509,7 +509,7 @@ var contextMenu = [
             itemcfg:[
              {
                     item_type:'raw_table',
-                    grid_h:260,
+                    grid_h:256,
                     code:'preview_activity',
                     value:'#table',
                     showwhere:'autowin',
@@ -517,7 +517,7 @@ var contextMenu = [
                 },
                 {       item_type:'combo_list',
                         id:'field_e',
-                        label:'选择用户',
+                        label:i18n.select_system_user,
                         level:1,
                         value:'#value',
                         category_to_use:'system_users' 
