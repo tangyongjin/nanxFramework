@@ -1229,7 +1229,7 @@ Fb.getWhoami=function()
      //mustHaveOneRow
      if (extradata.mustHaveOneRow && 0==extradata.row_count)
      {
-       alert('must have one and only one row');
+       alert(i18n.choose_only_one_record);
        return; 
      }
 
