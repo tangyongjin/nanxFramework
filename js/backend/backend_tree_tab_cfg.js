@@ -836,75 +836,76 @@ var contextMenu = [
                     label:i18n.set_to_me,
                     checkbox:'true',
                     id:'is_produce_col'
-                },
-                {
-
-                    item_type:'radio_group',
-                    label:i18n.default_value_type,
-                    id:'field_default_type',
-                    toggle_items:'combox',
-                    items: [
-                    {
-                        xtype:'radio',
-                        boxLabel:i18n.current_time,
-                        id:'f_ref_to_user',
-                        name:'f_def',
-                        listeners:{
-                            check: function() {
-                                 Fb.toggle_combo(true);
-
-                            }
-                        },
-                        toggle_value:true,
-                        checked:true
-                    }, 
-                    {
-                        xtype:'radio',
-                        boxLabel:i18n.no_fixed_value,
-                        id:'f_ref_to_inner_table',
-                        name:'f_def',
-                         listeners:{
-                            check: function() {
-                              Fb.toggle_combo(false);
-                            }
-                        },
-                        toggle_value:false,
-                        checked:false
-                    }]
-                
-                },
-                {
-
-                    item_type:'combo_group',
-                    root_combox:{
-                       id:'combo_table',
-                       label:i18n.select_source_table,
-                       path:'combo_table',
-                       group_id:'follow_gp',
-                       level:1,
-                       value_key_for_slave:'value',
-                       category_to_use:'biz_tables_can_follow'},
-                    slave_comboxes:[
-                    {   id:'value_field',
-                        label:i18n.value_col_in_source_table,
-                        path:'value_field',
-                        level:2,
-                        group_id:'follow_gp',
-                        ds_auto:false,
-                        category_to_use:'biz_cols' 
-                    },
-                    {
-                        id:'list_field',
-                        group_id:'follow_gp',
-                        label:i18n.display_col_in_source_table,
-                        path:'list_field',
-                        level:2,
-                        ds_auto:false,
-                        category_to_use:'biz_cols' 
-                    }
-                    ] 
-                
                 }
+                //,
+                // {
+
+                //     item_type:'radio_group',
+                //     label:i18n.default_value_type,
+                //     id:'field_default_type',
+                //     toggle_items:'combox',
+                //     items: [
+                //     {
+                //         xtype:'radio',
+                //         boxLabel:i18n.current_time,
+                //         id:'f_ref_to_user',
+                //         name:'f_def',
+                //         listeners:{
+                //             check: function() {
+                //                  Fb.toggle_combo(true);
+
+                //             }
+                //         },
+                //         toggle_value:true,
+                //         checked:true
+                //     }, 
+                //     {
+                //         xtype:'radio',
+                //         boxLabel:i18n.no_fixed_value,
+                //         id:'f_ref_to_inner_table',
+                //         name:'f_def',
+                //          listeners:{
+                //             check: function() {
+                //               Fb.toggle_combo(false);
+                //             }
+                //         },
+                //         toggle_value:false,
+                //         checked:false
+                //     }]
+                
+                // },
+                // {
+
+                //     item_type:'combo_group',
+                //     root_combox:{
+                //        id:'combo_table',
+                //        label:i18n.select_source_table,
+                //        path:'combo_table',
+                //        group_id:'follow_gp',
+                //        level:1,
+                //        value_key_for_slave:'value',
+                //        category_to_use:'biz_tables_can_follow'},
+                //     slave_comboxes:[
+                //     {   id:'value_field',
+                //         label:i18n.value_col_in_source_table,
+                //         path:'value_field',
+                //         level:2,
+                //         group_id:'follow_gp',
+                //         ds_auto:false,
+                //         category_to_use:'biz_cols' 
+                //     },
+                //     {
+                //         id:'list_field',
+                //         group_id:'follow_gp',
+                //         label:i18n.display_col_in_source_table,
+                //         path:'list_field',
+                //         level:2,
+                //         ds_auto:false,
+                //         category_to_use:'biz_cols' 
+                //     }
+                //     ] 
+                
+                // }
 
 
                  ]

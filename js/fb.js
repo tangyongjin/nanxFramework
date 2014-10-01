@@ -309,16 +309,18 @@ Fb.toggle_combo=function(togglefalg)
      };
  }
 
- Fb.getHtmlEditor = function(id, label, value) {
+ 
+  Fb.getHtmlEditor = function(id, label, value) {
      var htmlEditor = {
          xtype: "StarHtmleditor",
          fieldLabel: label,
          id: id,
-         value:oneFieldCfg.editor_cfg.default_v,
+         value: value,
          width: 680
      };
      return htmlEditor;
  }
+
 
  Fb.getDateEditor = function(oneFieldCfg,   readonly_flag) {
      var dateEditor = {
@@ -803,15 +805,10 @@ Fb.toggle_combo=function(togglefalg)
 
  Fb.getBasicCombo = function(cfg, store,_readOnly) {
  
-   console.log('same in  getBasicCombo');
    console.log(cfg);
-
-
    if ( _readOnly== undefined) {  
          _readOnly=false;  
     }  
- 
- 
      var combox_cfg = {
          id: cfg.id,
          triggerAction: 'all',
@@ -878,6 +875,8 @@ Fb.toggle_combo=function(togglefalg)
          if (Ext.isEmpty(v)) {
              v = tmp_v;
          }
+
+
          
          var x_group_id = cfg.group_id;
          var level = cfg.level;
@@ -921,6 +920,8 @@ Fb.toggle_combo=function(togglefalg)
 
 
  Fb.setStorePara = function(store, key, value) {
+    console.log(value);
+
      if (store.proxy.conn.jsonData) {
          store.proxy.conn.jsonData.filter_value = value;
      } else {
@@ -992,38 +993,63 @@ Fb.toggle_combo=function(togglefalg)
      return defaultEditor;
  }
 
- Fb.getTriggerEditor = function(  editCfg, row,readonly_flag) {
- 	  
- 	  
-     ghost_field = 'ghost_' + editCfg['field_e'];
-     if (row) {
-         editCfg.ini = row.json[ghost_field];
-     }else
-     {
-       editCfg.ini=editCfg.editor_cfg.default_v;
+ Fb.getTriggerWhoIsWho=function  (one_col_cfg,whoami_cfg)
+ {
+
+    var trigger_cfg=one_col_cfg.editor_cfg.trigger_cfg;
+    var trigger_table=trigger_cfg.combo_table;
+    var level=trigger_cfg.level;
+    var who_is_who=whoami_cfg.who_is_who;
+    var login_user=whoami_cfg.whoami;
+    var connected_value=null;   
+    for (var i = 0; i < who_is_who.length; i++) {
+        if(who_is_who[i].inner_table==trigger_table  &&  who_is_who[i].user==login_user )
+        {
+        connected_value=who_is_who[i].inner_table_value;
+        break;
+        }
+    };
+    return connected_value;
+ }
+
+
+   Fb.getTriggerEditor = function(  one_col_cfg, row,readonly_flag,whoami_cfg) {
+     
+     var connected_value=  this.getTriggerWhoIsWho(one_col_cfg,whoami_cfg);
+     if (connected_value){readonly_flag=true;} 
+     ghost_field = 'ghost_' + one_col_cfg['field_e'];
+     if (row) {   // edit mode
+         one_col_cfg.ini = row.json[ghost_field];
+     }
+     else
+     {    //add mode
+        if(connected_value){
+            one_col_cfg.ini=connected_value;
+       }else
+       {
+            one_col_cfg.ini=one_col_cfg.editor_cfg.default_v;
+       }
      }
        
-         
-     
-     var fields = [editCfg.editor_cfg.trigger_cfg.list_field, editCfg.editor_cfg.trigger_cfg.value_field];
-     var table = editCfg.editor_cfg.trigger_cfg.combo_table;
+     var fields = [one_col_cfg.editor_cfg.trigger_cfg.list_field, one_col_cfg.editor_cfg.trigger_cfg.value_field];
+     var table = one_col_cfg.editor_cfg.trigger_cfg.combo_table;
      var filter_cfg = {
-         filter_field: editCfg.editor_cfg.trigger_cfg.filter_field
+         filter_field: one_col_cfg.editor_cfg.trigger_cfg.filter_field
      };
      var combo_store = Act.prototype.getStoreByTableAndField(table, fields, filter_cfg);
-     editCfg.id = editCfg.field_e;
-     editCfg.valueField = editCfg.editor_cfg.trigger_cfg.value_field;
-     editCfg.displayField = editCfg.editor_cfg.trigger_cfg.list_field;
-     editCfg.level = editCfg.editor_cfg.trigger_cfg.level;
+     one_col_cfg.id = one_col_cfg.field_e;
+     one_col_cfg.valueField = one_col_cfg.editor_cfg.trigger_cfg.value_field;
+     one_col_cfg.displayField = one_col_cfg.editor_cfg.trigger_cfg.list_field;
+     one_col_cfg.level = one_col_cfg.editor_cfg.trigger_cfg.level;
 
-     if (editCfg.editor_cfg.trigger_cfg.level == 1) {
-         editCfg.nanx_type = 'root';
+     if (one_col_cfg.editor_cfg.trigger_cfg.level == 1) {
+         one_col_cfg.nanx_type = 'root';
      } else {
-         editCfg.nanx_type = 'slave';
+         one_col_cfg.nanx_type = 'slave';
      }
-     editCfg.group_id = editCfg.editor_cfg.trigger_cfg.group_id;
-     editCfg.detail_btn = true;
-     return this.getBasicCombo(editCfg, combo_store,readonly_flag);
+     one_col_cfg.group_id = one_col_cfg.editor_cfg.trigger_cfg.group_id;
+     one_col_cfg.detail_btn = true;
+     return this.getBasicCombo(one_col_cfg, combo_store,readonly_flag);
  }
 
 Fb.getWhoami=function()
@@ -1035,10 +1061,10 @@ Fb.getWhoami=function()
          whoami = whoami.innerHTML;
      }
 
-   var inner_table_column = document.getElementById('inner_table_column').innerHTML;
-   var inner_table_value= document.getElementById('inner_table_value').innerHTML;
-//   return whoami;
-  return inner_table_value;
+//   var inner_table_column = document.getElementById('inner_table_column').innerHTML;
+//   var inner_table_value= document.getElementById('inner_table_value').innerHTML;
+  return whoami;
+  //return inner_table_value;
 }
 
   Fb.determineOriginalValue = function(op_type, editCfg, row) {
@@ -1082,61 +1108,61 @@ Fb.getWhoami=function()
  }
 
 
- Fb.getFieldEditor = function(op_type, editCfg, row) {
+  Fb.getFieldEditor = function(op_type, one_col_cfg, row,whoami_cfg) {
    
- 	 this.determineOriginalValue(op_type, editCfg, row);
+     this.determineOriginalValue(op_type, one_col_cfg, row);
      var readonly_flag = false;
      var skip_flag = false;
-     if (editCfg['field_e']=='pid'){
+     if (one_col_cfg['field_e']=='pid'){
          readonly_flag = true;
      }
 
-     if (editCfg.editor_cfg.is_produce_col == 1){ readonly_flag = true;} 
-     if ((editCfg['field_e'] == 'pid') && (op_type == 'add')) {skip_flag = true;}
+     if (one_col_cfg.editor_cfg.is_produce_col == 1){ readonly_flag = true;} 
+     if ((one_col_cfg['field_e'] == 'pid') && (op_type == 'add')) {skip_flag = true;}
      if (skip_flag){return null;}
      
-     if ((editCfg['field_e'] == this.gridFilter) && (op_type == 'add')) {
+     if ((one_col_cfg['field_e'] == this.gridFilter) && (op_type == 'add')) {
          
-         return [this.getInheritEditor(editCfg, this.filterValue, true)];
+         return [this.getInheritEditor(one_col_cfg, this.filterValue, true)];
      }
     
       
-     if (!Ext.isEmpty(editCfg.editor_cfg.trigger_cfg)) {
-         return [Fb.getTriggerEditor(  editCfg, row, readonly_flag )];
+     if (!Ext.isEmpty(one_col_cfg.editor_cfg.trigger_cfg)) {
+         return [Fb.getTriggerEditor(  one_col_cfg, row, readonly_flag,whoami_cfg )];
      } 
      
 
-     if (editCfg.editor_cfg.need_upload == 1) {
+     if (one_col_cfg.editor_cfg.need_upload == 1) {
          var cfg = {
-             label: editCfg.display_cfg.field_c,
-             name: editCfg['field_e'],
-             value: editCfg.editor_cfg.default_v
+             label: one_col_cfg.display_cfg.field_c,
+             name: one_col_cfg['field_e'],
+             value: one_col_cfg.editor_cfg.default_v
          };
          return [this.getAttachmentEditor(cfg)];
      }
 
-     if (editCfg.editor_cfg.edit_as_html == 1) {
-         return [this.getHtmlEditor(editCfg['field_e'], editCfg['display_cfg'].field_c)];
+     if (one_col_cfg.editor_cfg.edit_as_html == 1) {
+         return [this.getHtmlEditor(one_col_cfg['field_e'], one_col_cfg['display_cfg'].field_c)];
      }
 
-     if (editCfg.editor_cfg.datetime == 'datetime') {
-         return [this.getDatetimeEditor(editCfg, readonly_flag)];
+     if (one_col_cfg.editor_cfg.datetime == 'datetime') {
+         return [this.getDatetimeEditor(one_col_cfg, readonly_flag)];
      }
 
-     if (editCfg.editor_cfg.datetime == 'date') {
-         return [this.getDateEditor(editCfg,  readonly_flag)];
+     if (one_col_cfg.editor_cfg.datetime == 'date') {
+         return [this.getDateEditor(one_col_cfg,  readonly_flag)];
      }
 
-     if (editCfg.editor_cfg.datetime == 'time') {
-         return [this.getTimeEditor(editCfg, readonly_flag)];
+     if (one_col_cfg.editor_cfg.datetime == 'time') {
+         return [this.getTimeEditor(one_col_cfg, readonly_flag)];
      }
 
-     if (editCfg['edit_type'] == 'textarea') {
-         return [this.getTextAreaEditor(editCfg,readonly_flag)];
+     if (one_col_cfg['edit_type'] == 'textarea') {
+         return [this.getTextAreaEditor(one_col_cfg,readonly_flag)];
      }
 
-     if ((editCfg['edit_type'] == null) || (editCfg['edit_type'] == '')) {
-         return [this.getDefaultEditor(editCfg, readonly_flag)];
+     if ((one_col_cfg['edit_type'] == null) || (one_col_cfg['edit_type'] == '')) {
+         return [this.getDefaultEditor(one_col_cfg, readonly_flag)];
      }
 
  }
@@ -1226,13 +1252,23 @@ Fb.getWhoami=function()
      var extradata = getGridExtraData();
     
      console.log(extradata);
-     //mustHaveOneRow
-     if (extradata.mustHaveOneRow && 0==extradata.row_count)
-     {
-       alert(i18n.choose_only_one_record);
-       return; 
-     }
 
+
+     //mustHaveOneRow
+
+
+     if (extradata){
+       if (extradata.mustHaveOneRow && 0==extradata.row_count)
+         {
+          alert(i18n.choose_only_one_record);
+          return; 
+         }
+       }
+        
+
+
+
+     
 
 
      if (extradata){

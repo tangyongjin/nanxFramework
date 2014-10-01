@@ -1077,14 +1077,27 @@ class Nanx extends CI_Controller {
 	function getConnectionInfo($para) {
 
 		$info                = array();
-		$info['inner_table'] = $para['table'];
+		$inner_table=$para['table'];
+		$info['inner_table'] = $inner_table;
 		$info['user']        = $para['field_e'];
-		//	$info['inner_table_pid'] = $para[''];
-
+		 
 		$onr_row = $para['extradata']->data[0];
 		$pid     = $onr_row->pid;
 
 		$info['inner_table_pid'] = $pid;
+
+
+        $value_field='';
+        $sql="select value_field from nanx_biz_column_trigger_group where combo_table='".$inner_table."'  limit 1 ";
+        $res=$this->db->query($sql)->row_array();
+        $value_field=$res['value_field'];
+
+        $info['inner_table_value_field'] = $value_field;
+ 
+        $inner_table_value='';
+        $sql=" select  $value_field  as inner_table_value from  $inner_table where pid= $pid  limit 1 ";
+        $res=$this->db->query($sql)->row_array();
+        $info['inner_table_value'] =$res['inner_table_value'];
 
 		return $info;
 	}

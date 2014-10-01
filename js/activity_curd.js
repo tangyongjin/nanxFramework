@@ -123,6 +123,9 @@ Act.prototype.setcfg = function(ret) {
     this.gridTitle = ret.grid_title;
     this.colsCfg = ret.colsCfg;
     this.layoutCfg = ret.layoutCfg;
+    this.whoami=ret.whoami;
+    this.who_is_who=ret.who_is_who;
+
     this.dataUrl = ret.data_url;
     this.pic_url = ret.pic_url;
     this.serviceUrl = ret.service_url;
@@ -414,10 +417,7 @@ Act.prototype.handleCellClick=function(grid,rowIndex,columnIndex,e){
 
 Act.prototype.createSM =function(){
     
-    console.log(this.cfg);
     var is_singleSelect = this.cfg.hasOwnProperty('singleSelect') ? this.cfg.singleSelect :false;
-    console.log(is_singleSelect);
-
     var checksm=new Ext.grid.CheckboxSelectionModel({
         checkOnly:true,
         singleSelect:is_singleSelect,
@@ -1147,7 +1147,13 @@ Act.prototype.buildTopToolbar_backend=function(){
 }
 
 
-Act.prototype.getLayoutedForms=function(layoutCfg,optype,row){
+Act.prototype.getLayoutedForms=function(total_cfg,optype,row){
+    
+    console.log(row);
+    
+    var layoutCfg=total_cfg.layoutCfg;
+    var whoami_cfg={whoami:total_cfg.whoami,who_is_who:total_cfg.who_is_who  };
+    console.log(whoami_cfg);
     var all_lines=[];
     var max_col=0;
     var line_width=0;
@@ -1166,7 +1172,7 @@ Act.prototype.getLayoutedForms=function(layoutCfg,optype,row){
                     }
                 }
  
-                var item_one=Fb.getFieldEditor(optype,colsCfg_found,row);
+                var item_one=Fb.getFieldEditor(optype,colsCfg_found,row,whoami_cfg);
                 if (item_one){
                     var tmp={};
                     tmp.layout='form';
@@ -1246,9 +1252,10 @@ Act.prototype.addData=function( ){
     
     this.fixLayout('add');
     
-   
+    console.log(this);
 
-    var x=this.getLayoutedForms(this.layoutCfg,'add',null);
+
+    var x=this.getLayoutedForms(this,'add',null);
     console.log(x);
     var width=this.getLayoutWidth(x);
     var add_form = new Ext.form.FormPanel({
@@ -1282,7 +1289,7 @@ Act.prototype.editData=function(btn){
         return false;
     }
     this.fixLayout('update');
-    var x=this.getLayoutedForms(this.layoutCfg, 'update', userRecord[0]);
+    var x=this.getLayoutedForms(this, 'update', userRecord[0]);
     var w=this.getLayoutWidth(x)*1.0;
     var updateForm =new Ext.form.FormPanel({
         xtype:'form',
@@ -1320,7 +1327,9 @@ Act.prototype.batchUpdate=function(btn){
         'field_list': btn.op_field,
         'row':0
     }];
-    var x = this.getLayoutedForms(this.layoutCfg,'update',userRecord[0]);
+    
+
+    var x = this.getLayoutedForms(this,'update',userRecord[0]);
     var pids_batch = [];
     for (var i = 0; i < len; i++) {
         pids_batch.push(userRecord[i].get('pid'));

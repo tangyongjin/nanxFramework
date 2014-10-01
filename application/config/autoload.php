@@ -109,6 +109,8 @@ $autoload['language'] = array();
 |
 */
 
+//	$autoload['model'] = array('mcurd');
+
 $autoload['model'] = array();
 
 

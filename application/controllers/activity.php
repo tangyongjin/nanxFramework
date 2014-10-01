@@ -164,7 +164,11 @@ class Activity extends CI_Controller
 	  $cfg['activty_based_btns']=$this->getActivityBasedBtns($activty_code);
 	  $cfg['js_btns']=$this->getJSBtns($activty_code);
 	  $cfg['batch_btns']=$this->getBatchBtns($activty_code);
-		return $cfg;
+		$cfg['who_is_who']=$this->session->userdata('who_is_who');
+    $cfg['whoami']=$this->session->userdata('user');
+
+    
+    return $cfg;
 	}
 	
 	function getActRawData()
