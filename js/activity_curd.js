@@ -642,6 +642,11 @@ Act.prototype.getStoreBySql=function(){
 }
 
 Act.prototype.getStoreByTableAndField=function(basetable,fields,cfg){
+    
+    console.log(cfg);
+    console.log(this); 
+    var whoami=this.whoami;
+    
     if (this.pid_order) {
         var pid_order = this.pid_order.pid_order;
     } else {
@@ -650,6 +655,8 @@ Act.prototype.getStoreByTableAndField=function(basetable,fields,cfg){
     var table_query_obj={
         table:basetable,
         code:this.actcode,
+        whoami:this.whoami,
+        who_is_who:this.who_is_who,
         pid_order:pid_order,
         filter_field:(cfg.filter_field)?cfg.filter_field:null,
         filter_value:(cfg.filter_value)?cfg.filter_value:null
@@ -1150,7 +1157,7 @@ Act.prototype.buildTopToolbar_backend=function(){
 Act.prototype.getLayoutedForms=function(total_cfg,optype,row){
     
     console.log(row);
-    
+
     var layoutCfg=total_cfg.layoutCfg;
     var whoami_cfg={whoami:total_cfg.whoami,who_is_who:total_cfg.who_is_who  };
     console.log(whoami_cfg);
