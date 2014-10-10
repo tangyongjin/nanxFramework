@@ -179,6 +179,41 @@ class MDatafactory extends CI_Model
         }
     }
     
+    function getWhoIsProducer_where($p)
+    {
+       $sql_who_is_who='';  
+       $maintable=$p['table'];
+       $whoami=$p['whoami'];
+       $sql="select field_e from  nanx_biz_column_editor_cfg where base_table='$maintable' and is_produce_col=1 "; 
+       $row=$this->db->query($sql)->row_array();
+       $main_table_field=$row['field_e'];
+       $sql_who_is_who=" $maintable.$main_table_field='$whoami'";
+       return $sql_who_is_who;
+    }
+    
+    function getWhoIsWho_where($p)
+    {
+    
+      if(! array_key_exists('whoami', $p) ) {return '';}  
+      $sql_who_is_who='';  
+      $who_is_who=$p['who_is_who'];
+      if (count($who_is_who)>=1 )
+              {
+              $maintable=$p['table'];
+              $logged_user=$p['whoami'];
+              $who_is_who=$p['who_is_who'][0];
+              $who_is_who_value=$who_is_who->inner_table_value;  
+              $staff_table=$who_is_who->inner_table;
+              $sql=" select * from nanx_biz_column_trigger_group where base_table='$maintable'  and combo_table='$staff_table' and level=1 limit 1 ";
+              $row=$this->db->query($sql)->row_array();
+              if($row){
+                $main_table_field=$row['field_e'];
+                $sql_who_is_who=" $maintable.$main_table_field = $who_is_who_value";
+               } 
+              }
+     return $sql_who_is_who;
+    }
+
     function buildSql($table, $sql, $count, $lines, $needs)
     {
         $fix   = 'where 1=1 and(';

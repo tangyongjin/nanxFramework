@@ -86,7 +86,8 @@ class MFile extends CI_Model
         {   
             return false;
         } else
-        {   unlink("$path/$fname");
+        {   
+            unlink("$path/$fname");
             return true;
         }
     }

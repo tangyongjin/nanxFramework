@@ -63,12 +63,12 @@ class Curd extends CI_Controller
             if (($activity_type == 'table') || ($p['code'] == 'NANX_TBL_DATA')) {
                 $filter_field = null;
                 $filter_value = null;
-                $who_is_who_found=$this->getWhoIsWho_where($p);
+                $who_is_who_found=$this->MDatafactory->getWhoIsWho_where($p);
                 if ( strlen( trim($who_is_who_found))==0  &&  array_key_exists('owner_data_only', $p)  )
                 {
                    if($p['owner_data_only']==1){
                      $who_is_who_found='';
-                     $who_is_who_found=$this->getWhoIsProducer_where($p);
+                     $who_is_who_found=$this->MDatafactory->getWhoIsProducer_where($p);
                    }
                 }
                 
@@ -118,44 +118,6 @@ class Curd extends CI_Controller
         echo str_replace("null", "''", $json);
     }
     
-
-    function getWhoIsProducer_where($p)
-    {
-       $sql_who_is_who='';  
-       $maintable=$p['table'];
-       $whoami=$p['whoami'];
-       $sql="select field_e from  nanx_biz_column_editor_cfg where base_table='$maintable' and is_produce_col=1 "; 
-       $row=$this->db->query($sql)->row_array();
-       $main_table_field=$row['field_e'];
-       $sql_who_is_who=" $maintable.$main_table_field='$whoami'";
-       return $sql_who_is_who;
-    }
-    
-    function getWhoIsWho_where($p)
-    {
-    
-      if(! array_key_exists('whoami', $p) ) {return '';}  
-      $sql_who_is_who='';  
-      $who_is_who=$p['who_is_who'];
-      if (count($who_is_who)>=1 )
-              {
-              $maintable=$p['table'];
-              $logged_user=$p['whoami'];
-              $who_is_who=$p['who_is_who'][0];
-              $who_is_who_value=$who_is_who->inner_table_value;  
-              $staff_table=$who_is_who->inner_table;
-              $sql=" select * from nanx_biz_column_trigger_group where base_table='$maintable'  and combo_table='$staff_table' and level=1 limit 1 ";
-              $row=$this->db->query($sql)->row_array();
-              if($row){
-                $main_table_field=$row['field_e'];
-                $sql_who_is_who=" $maintable.$main_table_field = $who_is_who_value";
-               } 
-              }
-    // echo  "who is who string".$sql_who_is_who;
-     return $sql_who_is_who;
-    }
-
-
     function updateData()
     {
         $post    = file_get_contents('php://input');

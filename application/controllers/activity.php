@@ -332,8 +332,6 @@ class Activity extends CI_Controller
    
    function   getExportData($para)
    {
-    
-     
     /*
      [code] => NANX_TBL_DATA
     [table] => newoss_book_sale_record
@@ -350,7 +348,6 @@ class Activity extends CI_Controller
       $table=$para['table']; 
 	    $sql="select * from $table ";
 	    $rows=$this->db->query($sql)->result_array();
-	   // debug($rows);
       return $rows;
     }
     
@@ -369,7 +366,19 @@ class Activity extends CI_Controller
    {
     $ci =& get_instance();     
     $ci->load->model('MDatafactory');
-    $table_rows =	 $ci->MDatafactory->getDatabyBasetable($para['table'],$para['filter_field'],$para['filter_value'],'asc',$para['query_cfg']);
+   
+    $who_is_who_found=$this->MDatafactory->getWhoIsWho_where($para);
+                if ( strlen( trim($who_is_who_found))==0  &&  array_key_exists('owner_data_only', $para)  )
+                {
+                   if($para['owner_data_only']==1){
+                     $who_is_who_found='';
+                     $who_is_who_found=$this->MDatafactory->getWhoIsProducer_where($para);
+                   }
+                }
+
+
+
+    $table_rows =	 $ci->MDatafactory->getDatabyBasetable($para['table'],$para['filter_field'],$para['filter_value'],'asc',$para['query_cfg'] ,$who_is_who_found );
    }
    return $table_rows['rows'];
    }

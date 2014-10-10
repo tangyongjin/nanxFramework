@@ -1446,6 +1446,9 @@ Act.prototype.writeExcel=function(btn,e){
         filter_field:this.cfg.col||'',
         filter_value:this.cfg.value||'',
         transfer:btn.transfer,
+        whoami:this.whoami,
+        who_is_who:this.who_is_who,
+        owner_data_only:this.owner_data_only,
         activity_type:this.activity_type,
         excel_name:(this.actcode=="NANX_TBL_DATA")?this.table:girdtitle
     };
