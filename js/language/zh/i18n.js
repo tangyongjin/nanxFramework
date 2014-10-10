@@ -248,5 +248,6 @@ using_html_editor:'使用复杂编辑器',
 value_col_in_source_table:'Value Field',
 view_file:'查看文件',
 set_to_biz_table:'',
+set_owner_data_only:'仅能查看自己录入的数据',
 zzz:'zzz' 
 }

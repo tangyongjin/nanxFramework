@@ -123,9 +123,11 @@ Act.prototype.setcfg = function(ret) {
     this.gridTitle = ret.grid_title;
     this.colsCfg = ret.colsCfg;
     this.layoutCfg = ret.layoutCfg;
+    
     this.whoami=ret.whoami;
     this.who_is_who=ret.who_is_who;
-
+    this.owner_data_only=ret.owner_data_only?ret.owner_data_only:null;
+    
     this.dataUrl = ret.data_url;
     this.pic_url = ret.pic_url;
     this.serviceUrl = ret.service_url;
@@ -657,6 +659,7 @@ Act.prototype.getStoreByTableAndField=function(basetable,fields,cfg){
         code:this.actcode,
         whoami:this.whoami,
         who_is_who:this.who_is_who,
+        owner_data_only:this.owner_data_only,
         pid_order:pid_order,
         filter_field:(cfg.filter_field)?cfg.filter_field:null,
         filter_value:(cfg.filter_value)?cfg.filter_value:null
@@ -1159,7 +1162,7 @@ Act.prototype.getLayoutedForms=function(total_cfg,optype,row){
     console.log(row);
 
     var layoutCfg=total_cfg.layoutCfg;
-    var whoami_cfg={whoami:total_cfg.whoami,who_is_who:total_cfg.who_is_who  };
+    var whoami_cfg={whoami:total_cfg.whoami,who_is_who:total_cfg.who_is_who,owner_data_only:total_cfg.owner_data_only };
     console.log(whoami_cfg);
     var all_lines=[];
     var max_col=0;

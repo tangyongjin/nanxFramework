@@ -299,5 +299,7 @@ group_item:'Item',
 backup_system:'System backup',
 backup_system_name:'Backup Filename',
 connect_user:'Equal to user',
+select_system_user:'Select User',
+set_owner_data_only:'See own data only',
 zzz:'zzz'
 }

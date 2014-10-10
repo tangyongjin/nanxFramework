@@ -537,6 +537,19 @@ class Nanx extends CI_Controller {
 					'fn_del'    => 'fn_del'),
 				'wherecfg'   => array('activity_code' => 'nodevalue')),
 
+
+			'set_owner_data_only' => array(
+				'successmsg' => 'success_set',
+				'tbused'     => 'nanx_activity',
+				'dbcmdtype'  => 'update',
+				'pre_check_func'=>'check_have_produce_col',
+				'paracfg'    => array(
+					'owner_data_only' =>'owner_data_only'
+					),
+				'wherecfg'   => array('pid' => 'pid')),
+
+
+
 			'set_upload_field' => array(
 				'successmsg' => 'success_set',
 				'tbused'     => 'nanx_biz_column_editor_cfg',
@@ -819,6 +832,22 @@ class Nanx extends CI_Controller {
 		}
 	}
 
+	function check_have_produce_col($para)
+	{
+   
+    $check=false;
+    $pid=$para['pid'];
+    $sql="select base_table from nanx_activity where pid=$pid";
+    $row=$this->db->query($sql)->row_array();
+    $bstable=$row['base_table'];
+	$sql=" select count(*) as produce_col_counter from nanx_biz_column_editor_cfg where base_table='$bstable' and is_produce_col=1  ";
+    $res=$this->db->query($sql)->row_array();
+    $counter=$res['produce_col_counter'];
+	if(0==$counter){$check=false;}
+	if(1==$counter){$check=true;}
+	return $check;
+	}
+
 	function processOpcode($data_received, $opcode) {
 		$action_cfg = $this->actionCfg()[$opcode];
 		$all_cfg    = $this->actionCfg();
@@ -829,11 +858,29 @@ class Nanx extends CI_Controller {
 				'msg'     => 'No such opcode',
 				'errcode' => -1,
 				'errmsg'  => 'No such opcode <br/> ');
-
 			return json_encode($res);
 		}
 
 		$action_cfg['opcode'] = $opcode;
+
+        if(array_key_exists('pre_check_func', $action_cfg)){
+          $pre_check=false;
+          $pre_check=call_user_func_array( array($this,'check_have_produce_col'),  array( $data_received ) );
+          if (! $pre_check){
+				$res = array(
+								'success' => false,
+								'opcode'  => $opcode,
+								'msg'     => $this->lang->line('only_one_col_be_produce_col'),
+								'errcode' => -1,
+								'errmsg'  => $this->lang->line('only_one_col_be_produce_col'));
+		  return json_encode($res);
+				           
+
+          }
+        }
+
+
+
 
 		$tbused     = $action_cfg['tbused'];
 		$dbcmdtype  = $action_cfg['dbcmdtype'];
@@ -1557,5 +1604,9 @@ class Nanx extends CI_Controller {
 	}
 
 }
+
+
+
+
 
 ?>

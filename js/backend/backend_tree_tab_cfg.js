@@ -1400,6 +1400,23 @@ var contextMenu = [
                 place:'context',
                 itemcfg:
                  []
+            },{
+                title:i18n.set_owner_data_only,
+                opcode:'set_owner_data_only',
+                place:'context',
+                itemcfg:[
+                {
+                    item_type:'field',
+                    label:i18n.activity,
+                    value:'#text',
+                    readonly:true
+                }
+                   ,{
+                   item_type:'checkbox',
+                    label:i18n.set_owner_data_only,
+                    checkbox:true,
+                    id:'owner_data_only'
+                }] 
             }
         ]
     }, {

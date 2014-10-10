@@ -159,4 +159,5 @@ $lang['post_size_too_big']               = 'POST尺寸超过了';
 $lang['check_write_able']                = '请检查目录是否存在,并且可写';
 $lang['file_size_over']                  = '文件尺寸超过了';
 $lang['upload_only_part']                = '文件没有完全上传';
+$lang['only_one_col_be_produce_col']     = '对应的基础表必须有1列为操作者列';
 ?>

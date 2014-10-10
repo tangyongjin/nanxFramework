@@ -1087,7 +1087,7 @@ Fb.getWhoami=function()
      if (editCfg.editor_cfg.is_produce_col == 1) {
          whoami=this.getWhoami();
          if (op_type == 'add') {
-              alert('set to whoami'+whoami);
+//              alert('set to whoami'+whoami);
              rowOriginalValue = whoami;
            
          }

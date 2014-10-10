@@ -156,4 +156,5 @@ $lang['post_size_too_big']               = 'POST size too big then';
 $lang['check_write_able']                = 'Check if wirteable';
 $lang['file_size_over']                  = 'File size bigger then ';
 $lang['upload_only_part']                = 'Only part of the file is uploaded';
+$lang['only_one_col_be_produce_col']     = 'Base table must have 1 column setted as produce column';
 ?>
