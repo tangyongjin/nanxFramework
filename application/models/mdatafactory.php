@@ -185,9 +185,13 @@ class MDatafactory extends CI_Model
        $maintable=$p['table'];
        $whoami=$p['whoami'];
        $sql="select field_e from  nanx_biz_column_editor_cfg where base_table='$maintable' and is_produce_col=1 "; 
+    
        $row=$this->db->query($sql)->row_array();
-       $main_table_field=$row['field_e'];
-       $sql_who_is_who=" $maintable.$main_table_field='$whoami'";
+       if ($row)
+       {
+        $main_table_field=$row['field_e'];
+        $sql_who_is_who=" $maintable.$main_table_field='$whoami'";
+        }
        return $sql_who_is_who;
     }
     
