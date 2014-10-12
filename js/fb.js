@@ -1,7 +1,6 @@
   Ext.override(Ext.Component,{
         Callback_setValue:function(value){
                 var xtype=this.getXType();
-                console.log(xtype);
                 if(xtype=='textfield'||xtype=='textarea'||xtype=='combo'||xtype=='StarHtmleditor') {this.setValue(value);}
                 if((xtype=='panel') &&( this.items.itemAt(0).getXType()=='checkbox' )) 
                 {
@@ -44,7 +43,6 @@
  
  
  Fb.showPic = function(pic) {
-     console.log(pic);
      var xwin = new Ext.Window({
          constrain: true,
          modal: true,
@@ -129,7 +127,6 @@ Fb.toggle_combo=function(togglefalg)
  }
 
  Fb.getAttachmentEditor = function(cfg) {
-     console.log(cfg);
      var xid = Ext.id();
      var fake_id = cfg.name;
      upload_field = [{
@@ -145,9 +142,7 @@ Fb.toggle_combo=function(togglefalg)
          width: 200,
          listeners:{
              'fileselected':function(obj,file){
-                  console.log(file);
                   var ftype=Fb.getFileType(file);
-                  console.log(ftype);
                   if(cfg.file_type)
                    {
                     if(cfg.file_type!==ftype){alert('check file type'); return;}
@@ -155,9 +150,6 @@ Fb.toggle_combo=function(togglefalg)
                   
                  var form=Ext.getCmp(xid).findParentByType('form');
                  if (form) {
-                     console.log('In fileselected,form found');
-                     console.log('this.ownerct is');
-                     console.log(this.ownerCt);
                      this.ownerCt.field_realupload=true;
                      form.uptasks++;
                      form.realupload = true;
@@ -174,12 +166,8 @@ Fb.toggle_combo=function(togglefalg)
          hidden: true,
          listeners: {
              'click': function(){
-                 console.log(this.ownerCt);
-                 console.log(this.ownerCt.field_realupload);
                  var form = Ext.getCmp(xid).findParentByType('form');
                  if (!this.ownerCt.field_realupload) {
-                     console.log('hidden clicked,and  delete  uptasks');
-                     console.log('now taks is'+form.uptasks);
                      form.uptasks--;
                      return;
                  }
@@ -199,7 +187,6 @@ Fb.toggle_combo=function(togglefalg)
                          failure: function(f, r) {
                              WaitMask.hide();
                              Fb.showUploadResult(r,postcfg);
-                             console.log('failed,and delte  uptasks');
                              form.uptasks--;
                              form.upload_errcount++;
                          },
@@ -208,7 +195,6 @@ Fb.toggle_combo=function(togglefalg)
                              if (r.result.success){
                                  var fd = form.getForm().findField(cfg.name);
                                  fd.setValue(r.result.serverURL);
-                                 console.log('succeed,and delte  uptasks');
                                  form.uptasks--;
                                  Act.prototype.FormAction(form);
                              }
@@ -266,7 +252,6 @@ Fb.toggle_combo=function(togglefalg)
  }
 
  Fb.getDetailBtn = function(combo_table) {
-     console.log(combo_table);
      var btn_detail = new Ext.Button({
          text: i18n.detail_with_dot,
          handler: function() {
@@ -525,7 +510,6 @@ Fb.toggle_combo=function(togglefalg)
  }
  
  Fb.triggerRow12345 = function(cfg,meta5){
-     console.log(cfg);
      var hostcfg = {
          item_type: 'combo_list',
          id: 'field_e_' + cfg.serial,
@@ -805,7 +789,6 @@ Fb.toggle_combo=function(togglefalg)
 
  Fb.getBasicCombo = function(cfg, store,_readOnly) {
  
-   console.log(cfg);
    if ( _readOnly== undefined) {  
          _readOnly=false;  
     }  
@@ -902,7 +885,6 @@ Fb.toggle_combo=function(togglefalg)
      }) 
 
      if (cfg.detail_btn) {
-         console.log(cfg);
          var table = cfg.editor_cfg.trigger_cfg.combo_table;
          var btn_detail = Fb.getDetailBtn(table);
          var combowithdetail = new Ext.Container({
@@ -920,8 +902,6 @@ Fb.toggle_combo=function(togglefalg)
 
 
  Fb.setStorePara = function(store, key, value) {
-    console.log(value);
-
      if (store.proxy.conn.jsonData) {
          store.proxy.conn.jsonData.filter_value = value;
      } else {
@@ -930,8 +910,6 @@ Fb.toggle_combo=function(togglefalg)
  }
 
  Fb.buildTreeStore = function(treecfg) {
-     console.log(treecfg);
-     
      baseParaObj = {};
      baseParaObj.category_to_use = treecfg.category_to_use;
      baseParaObj.value = treecfg.value;
@@ -1250,13 +1228,6 @@ Fb.getWhoami=function()
      }
     
      var extradata = getGridExtraData();
-    
-     console.log(extradata);
-
-
-     //mustHaveOneRow
-
-
      if (extradata){
        if (extradata.mustHaveOneRow && 0==extradata.row_count)
          {
@@ -1264,12 +1235,6 @@ Fb.getWhoami=function()
           return; 
          }
        }
-        
-
-
-
-     
-
 
      if (extradata){
          fmdata.extradata = extradata;
@@ -1445,6 +1410,68 @@ Fb.getWhoami=function()
      });
  };
 
+
+Fb.Piccellmenu=function(grid, row, col, event) {
+                 event.stopEvent();
+                 var cellValue = Fb.getCellStr(grid, row, col);
+                 var src = Fb.getHtmlAttribute(cellValue, 'src');
+                 var menu = new Ext.menu.Menu({
+                     items: [
+                     {
+                         text: i18n.view_file,
+                         'iconCls': 'view_item',
+                         handler:function()
+                         {Fb.showPic(src);} 
+                     }, 
+                     {
+                         text: i18n.set_as_logo,
+                         'iconCls': 'view_item',
+                         handler: function(){
+                             var picname = src.split('/').pop();
+                             var fmv = {
+                                 rawdata: {
+                                     'opcode': 'set_logo',
+                                     'input_0': picname,
+                                     'key': 'COMPANY_LOGO'
+                                 }
+                             };
+                             Fb.ajaxPostData(AJAX_ROOT + 'nanx', fmv, function() {});
+                         }
+                     }, {
+                         text: i18n.download_file,
+                         'iconCls': 'download_item',
+                         handler: function() {
+                             //window.location.href = src;
+                             window.location = src;
+                             
+                         }
+                     }, {
+                         text: i18n.delete_file,
+                         'iconCls': 'remove_item',
+                         handler: function() {
+                             Ext.MessageBox.show({
+                                 title: i18n.delete_file,
+                                 msg: i18n.confirm_delete_file + '<br/>' + src + '&nbsp;?<br/><br/>' + "<img src='" + src + "' />",
+                                 buttons: Ext.Msg.YESNO,
+                                 fn: function(btn) {
+                                     if (btn == 'yes') {
+                                         var file_op_url = AJAX_ROOT + 'backend/deleteFile';
+                                         var file2del = {
+                                             'file': src
+                                         };
+                                         var succ = function() {
+                                           grid.getStore().reload();
+                                         };
+                                         Fb.ajaxPostData(file_op_url, file2del, succ);
+                                     }
+                                 }
+                             });
+                         }
+                     }]
+                 });
+                 menu.showAt(event.xy);
+}
+
  Fb.RestoreField = function(grid, row, col, event) {
      var cellMenu = new Ext.menu.Menu({
          items: [{
@@ -1589,7 +1616,6 @@ Fb.getWhoami=function()
                       
                       case 'trigger_bar':
                       follow_key_used = item.path;
-                      console.log(ret_json[follow_key_used]); 
                       Fb.addTriggerRow12345_from_response(ret_json[follow_key_used]);
                       break;
                       
@@ -1605,20 +1631,6 @@ Fb.getWhoami=function()
 
  Fb.preProcessNodeAtt = function(cfg, xnode) {
   
-    /*
-    if (item.hasOwnProperty('sqlparagroup')) {
-         var group = item.sqlparagroup;
-         var sqlpara = {};
-         for (var p_index = 0; p_index < group.length; p_index++) {
-             var key = group[p_index]['key'];
-             var value_ref = group[p_index]['init'];
-             var value = node.attributes[value_ref];
-             var new_key = '$' + key;
-             sqlpara[new_key] = value;
-         }
-         field_v = sqlpara;
-     }*/
-     
      var fixed = Fb.DeepClone(cfg);
      function fix_obj_tag(taged, node) {
          if (taged.substring(0, 2) == '##') {
@@ -1656,7 +1668,7 @@ Fb.getWhoami=function()
  }
 
 
- Fb.getBackendFormItem = function(items, i, node) {
+ Fb.getBackendFormItem = function(items,i,node) {
      var item = Fb.DeepClone(items[i]);
      var item = Fb.preProcessNodeAtt(item, node);
      var readonly = item.readonly ? item.readonly : false;
@@ -1665,7 +1677,6 @@ Fb.getWhoami=function()
      var field_v=item.value;
 
      switch (item.item_type) {
-      
          case 'field':
              var f = {
                  fieldLabel:item.label,
@@ -1685,8 +1696,6 @@ Fb.getWhoami=function()
              };
              if(item.inputType){f.inputType=item.inputType;}
              break;
-
-
 
          case 'raw_table':
               var container_id = 'raw_table_' + Ext.id();
@@ -1818,7 +1827,6 @@ Fb.getWhoami=function()
 
          case 'radio_group':
              var rg = [];
-             console.log(item);
              for (i = 0; i < item.items.length; i++) {
                  if (item.items[i].hasfollow) {
                      item.items[i].listeners = {
@@ -1886,22 +1894,20 @@ Fb.getWhoami=function()
                  grid_h:item.grid_h,
                  renderto: container_id,
                  media_type:'img',
-                 showwhere: 'container' 
+                 showwhere: 'container',
+                 callback:[{
+                     event:'cellcontextmenu',
+                     fn:Fb.Piccellmenu
+                 }]
                    });
-             
              break;
 
          case 'combo_list':
-         
-         
              item.displayField = 'text';
              item.valueField = 'value';
              var store = Fb.buildTreeStore(item);
-             console.log(item);
              var f = Fb.getBasicCombo(item, store);
              break;
-         
-         
          
          case 'combo_group':
              var f = Fb.getComboGroup(item);
@@ -1917,7 +1923,6 @@ Fb.getWhoami=function()
              break;
 
          case 'layout_panel':
-         
              var container_id = 'r_grid_' + Ext.id();
              var f = new Ext.Container({
                  layout: 'absolute',
@@ -1940,12 +1945,12 @@ Fb.getWhoami=function()
                  para_json: {
                      '$table': field_v
                  },
-                 callback: [{
-                     event: 'cellcontextmenu',
-                     fn: Fb.RestoreField
-                 }, {
-                     event: 'render',
-                     fn: Fb.LayoutManager
+                 callback:[{
+                     event:'cellcontextmenu',
+                     fn:Fb.RestoreField
+                 },{
+                     event:'render',
+                     fn:Fb.LayoutManager
                  }]
              });
              
@@ -2041,8 +2046,6 @@ Fb.validate_password_input = function(v) {
       
       var pwd=Ext.getCmp('password').getValue();
       var pwd2=Ext.getCmp('password2').getValue();
-      console.log(pwd);
-      console.log(pwd2);
       if(pwd.length<1){return false;} 
       if(!(pwd===pwd2)){return false;}
       else
@@ -2138,8 +2141,6 @@ Fb.validate_password_input = function(v) {
      var ds = Ext.getCmp(gridid).getStore();
      
      var destGrid=Ext.getCmp(gridid);
-     console.log(destGrid.selModel.singleSelect);
-
 
      if(destGrid.selModel.singleSelect)
      {
@@ -2160,7 +2161,6 @@ Fb.validate_password_input = function(v) {
      }
 
      var cm =destGrid.getColumnModel();
-     console.log(cm);
      
      var col_count = cm.getColumnCount();
      return {

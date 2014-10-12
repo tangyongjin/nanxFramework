@@ -6,6 +6,12 @@ class Activity extends CI_Controller
 {
  
   
+  function service1()
+  {
+    $x=array('msg' =>'执行结果' ,'success'=>true );
+    //echo json_encode($x);
+  }
+
 	function listall()
 	{
 		$sql = "select * from activity";
@@ -44,28 +50,8 @@ class Activity extends CI_Controller
 	 
 	 
 	
-	
-	
-	function  callerIncaller($url,$para)
-	{ 
-	  
-	  $c_and_m = explode("/", $url);
-    $c=$c_and_m[0];
-    $m=$c_and_m[1];
-    $arg=json_encode($para);
-    
-    $control_dir=dirname(__FILE__);
-    include_once(APPPATH.'controllers/'.$c.'.php');
-    $CI = new $c();
-	  $result=  call_user_func (array( $CI, $m), $para);
-    return $result;
-  }
+	 
   
-  function  sqlIncaller($sql,$para)
-	{  
-		 $ret=$this->db->query($sql)->result_array();
-     return $ret;
-  }
   
     
   function getIndexOptions()

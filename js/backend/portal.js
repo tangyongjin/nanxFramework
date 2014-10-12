@@ -246,7 +246,6 @@ Ext.extend(Explorer.explorerTreePanel,Ext.tree.TreePanel,{
                              if(!mcfg){alert('MCFG is null');return;};
                              if(mcfg.viewonly){wincfg.viewonly=true;}
                              var defaultCF=Category.getMenuDefaultProcessor();
-                             console.log(mcfg);
                              Ext.applyIf(mcfg,defaultCF);
                              var url=null;
                              if(!Ext.isEmpty(mcfg.controller))

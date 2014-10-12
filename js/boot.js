@@ -143,8 +143,5 @@ App.route = function(activity_type, code,fnname,service_url,memo){
 Ext.onReady(function(){
         App.init();
         getevent();
-    //    App.rightAccordion();
-       // Ext.QuickTips.init();
-        //helps_prod();
 })
   

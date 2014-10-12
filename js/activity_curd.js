@@ -114,9 +114,6 @@ Act.prototype.init_all = function(cfg) {
 
 Act.prototype.setcfg = function(ret) {
 
-
-    console.log(ret);
-
     this.actcode = ret.activity_code;
     this.activity_type = ret.activity_type;
     this.table = ret.base_table;
@@ -127,7 +124,7 @@ Act.prototype.setcfg = function(ret) {
     this.whoami=ret.whoami;
     this.who_is_who=ret.who_is_who;
     this.owner_data_only=ret.owner_data_only?ret.owner_data_only:null;
-    
+    this.sql_syntax_error=ret.sql_syntax_error?ret.sql_syntax_error:false;
     this.dataUrl = ret.data_url;
     this.pic_url = ret.pic_url;
     this.serviceUrl = ret.service_url;
@@ -179,73 +176,14 @@ Act.prototype.showActivityWindow=function(){
     });
 };
 
-
-Act.Piccellmenu=function(grid, row, col, event) {
-                 event.stopEvent();
-                 var cellValue = Fb.getCellStr(grid, row, col);
-                 var src = Fb.getHtmlAttribute(cellValue, 'src');
-                 var menu = new Ext.menu.Menu({
-                     items: [
-                     {
-                         text: i18n.view_file,
-                         'iconCls': 'view_item',
-                         handler:function()
-                         {Fb.showPic(src);} 
-                     }, 
-                     {
-                         text: i18n.set_as_logo,
-                         'iconCls': 'view_item',
-                         handler: function(){
-                             var picname = src.split('/').pop();
-                             var fmv = {
-                                 rawdata: {
-                                     'opcode': 'set_logo',
-                                     'input_0': picname,
-                                     'key': 'COMPANY_LOGO'
-                                 }
-                             };
-                             Fb.ajaxPostData(AJAX_ROOT + 'nanx', fmv, function() {});
-                         }
-                     }, {
-                         text: i18n.download_file,
-                         'iconCls': 'download_item',
-                         handler: function() {
-                             //window.location.href = src;
-                             window.location = src;
-                             
-                         }
-                     }, {
-                         text: i18n.delete_file,
-                         'iconCls': 'remove_item',
-                         handler: function() {
-                             Ext.MessageBox.show({
-                                 title: i18n.delete_file,
-                                 msg: i18n.confirm_delete_file + '<br/>' + src + '&nbsp;?<br/><br/>' + "<img src='" + src + "' />",
-                                 buttons: Ext.Msg.YESNO,
-                                 fn: function(btn) {
-                                     if (btn == 'yes') {
-                                         var file_op_url = AJAX_ROOT + 'backend/deleteFile';
-                                         var file2del = {
-                                             'file': src
-                                         };
-                                         var succ = function() {
-                                           console.log(grid);
-                                           grid.getStore().reload();
-                                         };
-                                         Fb.ajaxPostData(file_op_url, file2del, succ);
-                                     }
-                                 }
-                             });
-                         }
-                     }]
-                 });
-                 menu.showAt(event.xy);
-}
-
-
              
 Act.prototype.createActivityGridPanel=function(){
-   
+    console.log(this);
+    if (this.sql_syntax_error){
+        return;
+
+    }
+
     var that=this;
     var gridcfg={
         store:this.mainStore,
@@ -263,7 +201,6 @@ Act.prototype.createActivityGridPanel=function(){
         tbar:this.tBar,
         bbar:this.bBar,
         listeners:{
-            cellcontextmenu:Act.Piccellmenu,
             rowdblclick:function(grid,row,col){
                 if(this.id=='grid_PIC'){return;}
                 grid.getStore().each(function(item,idx){
@@ -278,13 +215,8 @@ Act.prototype.createActivityGridPanel=function(){
             cellclick:that.handleCellClick,
             celldblclick:function(grid,row,col)
             {
-              
                if(this.id=='grid_PIC')
                 {
-                    console.log(grid);
-                    console.log(row);
-                    console.log(col);
-                    
                    var cellValue = Fb.getCellStr(grid, row, col);
                    console.log(cellValue);
                    var src = Fb.getHtmlAttribute(cellValue, 'src');
@@ -312,11 +244,7 @@ Act.prototype.createActivityGridPanel=function(){
         }
     };
     
-    console.log(this.cfg);
-
-
     if(!this.nosm){gridcfg.sm=this.sm;}
-    
 
     this.gridPanel=(this.cfg.edit_type==='noedit')?new Ext.grid.GridPanel(gridcfg):new Ext.grid.EditorGridPanel(gridcfg);
     this.gridPanel.getStore().on('load',function(ds){
@@ -329,6 +257,7 @@ Act.prototype.createActivityGridPanel=function(){
             this.gridPanel.addListener(this.cfg.callback[i].event, this.cfg.callback[i].fn);
         }
     }
+
     this.mainStore.load({
         params:{
             start:0,
@@ -336,16 +265,6 @@ Act.prototype.createActivityGridPanel=function(){
         }
     });
 }
-
-
-
-
-Act.prototype.getGridPanel=function(){
-   console.log('called  getGridPanel');
-   console.log(this.cfg);
-   console.log(this.gridPanel);
-}
-
 
 
 Act.prototype.createActivityHtmlPanel=function(){
@@ -1756,6 +1675,14 @@ Act.prototype.getBbar=function(){
     });
 };
 Act.prototype.showWindow = function(){
+    console.log(this);
+    if (this.sql_syntax_error){
+        Ext.Msg.alert(i18n.error,i18n.sql_syntax_error);
+        return;
+    }
+
+
+
     var title ='<img src='+URL_ROOT+'imgs/thumbs/'+this.pic_url+' />&nbsp;'+this.gridTitle;
     if (this.cfg.wintitle){
         var title=this.cfg.wintitle;
@@ -2015,16 +1942,23 @@ function Act_service(acode,service_url,memo){
         iconAlign:"left",
         width:90,
         handler:function(){
-            Ext.MessageBox.confirm(i18n.confirm,i18n.confirm_execute,function(btn){
+            Ext.Msg.confirm(i18n.confirm,i18n.confirm_execute,function(btn){
                 if (btn=='yes'){
                     WaitMask.show();
                     Ext.Ajax.request({
                         url: AJAX_ROOT + service_url,
                         success: function(response, opts) {
                             WaitMask.hide();
-                            Ext.Msg.alert(i18n.message, i18n.service_exec_done);
-                            var obj = Ext.decode(response.responseText);
-                            Ext.Msg.alert(i18n.message, obj.msg);
+                            if(response.responseText){
+                              var obj = Ext.decode(response.responseText);
+                              if(obj&& obj.msg){ Ext.Msg.alert(i18n.message,obj.msg);}
+                            }
+                            else
+                            {
+                              Ext.Msg.alert(i18n.message,i18n.service_exec_done);
+                            }
+                            
+
                         },
                         failure: function(response, opts) {
                             WaitMask.hide();
