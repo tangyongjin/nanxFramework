@@ -1677,9 +1677,14 @@ Act.prototype.getBbar=function(){
 Act.prototype.showWindow = function(){
     console.log(this);
     if (this.sql_syntax_error){
+        Ext.MessageBox.minWidth=250;
         Ext.Msg.alert(i18n.error,i18n.sql_syntax_error);
         return;
     }
+
+
+
+
 
 
 

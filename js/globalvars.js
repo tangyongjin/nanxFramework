@@ -8,7 +8,7 @@ CURD_GETDATA_URL=CURD_URL+'listData';
 LOGIN_URL=URL_ROOT+'index.php/home/login';
 Ext.BLANK_IMAGE_URL=URL_ROOT+'jslib/ext/resources/images/default/s.gif';
 pageSize=25;
-
+Ext.MessageBox.minWidth=250;
 MEM_COPY_PASTE={'source':null,'target':null};
 if(!window.console)
 {

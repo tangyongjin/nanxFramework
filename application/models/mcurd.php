@@ -47,42 +47,45 @@ class MCurd extends CI_Model{
             $activity_type = 'table';
         }
         
-        if (($activity_type == 'service') && ($code == 'NANX_TBL_DATA')) {
-            
+        if (($activity_type == 'service') && ($code == 'NANX_TBL_DATA')) 
+        {
+            $table = $p['table'];
+        
             if (isset($_GET['start'])) {
                 $start = $_GET['start'];
                 $limit = $_GET['limit'];
+                $this->db->limit($limit, $start);
             }
             
-            $table = $p['table'];
             if (array_key_exists('pid_order', $p)) {
                 $pidorder = $p['pid_order'];
             } else {
                 $pidorder = 'asc';
             }
+            $this->db->order_by('pid', $pidorder);
             
+
+             if (array_key_exists('cols_selected', $p)) {
+                $cols_selected=$p['cols_selected'];
+                $this->db->select( $cols_selected );
+            } 
+
             if (array_key_exists('filter_field', $p)) {
                 $filter_field = $p['filter_field'];
                 $filter_value = $p['filter_value'];
-                
-                $this->db->where($filter_field, $filter_value);
-                $rows  = $this->db->get($table)->result_array();
-                $total = count($rows);
-                $this->db->order_by('pid', $pidorder);
-                $this->db->where($filter_field, $filter_value);
-                $this->db->limit($limit, $start);
-                $rows = $this->db->get($table)->result_array();
-            } else {
-                $sql   = "select * from $table order by pid $pidorder limit $start,$limit ";
-                $rows  = $this->db->query($sql)->result_array();
-                $total = $this->db->count_all($table);
-            }
-            
+                if( strlen(trim($filter_field))>0 ){
+                    $this->db->where($filter_field, $filter_value);
+                }
+            } 
+
+            $rows  = $this->db->get($table)->result_array();
+            $total = count($rows);
             $result['rows']  = $rows;
             $result['total'] = $total;
             $result['table'] = $table;
             $result['sql']   = null;
-        } else {
+        } else 
+        {
             if (($activity_type == 'table') || ($p['code'] == 'NANX_TBL_DATA')) {
                 $filter_field = null;
                 $filter_value = null;

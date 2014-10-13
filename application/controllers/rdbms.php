@@ -843,9 +843,13 @@ class Rdbms extends CI_Controller
     
     function getTableFields($para)
     {
-      
       $tb=$para['table'];
       $fields_e=$this->db->list_fields($tb);
+      if (array_key_exists('cols_selected',$para)){
+        if(  strlen($para['cols_selected'])>0){
+           $fields_e = explode(",",$para['cols_selected']);
+        }
+      }
       $fds=array_flip($fields_e);
       return( array($fds));
     }

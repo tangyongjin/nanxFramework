@@ -31,16 +31,16 @@ class MActivity extends CI_Model
     
     function  callerIncaller($url,$para)
     { 
-      
+         
         $c_and_m = explode("/", $url);
         $c=$c_and_m[0];
         $m=$c_and_m[1];
         $arg=json_encode($para);
         
         $control_dir=dirname(__FILE__);
-        include_once(APPPATH.'controllers/'.$c.'.php');
-        $CI = new $c();
-        $result=  call_user_func (array( $CI, $m), $para);
+        $CI=&get_instance();
+        $CI->load->library("../controllers/$c");
+        $result=$CI->$c->$m($para);
         return $result;
     }
   
@@ -103,6 +103,10 @@ class MActivity extends CI_Model
 
     function getActivityCfg($para_array)
     {
+
+        $this->load->model('MFieldcfg');
+        $this->load->model('MLayout');
+          
         $layout_cfg   = array();
         $activty_code = $para_array['code'];
         $this->db->where('activity_code', $activty_code);
@@ -121,9 +125,7 @@ class MActivity extends CI_Model
             $para_array['transfer'] = true;
             $base_table             = $cfg['base_table'];
             $fields_e               = $this->skip_field($activty_code, $this->db->list_fields($base_table));
-            $this->load->model('MFieldcfg');
             $col_cfg = $this->MFieldcfg->getColsCfg($base_table, $fields_e, $para_array['transfer']);
-            $this->load->model('MLayout');
             $layout_cfg = $this->MLayout->getLayoutCfg($activty_code, $base_table);
         }
         
@@ -137,7 +139,6 @@ class MActivity extends CI_Model
             } else {
                 $sql_fixed = $sql;
             }
-            
             $ret = $this->sqlIncaller($sql_fixed);
             if ($ret){
                 $fields_e = array_keys($ret[0]);
@@ -162,16 +163,14 @@ class MActivity extends CI_Model
         
         
         if ($activity_type == 'service') {
-            $this->load->model('MFieldcfg');
-            $ret = $this->callerIncaller($service_url, $para_array);
+            $selfmodel=$this;
+
+            $ret = $selfmodel->callerIncaller($service_url, $para_array);
             if ($ret) {
                 $ret2arr = $ret;
-                
-                
                 $fields_e = array_keys($ret2arr[0]);
-                if (in_array($activty_code, array(
-                    'NANX_TBL_DATA'
-                ))) {
+                if ($activty_code=='NANX_TBL_DATA')
+                {
                     if (in_array($para_array['table'], array(
                         'nanx_system_cfg',
                         'nanx_sms',
@@ -183,6 +182,7 @@ class MActivity extends CI_Model
                         if (array_key_exists('transfer', $para_array)) {
                             $transfer = $para_array['transfer'];
                         }
+                        $this->load->model('MFieldcfg');
                         $col_cfg = $this->MFieldcfg->getColsCfg('NULL', $fields_e, $transfer);
                     }
                 }

@@ -21,10 +21,10 @@ class Activity extends CI_Controller
 
 	 
 	function getActCfg()
-	{
+	{ 
 		$post = file_get_contents('php://input');
 		$para = (array)json_decode($post);
-		$actcfg = $this->getActivityCfg($para);
+		$actcfg = $this->getActivityCfg($para); 
 		echo json_encode($actcfg, JSON_UNESCAPED_UNICODE);
 	}
 	
@@ -92,10 +92,10 @@ class Activity extends CI_Controller
       	   $para_array['query_cfg']=null;
       	 }
       	 
-      	 
-      	   
+
          $act_cfg_result=$this->getActivityCfg($para_array);
          $col_cfg=$act_cfg_result['colsCfg'];
+
          $c_columns=array_retrieve($col_cfg,array(array('segment'=>'display_cfg','index'=>'field_c')));
          $c_columns=array_retrieve($c_columns,'field_c');
          $e_columns=array_retrieve($col_cfg,'field_e');
@@ -106,7 +106,12 @@ class Activity extends CI_Controller
 
 
          $this->load->model('MCurd');
-         $result=$this->MCurd->getActivityData($para_array);
+         $CI=&get_instance();
+         $CI->load->model('MCurd');
+         
+        // $result=$this->MCurd->getActivityData($para_array);
+         $result=$CI->MCurd->getActivityData($para_array);
+         
          $rows=$result['rows'];    
    
          $colscfg_and_rows=array_merge($c_e_cfg,$rows);
