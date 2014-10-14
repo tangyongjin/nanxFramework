@@ -22,8 +22,7 @@ class File extends CI_Controller {
       {
         if($_REQUEST['opcode']=='upload_pic'){$show_client_upload_info=true;}
       }
-		
-       
+		   
       $write_able=$this->MFile->checkWriteAble($dest);
       if(!$write_able){
       $ret=array('success'=>false,'msg'=>'['.$dest.']'.$this->lang->line('check_write_able'),'show_client_upload_info'=>true);
@@ -95,6 +94,7 @@ class File extends CI_Controller {
   
   function getFSGridFields()
   {
+    
     $header=array(
     'filename'=>0
     );

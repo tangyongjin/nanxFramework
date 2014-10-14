@@ -46,6 +46,7 @@ class MFieldcfg  extends CI_Model{
 	
 	function getDisplayCfg($base_table,$field,$transfer)
 	{   
+     // echo $base_table;
 	    if(!$transfer)
 		   {
 		    return array('field_c'=> $field,

@@ -2,7 +2,8 @@
 if ( ! defined('BASEPATH')) exit('No direct script access allowed');
 class Home extends CI_Controller {
     function index() 
-    { 
+    {
+
       $lang= $lang=$this->i18n->get_current_locale();
       $this->load->model('MUi'); 	 
       $page=$this->MUi->getCommPage('front',$lang);

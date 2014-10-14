@@ -849,6 +849,12 @@ class Nanx extends CI_Controller {
 	}
 
 	function processOpcode($data_received, $opcode) {
+
+        $os_operation_success=true;
+        $db_operation_success=true;
+        $db_err_msg='';
+        $os_err_msg='';
+
 		$action_cfg = $this->actionCfg()[$opcode];
 		$all_cfg    = $this->actionCfg();
 		if (!$action_cfg) {
@@ -874,19 +880,15 @@ class Nanx extends CI_Controller {
 								'errcode' => -1,
 								'errmsg'  => $this->lang->line('only_one_col_be_produce_col'));
 		  return json_encode($res);
-				           
-
           }
         }
-
-
 
 
 		$tbused     = $action_cfg['tbused'];
 		$dbcmdtype  = $action_cfg['dbcmdtype'];
 		$data_fixed = $this->getFixedData($action_cfg, $data_received);
 
-		// getwhre config can be two types, now or later
+	 
 		if (array_key_exists('when_get_where', $action_cfg) && $action_cfg['when_get_where'] == 'later') {
 			$wherecfg = $this->getWhereCfg($action_cfg, $data_fixed[0]);
 		} else {
@@ -909,11 +911,25 @@ class Nanx extends CI_Controller {
 		}
 
 		if ($dbcmdtype == 'update') {
-			$this->db->update($tbused, $data_fixed[0], $wherecfg);
-			if ($opcode == 'set_activity_pic') {
+
+			if ($opcode == 'set_activity_pic') 
+			{
 				$this->load->model('MFile');
-				$f = $this->MFile->getFilename4OS($data_fixed[0]['pic_url']);
-				$this->MFile->writeThumb($f);
+				$imgs_write_able=$this->MFile->checkWriteAble('imgs');
+                $imgs_thumb_write_able=$this->MFile->checkWriteAble('imgs/thumbs');
+                
+                if ($imgs_write_able && $imgs_thumb_write_able ){
+	         		$this->db->update($tbused, $data_fixed[0], $wherecfg);
+	                $f = $this->MFile->getFilename4OS($data_fixed[0]['pic_url']);
+					$this->MFile->writeThumb($f);
+                }else
+                {
+	                $os_operation_success=false;
+	                $os_err_msg='imgs, imgs/thumbs:'.$this->lang->line('check_write_able');
+                 }
+			}else
+			{
+			  $this->db->update($tbused, $data_fixed[0], $wherecfg);
 			}
 		}
 
@@ -982,8 +998,8 @@ class Nanx extends CI_Controller {
 				$ret['showdownload'] = true;
 				$ret['fname']        = base_url() . $ret['fname'];
 			}
-			printjson_encode($ret, JSON_UNESCAPED_UNICODE);
-			return;
+            $str=json_encode($ret, JSON_UNESCAPED_UNICODE);
+			return $str;
 		}
 
 		if ($dbcmdtype == 'backup_system') {
@@ -996,8 +1012,8 @@ class Nanx extends CI_Controller {
 				$ret['showdownload'] = true;
 				$ret['fname']        = base_url() . '/tmp/' . $ret['fname'];
 			}
-			printjson_encode($ret, JSON_UNESCAPED_UNICODE);
-			return;
+			$str=json_encode($ret, JSON_UNESCAPED_UNICODE);
+			return $str;
 		}
 
 		if ($dbcmdtype == 'create_table_from_excel') {
@@ -1042,7 +1058,15 @@ class Nanx extends CI_Controller {
 				}
 			}
 		}
-		$operation_result = $this->sendDbResult($action_cfg);
+		
+		$os_and_db_err=array(
+        'os_operation_success'=>$os_operation_success,
+        'db_operation_success'=>$db_operation_success,
+        'db_err_msg'=>$db_err_msg,
+        'os_err_msg'=>$os_err_msg
+		);
+
+		$operation_result = $this->sendOperationResult($action_cfg,$os_and_db_err);
 		return $operation_result;
 	}
 
@@ -1308,7 +1332,8 @@ class Nanx extends CI_Controller {
 		}
 	}
 
-	function sendDbResult($actcfg) {
+	function sendOperationResult($actcfg, $os_db_err) {
+        
 		if ($actcfg['dbcmdtype'] == 'upload_pic') {
 			$res = array(
 				'success'        => true,
@@ -1328,6 +1353,14 @@ class Nanx extends CI_Controller {
 		if ($sqlresult_code > 0) {
 			$success = false;
 		}
+
+        if(($os_db_err['os_operation_success']==false|| $os_db_err['db_operation_success']==false ))
+        {
+         $success=false;
+         $errmsg=$os_db_err['db_err_msg'].$os_db_err['os_err_msg'];
+        }
+		
+
 
 		$res = array(
 			'success' => $success,

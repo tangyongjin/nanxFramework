@@ -24,19 +24,14 @@ class Activity extends CI_Controller
 	{ 
 		$post = file_get_contents('php://input');
 		$para = (array)json_decode($post);
-		$actcfg = $this->getActivityCfg($para); 
+    $this->load->model('MActivity');
+    $actcfg=$this->MActivity->getActivityCfg($para);
 		echo json_encode($actcfg, JSON_UNESCAPED_UNICODE);
 	}
 	
 	
 	 
 	
-   function getActivityCfg($para_array)
-  {
-    $this->load->model('MActivity');
-    $cfg=$this->MActivity->getActivityCfg($para_array);
-    return $cfg;
-  }
 
 	function getActRawData()
 	{
@@ -48,11 +43,6 @@ class Activity extends CI_Controller
 	  echo json_encode($rawData, JSON_UNESCAPED_UNICODE);
 	}
 	 
-	 
-	
-	 
-  
-  
     
   function getIndexOptions()
   {
@@ -91,9 +81,9 @@ class Activity extends CI_Controller
       	 {
       	   $para_array['query_cfg']=null;
       	 }
-      	 
 
-         $act_cfg_result=$this->getActivityCfg($para_array);
+         $this->load->model('MActivity');
+         $act_cfg_result=$this->MActivity->getActivityCfg($para_array);
          $col_cfg=$act_cfg_result['colsCfg'];
 
          $c_columns=array_retrieve($col_cfg,array(array('segment'=>'display_cfg','index'=>'field_c')));
@@ -109,7 +99,6 @@ class Activity extends CI_Controller
          $CI=&get_instance();
          $CI->load->model('MCurd');
          
-        // $result=$this->MCurd->getActivityData($para_array);
          $result=$CI->MCurd->getActivityData($para_array);
          
          $rows=$result['rows'];    
@@ -136,20 +125,6 @@ class Activity extends CI_Controller
    
   
    
- 
-  function strMarcoReplace($str,$kv)
-  {
-  	if(is_array($kv)){}
-  	else{
-  	$k_v=(array)($kv);	
-  	}
-  
-    while(list($key,$val)= each($k_v))
-    {  	
-    	$fixed= str_replace($key, "'".$val."'", $str);
-    }
-  	return $fixed;
-  }
   
 	
 }

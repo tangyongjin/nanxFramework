@@ -119,7 +119,7 @@ class MFile extends CI_Model
 
 
     function writeThumb($fname)
-    {   
+    {    
         $this->load->model('MFile');
         $fname = $this->MFile->getFilename4OS($fname);
         $config['image_library'] = 'gd2';
@@ -129,7 +129,7 @@ class MFile extends CI_Model
         $config['width'] = 14;
         $config['height'] = 14;
         $this->load->library('image_lib', $config);
-        $this->image_lib->resize();
+        $write_file_result= $this->image_lib->resize();   //create file as XXXX_thumb.ext
         $f = spathinfo($fname);
         $src = 'imgs/' . $f['filename'] . '_thumb.' . $f['extension'];
         $dest = 'imgs/thumbs/' . $fname;
@@ -171,23 +171,7 @@ class MFile extends CI_Model
         return $rows;
     }
     
-      function getFileList2($path,$ftype='all')
-     { 
-       $p='/'.$path.'/';
-    	 $path= (dirname(dirname(dirname(__FILE__)))).$p;
-    	 if($ftype=='all')
-    	 {
-    	 $ext = '{*.*}';
-    	 }
-    	else
-    	{
-    	  $ext='{*.'.$ftype.'}';
-    	}
-    	 
-       $files  = glob($path.$ext, GLOB_BRACE);
-       return $files;
-       
-    }  
+     
     
     
     function backupsystem($fname)

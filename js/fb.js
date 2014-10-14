@@ -1228,6 +1228,7 @@ Fb.getWhoami=function()
      }
     
      var extradata = getGridExtraData();
+     console.log(extradata);
      if (extradata){
        if (extradata.mustHaveOneRow && 0==extradata.row_count)
          {
@@ -1943,7 +1944,7 @@ Fb.Piccellmenu=function(grid, row, col, event) {
                  gridheader: true,
                  checkbox: false,
                  para_json: {
-                     '$table': field_v
+                     '#table': field_v
                  },
                  callback:[{
                      event:'cellcontextmenu',
@@ -2141,8 +2142,8 @@ Fb.validate_password_input = function(v) {
      var ds = Ext.getCmp(gridid).getStore();
      
      var destGrid=Ext.getCmp(gridid);
-
-     if(destGrid.selModel.singleSelect)
+     
+     if(destGrid.selModel.singleSelect &&  ! gridid=='reorder_columns_grid' )
      {
       var singleSelectGrid=true;   
       var items=destGrid.getSelectionModel().getSelections();
@@ -2152,7 +2153,8 @@ Fb.validate_password_input = function(v) {
      var singleSelectGrid=false;
      var items = ds.data.items;
      }
-   
+
+     
 
      var griddata = [];
      for (var i = 0; i < items.length; i++) {

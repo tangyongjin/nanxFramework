@@ -189,23 +189,23 @@ function jsonstr2arr($str)
   
    function strMarcoReplace($str,$kv)
   {
-    
   	if(is_array($kv)){
   	$k_v=$kv;
   	}
   	else{
   	$k_v=(array)($kv);	
   	}
-  	 
     while(list($key,$val)= each($k_v))
-    {  
-    	$str= str_replace($key, "'".$val."'", $str);
+    {
+      $str= str_replace($key,"'".$val."'", $str);
     }
-  	return $str;
+   	return $str;
   }
   
   function getLayoutFields($arr)
-  { 
+  {
+
+  //  debug($arr); 
   
   	$max=0;
   	$cols=array();
