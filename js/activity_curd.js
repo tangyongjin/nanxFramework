@@ -228,6 +228,10 @@ Act.prototype.createActivityGridPanel=function(){
                 
             },
             beforeedit:function(col){
+
+                if (this.id=='x_grid_for_dnd'){
+                    return false;
+                }
                 if ((this.id=='grid_NANX_SYS_CONFIG')&&(col.field=='config_key')){
                     return false;
                 }

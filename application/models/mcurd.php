@@ -84,7 +84,8 @@ class MCurd extends CI_Model{
             $result['total'] = $total;
             $result['table'] = $table;
             $result['sql']   = null;
-        } else 
+        } 
+        else 
         {
             if (($activity_type == 'table') || ($p['code'] == 'NANX_TBL_DATA')) {
                 $filter_field = null;
