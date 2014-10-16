@@ -46,7 +46,7 @@ class MActivity extends CI_Model
         $control_dir=dirname(__FILE__);
         $CI=&get_instance();
         $CI->load->library("../controllers/$c");
-       // $this->_CI->load->library("$c");
+        
         $this->_CI->load->library("../controllers/$c");
        
         $result=$CI->$c->$m($para);
@@ -116,24 +116,25 @@ class MActivity extends CI_Model
 
 
 
-    function getFieldesByType($cfg,$para_array)
-    {
-        $activity_type   = $cfg['activity_type'];
-        $activity_code    = $cfg['activity_code'];
-        $url_for_get_cfg = $cfg['url_for_get_cfg'];
-        $service_url     = $cfg['service_url'];
-        $sql             = $cfg['sql'];
+     function getFieldesByType($activity_summary,$para_array)
+    {    
+        $activity_type   = $activity_summary['activity_type'];
+        $activity_code   = $activity_summary['activity_code'];
+        $url_for_get_cfg = $activity_summary['url_for_get_cfg'];
+        $service_url     = $activity_summary['service_url'];
+        $sql             = $activity_summary['sql'];
+        $base_table      = $activity_summary['base_table'];
+          
         $col_cfg=array();   
 
 
 
        if ($activity_type == 'html') {
-            $col_cfg = '';
+            $col_cfg = array();
         }
       
        if ($activity_type == 'table') {
             $para_array['transfer'] = true;
-            $base_table             = $cfg['base_table'];
             $fields_e               = $this->skip_field($activity_code, $this->db->list_fields($base_table));
             $col_cfg = $this->MFieldcfg->getColsCfg($base_table, $fields_e, $para_array['transfer']);
         }
@@ -151,27 +152,34 @@ class MActivity extends CI_Model
 
             $ret = $this->sqlIncaller($sql_fixed);
             
-            if ($ret['dbok']&& $ret['rows'] )
-            {
-                $fields_e = array_keys($ret['rows'][0]);
-                if ($activity_code == 'NANX_TB_LAYOUT') {
-                    $arr      = getLayoutFields($ret['rows']);
-                    $fields_e = $arr['cols'];
-                }
-                $col_cfg = $this->MFieldcfg->getColsCfg('NULL', $fields_e, true);
-            } 
-            else 
-            {
-                $fields_e = array(
-                    0 => 'pid'
-                );
-                if ($activity_code == 'NANX_TB_LAYOUT') {
-                    $fields_e = array(
-                        0 => 'col_0'
-                    );
-                }
-                $col_cfg = $this->MFieldcfg->getColsCfg('NULL', $fields_e, true);
+            if(! $ret['dbok']){
+                $col_cfg=array('sql_syntax_error'=>true);
             }
+            else
+            {
+                 if ($ret['rows'] )
+                    {
+                        $fields_e = array_keys($ret['rows'][0]);
+                        if ($activity_code == 'NANX_TB_LAYOUT') {
+                            $arr      = getLayoutFields($ret['rows']);
+                            $fields_e = $arr['cols'];
+                        }
+                        $col_cfg = $this->MFieldcfg->getColsCfg('NULL', $fields_e, true);
+                    } 
+                    else 
+                    {
+                        $fields_e = array(
+                            0 => 'pid'
+                        );
+                        if ($activity_code == 'NANX_TB_LAYOUT') {
+                            $fields_e = array(
+                                0 => 'col_0'
+                            );
+                        }
+                        $col_cfg = $this->MFieldcfg->getColsCfg('NULL', $fields_e, true);
+                    }
+            }
+             
         }
 
         if ($activity_type == 'service') {
@@ -188,6 +196,7 @@ class MActivity extends CI_Model
                         'nanx_sms',
                         'nanx_activity_field_public_display_cfg'
                     ))) {
+                        $this->load->model('MFieldcfg');
                         $col_cfg = $this->MFieldcfg->colsTrnasfer('NULL', $fields_e);
                     } else {
                         $transfer = false;
@@ -233,7 +242,7 @@ class MActivity extends CI_Model
 
    
 
-    function getActivityCfg($para_array)
+     function getActivityCfg($para_array)
     {
 
         $this->load->model('MFieldcfg');
@@ -242,31 +251,37 @@ class MActivity extends CI_Model
         $activity_code = $para_array['code'];
         $this->db->where('activity_code', $activity_code);
         $query           = $this->db->get('nanx_activity');
-        $cfg             = $query->first_row('array');
-        $activity_type   = $cfg['activity_type'];
+        $activity_summary             = $query->first_row('array');
+        $activity_type   = $activity_summary['activity_type'];
 
         if ($activity_type == 'table') {
-            $base_table             = $cfg['base_table'];
+            $base_table             = $activity_summary['base_table'];
             $layout_cfg = $this->MLayout->getLayoutCfg($activity_code, $base_table);
         }
 
       
         if (array_key_exists('table', $para_array) && (strlen($para_array['table']) > 0)) {
-            $cfg['base_table'] = $para_array['table'];
+            $activity_summary['base_table'] = $para_array['table'];
         }
         
-        $col_cfg=$this->getFieldesByType($cfg,$para_array);
-
-        $cfg['pidOrder']           = $this->getPidOrder($activity_code);
-        $cfg['curdCfg']            = $this->getCURDcfg($activity_code);
-        $cfg['colsCfg']            = $col_cfg;
-        $cfg['layoutCfg']          = $layout_cfg;
-        $cfg['activty_based_btns'] = $this->getActivityBasedBtns($activity_code);
-        $cfg['js_btns']            = $this->getJSBtns($activity_code);
-        $cfg['batch_btns']         = $this->getBatchBtns($activity_code);
-        $cfg['who_is_who']         = $this->session->userdata('who_is_who');
-        $cfg['whoami']             = $this->session->userdata('user');
-        return $cfg;
+        $col_cfg=$this->getFieldesByType($activity_summary,$para_array);
+        
+        if(array_key_exists('sql_syntax_error', $col_cfg))
+        {
+        $activity_summary['sql_syntax_error']   = $col_cfg['sql_syntax_error'];
+        $col_cfg=array();     
+        }
+        
+        $activity_summary['pidOrder']           = $this->getPidOrder($activity_code);
+        $activity_summary['curdCfg']            = $this->getCURDcfg($activity_code);
+        $activity_summary['colsCfg']            = $col_cfg;
+        $activity_summary['layoutCfg']          = $layout_cfg;
+        $activity_summary['activty_based_btns'] = $this->getActivityBasedBtns($activity_code);
+        $activity_summary['js_btns']            = $this->getJSBtns($activity_code);
+        $activity_summary['batch_btns']         = $this->getBatchBtns($activity_code);
+        $activity_summary['who_is_who']         = $this->session->userdata('who_is_who');
+        $activity_summary['whoami']             = $this->session->userdata('user');
+        return $activity_summary;
     }
     
 }

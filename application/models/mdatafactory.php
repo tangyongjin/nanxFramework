@@ -1,12 +1,14 @@
 <?php
 class MDatafactory extends CI_Model
 {
-    function setSqlbyBasetable($basetable, $filter_field, $filter_value, $pid_order)
+    function setSqlbyBasetable($basetable,$pid_order)
     {
         $where = array(
             'base_table' => $basetable
         );
         
+
+
         $combo_fields = $this->db->select('base_table,field_e,combo_table,list_field,value_field,filter_field,group_id,level')->get_where('nanx_biz_column_trigger_group', $where)->result_array();
         $base_fields  = $this->db->list_fields($basetable);
         
@@ -52,15 +54,8 @@ class MDatafactory extends CI_Model
         
         $sql = "select $live_and_ghost from $basetable ";
         
-        $filter_sql = '';
-        if ($filter_field) {
-            $filter_sql = " where  $basetable.$filter_field='" . $filter_value . "'";
-        }
-        
-        $sql_select = $sql . $join_str . $filter_sql;
+        $sql_select = $sql . $join_str;
         $sql_select .= " order by $basetable.pid $pid_order";
-        //echo $sql_select;
-        
         return $sql_select;
     }
     
@@ -132,10 +127,10 @@ class MDatafactory extends CI_Model
 
     }
     
-    function getDatabyBasetable($table, $filter_field, $filter_value, $pid_order, $query_cfg,$who_is_who_found)
+    function getDatabyBasetable($table, $pid_order, $query_cfg,$who_is_who_found)
     {
         $transfer = true;
-        $sql      = $this->setSqlbyBasetable($table, $filter_field, $filter_value, $pid_order);
+        $sql      = $this->setSqlbyBasetable($table,$pid_order);
         if ($query_cfg) {
             $all_fields = $this->db->query("show full fields from  $table")->result_array();
             $all_fields = array_retrieve($all_fields, array(
@@ -157,7 +152,6 @@ class MDatafactory extends CI_Model
         if ($db_q) {
             $rows  = $db_q->result_array();
             $total = count($rows);
-            
             
             if (isset($_GET['start'])) {
                 $start = $_GET['start'];
@@ -242,11 +236,11 @@ class MDatafactory extends CI_Model
             if ($operator == 'like') {
                 $arg = '%' . $arg . '%';
             }
-            if ($operator == 'like_end') {
+            if ($operator == 'like_begin') {
                 $operator = 'like';
                 $arg      = $arg . '%';
             }
-            if ($operator == 'like_begin') {
+            if ($operator == 'like_end') {
                 $operator = 'like';
                 $arg      = '%' . $arg;
             }

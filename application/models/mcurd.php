@@ -56,7 +56,8 @@ class MCurd extends CI_Model{
                 $limit = $_GET['limit'];
                 $this->db->limit($limit, $start);
             }
-            
+
+
             if (array_key_exists('pid_order', $p)) {
                 $pidorder = $p['pid_order'];
             } else {
@@ -70,13 +71,7 @@ class MCurd extends CI_Model{
                 $this->db->select( $cols_selected );
             } 
 
-            if (array_key_exists('filter_field', $p)) {
-                $filter_field = $p['filter_field'];
-                $filter_value = $p['filter_value'];
-                if( strlen(trim($filter_field))>0 ){
-                    $this->db->where($filter_field, $filter_value);
-                }
-            } 
+            
 
             $rows  = $this->db->get($table)->result_array();
             $total = count($rows);
@@ -87,9 +82,9 @@ class MCurd extends CI_Model{
         } 
         else 
         {
-            if (($activity_type == 'table') || ($p['code'] == 'NANX_TBL_DATA')) {
-                $filter_field = null;
-                $filter_value = null;
+
+             if (($activity_type == 'table') || ($p['code'] == 'NANX_TBL_DATA')) {
+               
                 $who_is_who_found=$this->MDatafactory->getWhoIsWho_where($p);
                 if ( strlen( trim($who_is_who_found))==0  &&  array_key_exists('owner_data_only', $p)  )
                 {
@@ -99,12 +94,6 @@ class MCurd extends CI_Model{
                    }
                 }
                 
-                if (array_key_exists('filter_field', $p)) {
-                    $filter_field = $p['filter_field'];
-                    $filter_value = $p['filter_value'];
-                }
-                
-                
                 if (array_key_exists('query_cfg', $p)) {
                     $query_cfg = $p['query_cfg'];
                 } else {
@@ -113,7 +102,7 @@ class MCurd extends CI_Model{
                 
                 $table     = $p['table'];
                 $pid_order = (isset($p['pid_order'])) ? $p['pid_order'] : 'asc';
-                $result    = $this->MDatafactory->getDatabyBasetable($table, $filter_field, $filter_value, $pid_order, $query_cfg,$who_is_who_found);
+                $result    = $this->MDatafactory->getDatabyBasetable($table, $pid_order, $query_cfg,$who_is_who_found);
             }
         }
         

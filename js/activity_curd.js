@@ -73,9 +73,10 @@ Act.prototype.init_all = function(cfg) {
     this.single_selection = cfg.hasOwnProperty('singleSelect')?cfg.singleSelect:false;     
     
     this.grid_h = cfg.hasOwnProperty('grid_h') ? cfg.grid_h:null;
-     
-       
-    this.getCfgUrl = AJAX_ROOT + 'activity/getActCfg';
+    
+   // this.query={};
+        
+    this.getActCfgUrl = AJAX_ROOT + 'activity/getActCfg';
     this.excelUrl = AJAX_ROOT + 'grid2excel/index';
     this.deletedPIDs = [];
     if (cfg.hasOwnProperty('renderto')) {
@@ -152,7 +153,7 @@ Act.prototype.showActivityWindow=function(){
     var that=this;
     var subcfg={};
     for (var p in this.cfg) {
-        if ((p !=='host')&&(p !=='callback')){
+        if ((p !=='host')&&(p !=='callback')&&(p!=='filter_field')&&(p!=='filter_value')){
             subcfg[p]=this.cfg[p];
         }
     }
@@ -160,7 +161,7 @@ Act.prototype.showActivityWindow=function(){
     var jsondata=Ext.encode(subcfg);
     WaitMask.show();
     Ext.Ajax.request({
-        url:that.getCfgUrl,
+        url:that.getActCfgUrl,
         jsonData:jsondata,
         callback:function(options,success,response){
             WaitMask.hide();
@@ -224,22 +225,20 @@ Act.prototype.createActivityGridPanel=function(){
                    Fb.showPic(src);
                    return;
                 }           
-                
-                
             },
             beforeedit:function(col){
-
-                if (this.id=='x_grid_for_dnd'){
-                    return false;
-                }
-                if ((this.id=='grid_NANX_SYS_CONFIG')&&(col.field=='config_key')){
-                    return false;
-                }
-                
-                if(this.id=='grid_PIC'){return false;}
-                
                 if (col.field=='pid'){
                     return false;
+                }
+
+                if (this.id=='x_grid_for_dnd'|| this.id=='grid_PIC' ){
+                    return false;
+                }
+
+                if (this.id=='grid_NANX_SYS_CONFIG'){
+                  if( col.field=='config_key' || col.field=='config_memo' ||col.field=='memo_of_config_item'  ) {
+                    return false;
+                  }                
                 }
             },
             afteredit:function(row){
@@ -566,6 +565,26 @@ Act.prototype.getStoreBySql=function(){
     return ds;
 }
 
+
+
+Act.prototype.filter2QueryCfg=function(cfg)
+{
+  var querycfg=null;   
+  if(cfg.filter_field){
+    var querydata={};
+    querydata['field_0']=cfg.filter_field;
+    querydata['operator_0']='=';
+    querydata['and_or_0']='and';
+    querydata['vset_0']=cfg.filter_value;
+    querycfg={
+            count:1,
+            lines:querydata
+          }
+    }
+   return querycfg;
+}
+
+
 Act.prototype.getStoreByTableAndField=function(basetable,fields,cfg){
     
     console.log(cfg);
@@ -577,6 +596,12 @@ Act.prototype.getStoreByTableAndField=function(basetable,fields,cfg){
     } else {
         pid_order = 'asc';
     }
+    console.log(cfg);
+    
+
+    var querycfg=this.filter2QueryCfg(cfg);
+
+
     var table_query_obj={
         table:basetable,
         code:this.actcode,
@@ -584,8 +609,7 @@ Act.prototype.getStoreByTableAndField=function(basetable,fields,cfg){
         who_is_who:this.who_is_who,
         owner_data_only:this.owner_data_only,
         pid_order:pid_order,
-        filter_field:(cfg.filter_field)?cfg.filter_field:null,
-        filter_value:(cfg.filter_value)?cfg.filter_value:null
+        query_cfg:querycfg
     };
     var table_query_json=Ext.encode(table_query_obj);
     var ds=new Ext.data.JsonStore({
@@ -743,7 +767,7 @@ Act.prototype.insertQueryLine=function(table,holderid){
     });
 
     var btn_remove=new Ext.Button({
-        text:i18n.remvoe,
+        text:i18n.remove,
         disabled:lines==0?true:false,
         style:{
             'margin-left': '10px'
@@ -932,11 +956,11 @@ Act.prototype.getSerachPanel=function(table,storeId,winid){
                 lines:puredata
             };
             ds.reload();
-            delete ds.proxy.conn.jsonData.query_cfg;
+            delete ds.proxy.conn.jsonData.nanx_query_cfg;
         }
     });
 
-    var btn_close = new Ext.Button({
+    var btn_close_query = new Ext.Button({
         text:i18n.close,
         iconCls:'n_close',
         style:{
@@ -944,6 +968,17 @@ Act.prototype.getSerachPanel=function(table,storeId,winid){
         },
         listeners:{
             'click':function(){
+                var qb=Ext.getCmp('query_builder');
+
+                var hostwin=qb.ownerCt;
+                console.log(hostwin);
+                var hostgrid=hostwin.findByType('grid');
+                var hoststore=hostgrid[0].getStore();
+
+                console.log(hostgrid[0].getStore());
+                hoststore.reload();
+
+
                 Ext.getCmp('query_builder').hide();
                 var gp=Ext.getCmp(winid).findByType('panel');
                 gp[2].setHeight(gp[2].getHeight() + 100);
@@ -953,15 +988,15 @@ Act.prototype.getSerachPanel=function(table,storeId,winid){
     });
 
 
-    var btn3=new Ext.Container({
+    var btn_search_bar=new Ext.Container({
         layout:'table',
         height:30,
-        items:[btn_add, execute, btn_close]
+        items:[btn_add, execute, btn_close_query]
     });
 
     var pnl=new Ext.FormPanel({
         id:'nanx_query_holder',
-        items:[btn3]
+        items:[btn_search_bar]
     });
 
     var sp=new Ext.Panel({
@@ -1362,14 +1397,15 @@ Act.prototype.getbatchHelpBtns=function(opfield){
 }
 
 Act.prototype.writeExcel=function(btn,e){
+
+    var querycfg=this.filter2QueryCfg(this.cfg);
     var girdtitle = this.gridTitle;
     var excel_cfg={
         code:this.cfg.code,
         table:this.table,
-        filter_field:this.cfg.col||'',
-        filter_value:this.cfg.value||'',
         transfer:btn.transfer,
         whoami:this.whoami,
+        query_cfg:querycfg,
         who_is_who:this.who_is_who,
         owner_data_only:this.owner_data_only,
         activity_type:this.activity_type,
