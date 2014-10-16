@@ -955,7 +955,14 @@ Act.prototype.getSerachPanel=function(table,storeId,winid){
                 count:condition_rows.length,
                 lines:puredata
             };
-            ds.reload();
+
+
+            ds.load({
+                params:{
+                    start:0,
+                    limit:pageSize
+                }
+            });
             delete ds.proxy.conn.jsonData.nanx_query_cfg;
         }
     });
