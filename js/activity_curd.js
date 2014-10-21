@@ -408,7 +408,7 @@ Act.prototype.editIndexCols=function(rowindex,a){
         opcode:'manage_index',
         node:{},
         width:550,
-        title:'<img src='+URL_ROOT+'imgs/thumbs/backop.png' + ' />&nbsp;'+i18n.manage_index,
+        title:'<img src='+BASE_URL+'imgs/thumbs/backop.png' + ' />&nbsp;'+i18n.manage_index,
         althandler:handler
     };
     this.actionWin('backend',opform,wincfg);
@@ -1735,7 +1735,7 @@ Act.prototype.showWindow = function(){
 
 
 
-    var title ='<img src='+URL_ROOT+'imgs/thumbs/'+this.pic_url+' />&nbsp;'+this.gridTitle;
+    var title ='<img src='+BASE_URL+'imgs/thumbs/'+this.pic_url+' />&nbsp;'+this.gridTitle;
     if (this.cfg.wintitle){
         var title=this.cfg.wintitle;
     }
@@ -1880,7 +1880,7 @@ Act.prototype.actionWin = function(type,form,wincfg){
         var backendUrl=Category.getMenuDefaultProcessor();
         var url=wincfg.url?wincfg.url:AJAX_ROOT+backendUrl.controller+'/'+backendUrl.func_name;
         
-        var title ='<img src=' + URL_ROOT + 'imgs/thumbs/backop.png' + ' />&nbsp;'+wincfg.title;
+        var title ='<img src=' + BASE_URL+ 'imgs/thumbs/backop.png' + ' />&nbsp;'+wincfg.title;
         form.extra_url=url;
         form.extra_fn=refresh;
         form=Fb.formBuilder(form,wincfg.opcode);

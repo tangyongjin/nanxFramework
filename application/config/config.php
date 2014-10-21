@@ -1,9 +1,9 @@
 <?php  if ( ! defined('BASEPATH')) exit('No direct script access allowed');
 
 $config['webroot']	= '/Library/WebServer/Documents/cloud/standx/';
-$config['zipfile']='src_package/nanx_deploy.zip'; 
 $config['subfolder']='cloud';
-$config['base_url']	='http://127.0.0.1/cloud/standx';$config['index_page'] = 'index.php';
+$config['base_url']	='http://127.0.0.1/cloud/standx';
+$config['index_page'] = 'index.php';
 $config['uri_protocol']	= 'AUTO';
 $config['url_suffix'] = '';
 $config['language']	= 'english';
@@ -134,14 +134,7 @@ $config['rewrite_short_tags'] = FALSE;
 |
 */
 $config['proxy_ips'] = '';
-
-
-//debug来控制是否打印调试信息。
-
-//$config['debug'] = TRUE;
-$config['debug'] = TRUE;
-
-
+$config['debug'] = false;
 
 /* End of file config.php */
 /* Location: ./application/config/config.php */

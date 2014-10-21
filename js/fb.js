@@ -120,7 +120,7 @@ Fb.toggle_combo=function(togglefalg)
      } else {
          var box = {
              xtype:'box',
-             html: '<div  style="height:44px"  class=pic_holder><table><tr><td><img src="' + URL_ROOT + 'css/images/' + ftype + '.png "></td><td><a onClick=Fb.showDownload(' + "'" + field.value + "'" + ')  href=#>' + fname + '</a></td></tr></div>',
+             html: '<div  style="height:44px"  class=pic_holder><table><tr><td><img src="' + BASE_URL+ 'css/images/' + ftype + '.png "></td><td><a onClick=Fb.showDownload(' + "'" + field.value + "'" + ')  href=#>' + fname + '</a></td></tr></div>',
          };
      }
      return box;
