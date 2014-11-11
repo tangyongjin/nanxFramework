@@ -1,8 +1,11 @@
 <?php  if ( ! defined('BASEPATH')) exit('No direct script access allowed');
-
-$config['webroot']	= '/Library/WebServer/Documents/cloud/standx/';
+//EID_HERE
+$config['eidfolder']='standx';
 $config['subfolder']='cloud';
-$config['base_url']	='http://127.0.0.1/cloud/standx';
+$config['webroot']= $_SERVER['DOCUMENT_ROOT'].'/'.$config['subfolder'].'/'.$config['eidfolder'].'/';
+$baseUrl = str_replace('\\','/',dirname($_SERVER['SCRIPT_NAME']));
+$baseUrl = trim($baseUrl,'/');
+$config['base_url'] = empty($baseUrl)? '/' : "/$baseUrl/";
 $config['index_page'] = 'index.php';
 $config['uri_protocol']	= 'AUTO';
 $config['url_suffix'] = '';
@@ -20,7 +23,7 @@ $config['log_threshold'] =0;
 $config['log_path'] = '';
 $config['log_date_format'] = 'Y-m-d H:i:s';
 $config['cache_path'] = '';
-$config['encryption_key'] = 'layoutit';
+$config['encryption_key'] = $config['eidfolder'];
 
 
 
@@ -43,7 +46,7 @@ $config['encryption_key'] = 'layoutit';
 | 'sess_time_to_update'		= how many seconds between CI refreshing Session Information
 |
 */
-$config['sess_cookie_name']		= 'ci_sess_layoutit';
+$config['sess_cookie_name']		=$config['eidfolder']; 
 $config['sess_expiration']		= 7200;
 $config['sess_expire_on_close']	= FALSE;
 $config['sess_encrypt_cookie']	= FALSE;

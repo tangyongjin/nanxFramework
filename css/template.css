@@ -119,8 +119,6 @@ width:200px;
   font-size:12px;
 }
 
- 
-
 
 
 textarea {
@@ -220,6 +218,7 @@ p.footer-tip {
 
 #content-box {
     float:left;
+    width:100%;
 	background-color: #F4F4F4;
 }
  
@@ -542,6 +541,15 @@ button:hover {
 	width: 575px;
 }
 
+
+#logintext{
+	margin-top:4px;
+	font-size:16px;
+}
+
+
+
+  
 #user_td,#pwd_td
 {
   text-align:right;
