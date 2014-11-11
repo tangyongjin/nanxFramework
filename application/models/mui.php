@@ -130,7 +130,7 @@ class MUI extends CI_Model
    
  function getActionBlock($acts)
 	{
-		$left= '<div id="cpanel-left"  class="cpanel-left"><div class="cpanel">';
+		$left= '<div  id="cpanel-left" class="cpanel-left"><div class="cpanel">';
 		$divs = '';
 		foreach($acts as $one_activity)
 		{
@@ -290,7 +290,6 @@ class MUI extends CI_Model
           
          
          date_default_timezone_set('PRC');
-         $date=date('Y年-m月-d日');
          $current_user_info ="<a class=tbar_a href=# id=userpanel>$user/$staff_name</a>";
          $current_user_info.="<span style='display:none;' id=whoami>$user</span>"; 
          $current_user_info.="<span style='display:none;' id=inner_table_value>$inner_table_value</span>"; 

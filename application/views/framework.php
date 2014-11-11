@@ -12,7 +12,10 @@
 		echo '<div id="border-top" class="h_blue">';
 		$bs_url = $this->config->item('base_url');
 		echo "<div id=oss_menu1></div>";
-		echo "<div style='float:left;margin-top:9px;margin-left:5px;'><img src=$bs_url/css/images/nanx_logo.png /></div>";
+
+		$hostname ='http://'.getenv('HTTP_HOST');
+
+		echo "<div id=logo_nanx><a href=$hostname><img src=$bs_url/css/images/nanx_logo.png /></a></div>";
 		echo "<div id=menu_wrapper>";
 		echo $banner_title;
         if (!isset($loginview))
@@ -27,10 +30,8 @@
 		echo '</div>';
 		echo '</div>';
 		?>	 
- 
+   
 	<div id="content-box">
-		<div id="element-box">
-				<div class="adminform" style="height:242px;">
 					<?php
 						$user_item = 'user';
 						if (isset($loginview))
@@ -41,12 +42,12 @@
 							{
 							if (isset($left))
 								{
-								echo $left;
+						  echo $left;
 								}
 
 							if (isset($right))
 								{
-								$this->load->view($right);
+					    	 $this->load->view($right);
 								}
 
 							if (isset($activity_div))
@@ -55,16 +56,17 @@
 								}
 							}
 
-						date_default_timezone_set('PRC');
-						$date = date('Y-m-d');
-						$week = $this->lang->line('week') [date('w') ];
+						 
 						?>
-		        </div>
-		</div>
+		       
+		 
 	</div>
 	<div id=footer>
 	  <?php
-          echo "<div id=foot_date>$date $week</div>";
+	    date_default_timezone_set('PRC');
+		$date = date('Y-m-d');
+		$week = $this->lang->line('week') [date('w') ];
+       echo "<div id=foot_date>$date $week</div>";
       ?>
 	</div>
 </body>
