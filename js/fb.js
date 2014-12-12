@@ -1982,6 +1982,7 @@ Fb.getHtmlAttribute = function(str, tag) {
      
      
  Fb.formBuilder = function(opform, opcode) {
+         alert(HELP_DIR);
      var help_panel = new Ext.Panel({
          autoLoad: HELP_DIR + opcode,
          height: 400,

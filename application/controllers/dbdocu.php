@@ -198,17 +198,15 @@ table td{
 	}
 
 	function gethelp() {
-		$SERVER_ADDR=$_SERVER['SERVER_ADDR'];
 		$code = $this->uri->segment(3);
 		$lang = $this->i18n->get_current_locale();
 		if ($code == 'set_biz_field_combo_resorce,set_biz_field_combo_follow') {
 			$code = 'set_biz_field_combo_and_follow';
 		}
-        $webroot=config_item('webroot'); 
         $baseurl=config_item('base_url');
-		$v = 'http://'.$SERVER_ADDR.$baseurl."application/language/" . $lang . "/" . $code . '.html';
-		//echo $v;
-   	    redirect($v, 'location', 301);
+        $rand=time();
+		$v = $baseurl."/application/language/" . $lang . "/" . $code . '.html?rand='.$rand;
+	    redirect($v, 'location', 301);
 	}
 }
 ?>

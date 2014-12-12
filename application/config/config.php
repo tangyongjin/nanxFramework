@@ -3,9 +3,8 @@
 $config['eidfolder']='standx';
 $config['subfolder']='cloud';
 $config['webroot']= $_SERVER['DOCUMENT_ROOT'].'/'.$config['subfolder'].'/'.$config['eidfolder'].'/';
-$baseUrl = str_replace('\\','/',dirname($_SERVER['SCRIPT_NAME']));
-$baseUrl = trim($baseUrl,'/');
-$config['base_url'] = empty($baseUrl)? '/' : "/$baseUrl/";
+
+$config['base_url'] = 'http://127.0.0.1/cloud/standx';
 $config['index_page'] = 'index.php';
 $config['uri_protocol']	= 'AUTO';
 $config['url_suffix'] = '';
