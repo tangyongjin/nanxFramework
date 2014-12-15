@@ -631,25 +631,26 @@ var contextMenu = [
                 label:i18n.erase,
                 value:'#value'
             }]
-        }, {
-            title:i18n.set_display_text,
-            opcode:'set_col_displayname',
-            place:'context',
-            itemcfg:[{
-                item_type:'field',
-                label:i18n.display_text,
-                value:'#value',
-                id:'field_c'
-            }]
-        }, {
+        }, 
+        {
             title:i18n.rename_column,
             opcode:'rename_col',
             place:'context',
-            itemcfg:[{
+            itemcfg:[
+            {
                 item_type:'field',
-                label:i18n.new_column_name, 
+                label:i18n.new_column_name,
                 value:'#value'
-            }]
+            },
+            {
+                item_type:'field',
+                label:i18n.new_column_name,
+                id:'field_def',
+                value:'#field_def'
+            }
+                        
+
+            ]
         }]
     },
     {

@@ -571,18 +571,9 @@ class Nanx extends CI_Controller {
 					'usedtable'         => 'hostby',
 					'orgincol'          => 'nodevalue',
 					'newcolname'        => 'input_0',
-					'column_definition' => 'column_definition')),
+					'field_def' => 'field_def')),
 
-			'set_col_displayname' => array(
-				'successmsg' => 'success_set_col_displayname',
-				'tbused'     => 'nanx_activity_field_special_display_cfg',
-				'dbcmdtype'  => 'update_or_insert',
-				'paracfg'    => array(
-					'base_table' => 'hostby',
-					'field_e'    => 'nodevalue',
-					'field_c'    => 'field_c'),
-				'wherecfg'    => array('base_table' => 'hostby', 'field_e' => 'nodevalue')),
-
+			 
 			'set_activity_pic' => array(
 				'successmsg'        => 'success_set_activity_pic',
 				'tbused'            => 'nanx_activity',
@@ -791,7 +782,6 @@ class Nanx extends CI_Controller {
 	function getFixedData($action_cfg, $data_received) {
 		$opcode     = $action_cfg['opcode'];
 		$data_fixed = $this->getDataArray($action_cfg, $data_received);
-
 		if ($opcode == 'set_form_layout') {
 			$data_fixed = $this->getFormLayoutData($data_received);
 		}
@@ -1285,9 +1275,9 @@ class Nanx extends CI_Controller {
 			}
 			$tb                = $paracfg['usedtable'];
 			$newname           = $paracfg['newcolname'];
-			$column_definition = $paracfg['column_definition'];
+			$column_definition = $paracfg['field_def'];
 			$sql               = "alter table $tb  change column  $orgincol    $newname    $column_definition ";
-			$this->db->query($sql);
+		  	$this->db->query($sql);
 		}
 
 		if ($dbcmdtype == 'truncate_table') {

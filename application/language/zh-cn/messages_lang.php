@@ -106,7 +106,6 @@ $lang['success_set']                     = '设置成功';
 $lang['success_set_activity_pic']        = '活动图标成功';
 $lang['success_set_base_table']          = '基表设置成功';
 $lang['success_set_biz_table_ref']       = '表格设置成功';
-$lang['success_set_col_displayname']     = '列显示名设置成功';
 $lang['success_set_field_default_value'] = '设置缺省值成功';
 $lang['success_set_follow']              = '设置成功';
 $lang['success_set_forbidden_col']       = '设置隐藏列成功';
