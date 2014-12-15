@@ -66,6 +66,7 @@ class Copynode extends CI_Controller
               if (array_key_exists($key,$related_row)){$related_row[$key]=$value;}
               }
             reset($new_values);  
+            echo $related_table;
             $this->db->insert($related_table,$related_row);
           }
      }
