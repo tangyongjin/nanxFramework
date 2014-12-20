@@ -146,7 +146,7 @@ var contextMenu = [
         menus:[{
             title:i18n.create_new_biztable,
             place:'context',
-            opcode:'create_base_table',
+            opcode:'create_biz_table',
             itemcfg:[{
                 item_type:'field',
                 label:i18n.business_table_name,
@@ -1182,7 +1182,7 @@ var contextMenu = [
         category: ['activitys'],
         menus:[{
             title:i18n.add_table_activity,
-            opcode:'add_activity',
+            opcode:'create_table_activity',
             place:'context',
             itemcfg:[{
                 item_type:'field',
@@ -1350,7 +1350,7 @@ var contextMenu = [
         category: ['activity'],
         menus:[{
                 title:i18n.setting_biz_table,
-                opcode:'set_activity_base_table',
+                opcode:'set_activity_table',
                 place:'context',
                 itemcfg:[
                 {

@@ -1,7 +1,21 @@
 <div class=back_help>
-<h1>操作:设置链接的字段</h1>
-<div class=operation_desc>deschere</div>
-<div class=back_item_list><h1 class=back_items>字段说明:</h1><table class=thin-table><tr><td>主活动</td><td><div clsss=field_desc>xxxxxx</div></td></tr><tr><td>参考的活动</td><td><div clsss=field_desc>xxxxxx</div></td></tr><tr><td>主表字段</td><td><div clsss=field_desc>xxxxxx</div></td></tr><tr><td>参考字段</td><td><div clsss=field_desc>xxxxxx</div></td></tr></table></div>
+<h1>操作:设置关联的的字段</h1>
+<div class=operation_desc>
+  设置关联字段,前提是两个活动(业务表)有相同的字段,
+  比如:客户资料表有一个<mark>客户代码字段</mark>,
+  客户购买记录也有一个<mark>客户代码字段</mark>,
+  可能你只要100个客户,但是销售记录可能有2万条,你可以在
+  "客户资料管理"功能上添加一个按钮,起名:"此客户销售记录",
+  点击按钮后,系统会字段提取这个客户的销售记录.
+  <mark>"客户代码"</mark>字段就是关联字段.
+  </div>
+<div class=back_item_list><h1 class=back_items>字段说明:</h1>
+<table class=thin-table>
+	<tr><td>主活动</td><td><div clsss=field_desc>比如:客户资料</div></td></tr>
+	<tr><td>参考的活动</td><td><div clsss=field_desc>比如:销售记录</div></td></tr>
+	<tr><td>主表字段</td><td><div clsss=field_desc>比如:客户代码</div></td></tr>
+	<tr><td>参考字段</td><td><div clsss=field_desc>比如:客户代码</div></td></tr>
+</table></div>
 <div class=back_demo></div>
 <div class=back_notice>注意事项:</div>
 </div><div class=operation_notice>无</div>

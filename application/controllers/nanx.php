@@ -33,7 +33,7 @@ class Nanx extends CI_Controller {
 				'dbcmdtype'  => 'insert',
 				'paracfg'    => array('table_name' => 'table_name', 'backup_name' => 'backup_name')),
 
-			'create_base_table' => array(
+			'create_biz_table' => array(
 				'successmsg' => 'success_create_biz_table',
 				'tbused'     => 'nanx_biz_tables',
 				'dbcmdtype'  => 'insert',
@@ -70,7 +70,7 @@ class Nanx extends CI_Controller {
 					'win_size_width_operation' => 'win_size_width_operation'),
 				'wherecfg'                  => array('pid' => 'pid')),
 
-			'set_activity_base_table' => array(
+			'set_activity_table' => array(
 				'successmsg' => 'success_set_base_table',
 				'tbused'     => 'nanx_activity',
 				'dbcmdtype'  => 'update',
@@ -172,7 +172,7 @@ class Nanx extends CI_Controller {
 				'paracfg'    => array('group_id' => 'group_id'),
 				'tbused'                         => array('nanx_biz_column_follow_cfg', 'nanx_biz_column_trigger_group')),
 
-			'add_activity' => array(
+			'create_table_activity' => array(
 				'successmsg' => 'success_add_activity',
 				'tbused'     => 'nanx_activity',
 				'dbcmdtype'  => 'insert',
