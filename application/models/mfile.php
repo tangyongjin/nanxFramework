@@ -131,9 +131,16 @@ class MFile extends CI_Model
         $this->load->library('image_lib', $config);
         $write_file_result= $this->image_lib->resize();   //create file as XXXX_thumb.ext
         $f = spathinfo($fname);
+        if ( ! $this->image_lib->resize())
+        {
+         return false;
+        }
+
+
         $src = 'imgs/' . $f['filename'] . '_thumb.' . $f['extension'];
         $dest = 'imgs/thumbs/' . $fname;
         rename($src, $dest);
+        return true;
     }
     
     

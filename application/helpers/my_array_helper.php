@@ -24,6 +24,10 @@ or  array('name',array('segment'=>'book_info',index=>'sale_price'))
 
 function array_retrieve($arr,$keys_config)
 {
+
+// debug($arr);
+// debug($keys_config);
+
 $result=array();
 if(is_array($keys_config))
 {

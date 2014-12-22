@@ -712,11 +712,22 @@ class Nanx extends CI_Controller {
 				'paracfg'   => array('activity_code' => array('getFrom' => 'src', 'value' =>
 						'value'), 'role_code'                                 => array('getFrom' => 'target', 'value' => 'value'))),
 
+            //$lang['biz']     = '业务表';
+
+
+			'dnd_create_biz_table' => array(
+				'tbused'     => 'nanx_biz_tables',
+				'dbcmdtype'  => 'insert',
+                'paracfg'   => array('table_name' => array('getFrom' => 'src', 'value' =>
+						'value'), 'table_screen_name'  => array('getFrom' => 'src', 'prefix'=>$this->lang->line('biz') , 'value' => 'value'))),
+
+
+
 			'dnd_user_role_add_html_activity' => array(
 				'tbused'    => 'nanx_user_role_privilege',
 				'dbcmdtype' => 'insert',
 				'paracfg'   => array('activity_code' => array('getFrom' => 'src', 'value' =>
-						'value'), 'role_code'                                 => array('getFrom' => 'target', 'value' => 'value'))),
+						'value'), 'role_code'=> array('getFrom' => 'target', 'value' => 'value'))),
 
 			'add_user_to_role' => array(
 				'tbused'    => 'nanx_user_role_assign',
@@ -751,6 +762,9 @@ class Nanx extends CI_Controller {
 
 			'dnd_user_role_add_html_activity' => array('src' => 'activity_html', 'target' =>
 				'user_role_under_acls'),
+
+ 			'dnd_create_biz_table' => array('src' => 'table', 'target' =>
+				'biz_tables'),
 
 			'add_user_to_role' => array('src' => 'user', 'target' => 'user_role'),
 		);
@@ -911,13 +925,22 @@ class Nanx extends CI_Controller {
                 if ($imgs_write_able && $imgs_thumb_write_able ){
 	         		$this->db->update($tbused, $data_fixed[0], $wherecfg);
 	                $f = $this->MFile->getFilename4OS($data_fixed[0]['pic_url']);
-					$this->MFile->writeThumb($f);
-                }else
+					$gd_result=$this->MFile->writeThumb($f);
+                    if(!$gd_result){
+                    $os_operation_success=false;
+	                $os_err_msg=$this->lang->line('gd_pic_type_error');
+                    }
+
+                }
+                else
                 {
 	                $os_operation_success=false;
 	                $os_err_msg='imgs, imgs/thumbs:'.$this->lang->line('check_write_able');
-                 }
-			}else
+                }
+			}
+
+
+			else
 			{
 			  $this->db->update($tbused, $data_fixed[0], $wherecfg);
 			}
@@ -1430,6 +1453,7 @@ class Nanx extends CI_Controller {
 		$src       = (array ) $para['src'];
 		$target    = (array ) $para['target'];
 		$opcode    = $this->getDnDOpcode($src, $target);
+	 
 		$all       = $this->DndActionConfig();
 		$dnd_opcfg = $all[$opcode];
 
@@ -1439,6 +1463,7 @@ class Nanx extends CI_Controller {
 
 		$data = array();
 		$data = $this->getDndData($paracfg, $src, $target);
+        
 
 		if ($dbcmdtype == 'update') {
 			$wherecfg = $dnd_opcfg['wherecfg'];
@@ -1464,19 +1489,30 @@ class Nanx extends CI_Controller {
 		echo json_encode($res);
 	}
 
+ 
 	function getDndData($paracfg, $src, $target) {
 		$data = array();
 		foreach ($paracfg as $field => $field_cfg) {
-			$f_src      = $field_cfg['getFrom'];
-			$f_key_used = $field_cfg['value'];
-			if ($f_src == 'src') {
-				$value = $src[$f_key_used];
-			}
-			if ($f_src == 'target') {
-				$value = $target[$f_key_used];
+			$field_src      = $field_cfg['getFrom'];
+
+			$key_for_value = $field_cfg['value'];
+			if ($field_src == 'src') {
+				$value = $src[$key_for_value];
+               
+
 			}
 
-			if ($f_src == 'local') {
+			if ($field_src == 'target') {
+				$value = $target[$key_for_value];
+	                 
+			}
+
+             if(array_key_exists('prefix', $field_cfg)){
+                	$value=$field_cfg['prefix'].'_'.$value;
+                }
+
+
+			if ($field_src == 'local') {
 				$value = $field_cfg['value'];
 			}
 
@@ -1488,6 +1524,7 @@ class Nanx extends CI_Controller {
 		}
 		return $data;
 	}
+
 
 	function process_dnd_data_with_fun($fun, $v) {
 		if ($fun == 'generate_act_code') {

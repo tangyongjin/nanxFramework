@@ -179,10 +179,8 @@ Act.prototype.showActivityWindow=function(){
 
              
 Act.prototype.createActivityGridPanel=function(){
-    console.log(this);
     if (this.sql_syntax_error){
         return;
-
     }
 
     var that=this;
@@ -219,7 +217,6 @@ Act.prototype.createActivityGridPanel=function(){
                if(this.id=='grid_PIC')
                 {
                    var cellValue = Fb.getCellStr(grid, row, col);
-                   console.log(cellValue);
                    var src = Fb.getHtmlAttribute(cellValue, 'src');
                    grid.stopEditing();
                    Fb.showPic(src);
@@ -313,10 +310,7 @@ Act.prototype.handleCellClick=function(grid,rowIndex,columnIndex,e){
     if (grid.id=='grid_PIC') {
          var cellValue = Fb.getCellStr(grid, rowIndex, columnIndex);
          var src=Fb.getHtmlAttribute(cellValue, 'src');   
-         console.log(src);
-         console.log(grid);
          var file_anchor=Ext.getCmp(this.file_anchor_id);
-          console.log(file_anchor);
          file_anchor.setValue(src);
          grid.stopEditing();
       return false;
@@ -586,9 +580,6 @@ Act.prototype.filter2QueryCfg=function(cfg)
 
 
 Act.prototype.getStoreByTableAndField=function(basetable,fields,cfg){
-    
-    console.log(cfg);
-    console.log(this); 
     var whoami=this.whoami;
     
     if (this.pid_order) {
@@ -596,12 +587,7 @@ Act.prototype.getStoreByTableAndField=function(basetable,fields,cfg){
     } else {
         pid_order = 'asc';
     }
-    console.log(cfg);
-    
-
     var querycfg=this.filter2QueryCfg(cfg);
-
-
     var table_query_obj={
         table:basetable,
         code:this.actcode,
@@ -611,6 +597,7 @@ Act.prototype.getStoreByTableAndField=function(basetable,fields,cfg){
         pid_order:pid_order,
         query_cfg:querycfg
     };
+
     var table_query_json=Ext.encode(table_query_obj);
     var ds=new Ext.data.JsonStore({
         proxy:new Ext.data.HttpProxy({
@@ -643,7 +630,6 @@ Act.prototype.getStoreByTableAndField=function(basetable,fields,cfg){
 
 Act.prototype.insertQueryLine=function(table,holderid){
     var field_def=[];
-    console.log(this.colsCfg);
     for (var i=0;i<this.colsCfg.length;i++){
         field_def.push([this.colsCfg[i].field_e, this.colsCfg[i]['display_cfg'].field_c, this.colsCfg[i]['editor_cfg'].datetime]);
     }
@@ -908,7 +894,6 @@ Act.prototype.getQueryBtn = function(){
 
 
 Act.prototype.getSerachPanel=function(table,storeId,winid){
-    console.log(storeId);
     var that=this;
     var btn_add=new Ext.Button({
         text:i18n.addquerylien,
@@ -978,11 +963,9 @@ Act.prototype.getSerachPanel=function(table,storeId,winid){
                 var qb=Ext.getCmp('query_builder');
 
                 var hostwin=qb.ownerCt;
-                console.log(hostwin);
                 var hostgrid=hostwin.findByType('grid');
                 var hoststore=hostgrid[0].getStore();
 
-                console.log(hostgrid[0].getStore());
                 hoststore.reload();
 
 
@@ -1124,11 +1107,8 @@ Act.prototype.buildTopToolbar_backend=function(){
 
 Act.prototype.getLayoutedForms=function(total_cfg,optype,row){
     
-    console.log(row);
-
     var layoutCfg=total_cfg.layoutCfg;
     var whoami_cfg={whoami:total_cfg.whoami,who_is_who:total_cfg.who_is_who,owner_data_only:total_cfg.owner_data_only };
-    console.log(whoami_cfg);
     var all_lines=[];
     var max_col=0;
     var line_width=0;
@@ -1223,15 +1203,9 @@ Act.prototype.addData=function( ){
     if (Ext.getCmp('add_win')){
         Ext.getCmp('add_win').close();
     }
- 
-    
     this.fixLayout('add');
-    
-    console.log(this);
-
 
     var x=this.getLayoutedForms(this,'add',null);
-    console.log(x);
     var width=this.getLayoutWidth(x);
     var add_form = new Ext.form.FormPanel({
         xtype:'form',
@@ -1309,7 +1283,6 @@ Act.prototype.batchUpdate=function(btn){
     for (var i = 0; i < len; i++) {
         pids_batch.push(userRecord[i].get('pid'));
     }
-    console.log(pids_batch);
     var helper_btns = that.getbatchHelpBtns(btn.op_field);
     var batchForm = new Ext.form.FormPanel({
         xtype:'form',
@@ -1722,7 +1695,6 @@ Act.prototype.getBbar=function(){
     });
 };
 Act.prototype.showWindow = function(){
-    console.log(this);
     if (this.sql_syntax_error){
         Ext.MessageBox.minWidth=250;
         Ext.Msg.alert(i18n.error,i18n.sql_syntax_error);
@@ -1798,7 +1770,6 @@ Act.prototype.showWindow = function(){
         this.gridPanel.setTitle(i18n.layout);
         this.gridPanel.render(this.renderto);
         this.gridPanel.setHeight(this.grid_h||h);
-        console.log(this);
     }
 
 }
@@ -1957,11 +1928,8 @@ Act.prototype.ConfirmBtnHandler=function(btn){
 
 Act.prototype.FormAction=function(form){
         var that=this;
-        console.log(form);
         if((form.uptasks==0)&&(form.upload_errcount==0))
         {
-           
-           
             var formData=Fb.getFormData(form);
             if (!formData){
                 return;

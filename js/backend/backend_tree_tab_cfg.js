@@ -1905,7 +1905,7 @@ var Category = {
     GridAsForm: gridAsForm,
     CategoryDnD: {
         biz_table:['activity','activitys'],
-        table:['biz_table'],
+        table:['biz_tables'],
         button:['activity'],
         activity:['user_role_under_acls'],
         activity_js:['user_role_under_acls'],
