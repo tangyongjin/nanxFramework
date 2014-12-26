@@ -74,7 +74,8 @@ class MCurd extends CI_Model{
             
 
             $rows  = $this->db->get($table)->result_array();
-            $total = count($rows);
+            $total = $this->db->count_all($table);
+
             $result['rows']  = $rows;
             $result['total'] = $total;
             $result['table'] = $table;
@@ -114,12 +115,16 @@ class MCurd extends CI_Model{
             $query = $this->db->get('nanx_activity');
             $cfg   = $query->first_row('array');
             $sql   = $cfg['sql'];
+        
+
             if (isset($p['para_json'])) {
                 $sql_fixed = strMarcoReplace($sql, $p['para_json']);
             } else {
                 $sql_fixed = $sql;
             }
-            
+        
+            //judeSqlType
+
             $result = $this->MDatafactory->getDatabySql($sql_fixed);
             if ($activty_code == 'NANX_TB_LAYOUT') {
                 $mixed           = getLayoutFields($result['rows']);

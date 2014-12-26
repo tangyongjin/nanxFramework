@@ -1959,6 +1959,7 @@ Fb.Piccellmenu=function(grid, row, col, event) {
                  y: 0
              });
  
+
              var Act_f = new Act({
                  code: "NANX_TB_LAYOUT",
                  activity_type: "sql",
@@ -1969,7 +1970,9 @@ Fb.Piccellmenu=function(grid, row, col, event) {
                  gridheader: true,
                  checkbox: false,
                  para_json: {
-                     '#table': field_v
+                     'table': field_v
+               //      'table': field_v
+               
                  },
                  callback:[{
                      event:'cellcontextmenu',

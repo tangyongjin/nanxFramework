@@ -22,6 +22,8 @@ or  array('name','sex')
 or  array('name',array('segment'=>'book_info',index=>'sale_price'))
 */
 
+define("VAR_PREFIX",     "#");
+
 function array_retrieve($arr,$keys_config)
 {
 
@@ -201,7 +203,7 @@ function jsonstr2arr($str)
   	}
     while(list($key,$val)= each($k_v))
     {
-      $str= str_replace($key,"'".$val."'", $str);
+      $str= str_replace(VAR_PREFIX.$key,"'".$val."'", $str);
     }
    	return $str;
   }

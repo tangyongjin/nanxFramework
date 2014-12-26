@@ -269,11 +269,38 @@ class MDatafactory extends CI_Model
     
     function getDatabySql($sql)
     {
-        $rows          = $this->db->query($sql)->result_array();
-        $total         = count($rows);
-        $data['rows']  = $rows;
-        $data['total'] = $total;
-        $data['sql']   = $sql;
+
+        $data=array();
+        $this->load->model('Mactivity');
+        $sqltype=$this->Mactivity->judeSqlType($sql);
+        $dbres=$this->db->query($sql);
+        if ($dbres){
+                    if($sqltype=='select')
+                    {
+                        $data['dbok']=true;
+                        $data['rows']=$dbres->result_array();
+                        $total         = count($data['rows']);
+                        $data['total'] = $total;
+                     
+                    }
+                     else
+                    {
+                           $data['dbok']=true;
+                           $data['total'] = 1;
+                           $effected=$this->db->affected_rows();
+                           $data['rows']=array(
+                                 array('sqltype'=>$sqltype,'effected'=>$effected)
+                            );
+                    }
+                    
+
+            }else
+               {
+                $data['dbok']=false;
+                $data['rows']=null;
+               }
+
+        $data['sql']=$sql; 
         return $data;
     }
     

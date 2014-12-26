@@ -257,8 +257,25 @@ Act.prototype.createActivityGridPanel=function(){
             this.gridPanel.addListener(this.cfg.callback[i].event, this.cfg.callback[i].fn);
         }
     }
+ 
+        this.mainStore.addListener('load', function(store) {
+           
+             var serverRet=store.reader.jsonData;
+             console.log(serverRet);
+             if( serverRet.hasOwnProperty('dbok'))
+             {
+              if(serverRet.dbok===false){
+                Ext.Msg.alert(i18n.error,i18n.sql_syntax_error+':<br/>'+serverRet.sql );
+              }
 
-    this.mainStore.load({
+             }
+
+
+
+        });
+
+
+       this.mainStore.load({
         params:{
             start:0,
             limit:pageSize

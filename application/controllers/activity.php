@@ -22,6 +22,7 @@ class Activity extends CI_Controller
 	 
 	function getActCfg()
 	{ 
+
 		$post = file_get_contents('php://input');
 		$para = (array)json_decode($post);
     $this->load->model('MActivity');
@@ -29,10 +30,6 @@ class Activity extends CI_Controller
 		echo json_encode($actcfg, JSON_UNESCAPED_UNICODE);
 	}
 	
-	
-	 
-	
-
 	function getActRawData()
 	{
    	$post = file_get_contents('php://input');

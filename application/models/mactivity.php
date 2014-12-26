@@ -95,25 +95,82 @@ class MActivity extends CI_Model
         return $pordercfg;
     }
     
-    
+     function judeSqlType($sql)
+     {
+        $sql=trim($sql);
+        $sqltype='noselect';
+        if(strtolower(substr($sql,0,6)) == 'select'){
+         $sqltype='select';
+        }
 
-     function  sqlIncaller($sql)
-    {  
-         $ret=array(); 
-         $dbres=$this->db->query($sql);
-         if ($dbres){
-            $ret['rows']=$dbres->result_array();
-            $ret['dbok']=true;
-         }
-         else
-         {
-            $ret['dbok']=false;
-            $ret['rows']=null;
-         }
-         return $ret;
+        if(strtolower(substr($sql,0,6)) == 'update'){
+         $sqltype='update';
+        }
+        
+        if(strtolower(substr($sql,0,6)) == 'delete'){
+         $sqltype='delete';
+        }
+        
+        return $sqltype;
+     }
+
+     
+
+
+    function getFieldesByType_sql($activity_code,$sql_fixed)
+    {
+
+           $sqltype=$this->judeSqlType($sql_fixed);
+           $ret=array(); 
+           if($sqltype=='select'){
+               $dbres=$this->db->query($sql_fixed);
+               if ($dbres){
+                    $ret['dbok']=true;
+                    $ret['rows']=$dbres->result_array();
+
+               }else
+               {
+                $ret['dbok']=false;
+                $ret['rows']=null;
+               }
+           }
+
+           else  // not execute, assume sql sytanx is right.
+           {
+              $ret['rows']=array(array('sqltype'=>$sqltype,'effected'=>20));
+              $ret['dbok']=true;
+           } 
+
+            if(! $ret['dbok']){
+                $col_cfg=array('sql_syntax_error'=>true);
+            }
+
+            else
+            {
+                 if ($ret['rows'] )
+                    {
+                        $fields_e = array_keys($ret['rows'][0]);
+                        if ($activity_code == 'NANX_TB_LAYOUT') {
+                            $arr      = getLayoutFields($ret['rows']);
+                            $fields_e = $arr['cols'];
+                        }
+                    } 
+                    else 
+                    {
+                        $fields_e = array(
+                            0 => 'pid'
+                        );
+                        if ($activity_code == 'NANX_TB_LAYOUT') {
+                            $fields_e = array(
+                                0 => 'col_0'
+                            );
+                        }
+                    }
+              $col_cfg = $this->MFieldcfg->getColsCfg('NULL', $fields_e, true);
+            }
+
+         return $col_cfg;
     }
-
-
 
 
      function getFieldesByType($activity_summary,$para_array)
@@ -149,38 +206,9 @@ class MActivity extends CI_Model
                 $sql_fixed = $sql;
             }
 
-
-            $ret = $this->sqlIncaller($sql_fixed);
-            
-            if(! $ret['dbok']){
-                $col_cfg=array('sql_syntax_error'=>true);
-            }
-            else
-            {
-                 if ($ret['rows'] )
-                    {
-                        $fields_e = array_keys($ret['rows'][0]);
-                        if ($activity_code == 'NANX_TB_LAYOUT') {
-                            $arr      = getLayoutFields($ret['rows']);
-                            $fields_e = $arr['cols'];
-                        }
-                        $col_cfg = $this->MFieldcfg->getColsCfg('NULL', $fields_e, true);
-                    } 
-                    else 
-                    {
-                        $fields_e = array(
-                            0 => 'pid'
-                        );
-                        if ($activity_code == 'NANX_TB_LAYOUT') {
-                            $fields_e = array(
-                                0 => 'col_0'
-                            );
-                        }
-                        $col_cfg = $this->MFieldcfg->getColsCfg('NULL', $fields_e, true);
-                    }
-            }
-             
+           $col_cfg=$this->getFieldesByType_sql($activity_code,$sql_fixed);
         }
+
 
         if ($activity_type == 'service') {
             $selfmodel=$this;
