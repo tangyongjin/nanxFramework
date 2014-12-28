@@ -224,7 +224,50 @@ class MFieldcfg  extends CI_Model{
 	  return $forbidden_fields;
 	}
 	
-	
+	 function getTransedField($basetable, $field, $combo_fileds)
+    {
+        
+        if ($field == 'pid') {
+            $transed = $basetable . "." . $field;
+            $join    = '';
+            return array(
+                'join' => '',
+                'transed' => $transed,
+                'ghost' => ''
+            );
+        }
+        
+        //根据combo方式,挨个对table_field进行检查,看是否需要进行join连接.
+        //如果combo_fields为空,则直接返回field.
+        if (!$combo_fileds) {
+            $transed = $basetable . "." . $field;
+            $join    = '';
+            $ghost   = '';
+        }
+        
+        //如果combo_fields不为空,则检查,找到则返回转后的,否则直接直接返回field.
+        
+        foreach ($combo_fileds as $combo_4meta) {
+            if ($field == $combo_4meta['field_e']) {
+                $transed = $combo_4meta['combo_table'] . "." . $combo_4meta['list_field'] . " as " . $combo_4meta['field_e'];
+                $join    = " left join   " . $combo_4meta['combo_table'] . " on " . $combo_4meta['combo_table'] . "." . $combo_4meta['value_field'] . "=" . $basetable . "." . $field;
+                $ghost   = " $basetable.$field  as ghost_$field";
+                break;
+            } else {
+                $join    = '';
+                $transed = $basetable . "." . $field;
+                $ghost   = '';
+            }
+        }
+        
+        reset($combo_fileds);
+        return array(
+            'join' => $join,
+            'transed' => $transed,
+            'ghost' => $ghost
+        );
+    }
+    
 	
  function getIndexOptions()
  {

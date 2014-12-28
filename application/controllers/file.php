@@ -90,50 +90,7 @@ class File extends CI_Controller {
 	  );
    echo json_encode($res);    
   }
-  
-  
-  function getFSGridFields()
-  {
-    
-    $header=array(
-    'filename'=>0
-    );
-
-    return array($header);
-  }
-  
-  
-  function fs2array()
-  {
-      if(isset($_GET['start']))
-		   {
-		   	$start = $_GET['start'];
-		  	$limit = $_GET['limit'];
-		   }
-     $para = (array )json_decode(file_get_contents('php://input'));
-     $os_path=$para['os_path'];
-     $file_trunk=$para['file_trunk'];
-     $this->load->model('MFile');
-     $files=$this->MFile->getFileList('imgs','all');
-     $result=array();
-     $tr=array_chunk($files,5);
-      
-      if(isset($_GET['start']))
-		   {
-		   	$start = $_GET['start'];
-		  	$limit = $_GET['limit'];
-		    $segment=array_slice($tr,$start,$limit);
-		   }
-		   else
-		   {
-		    $segment=$tr;
-		   }
-     $result['rows']=$segment;
-     $result['total']=count($tr);
-     $result['table']='vstable';
-     $json = json_encode($result,JSON_UNESCAPED_UNICODE);
-     echo $json;
-  }
+   
 
 }
 ?>

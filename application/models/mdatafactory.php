@@ -7,8 +7,6 @@ class MDatafactory extends CI_Model
             'base_table' => $basetable
         );
         
-
-
         $combo_fields = $this->db->select('base_table,field_e,combo_table,list_field,value_field,filter_field,group_id,level')->get_where('nanx_biz_column_trigger_group', $where)->result_array();
         $base_fields  = $this->db->list_fields($basetable);
         
@@ -16,16 +14,15 @@ class MDatafactory extends CI_Model
         $joins         = array();
         $ghosts        = array();
         
-        
-        
         $field_list_str = '';
         $join_str       = '';
         $ghosts_str     = '';
         
         // 对每个列,查找combo_fields,看是否需要替换为left join形式.
+        $this->load->model('MFieldcfg');
         foreach ($base_fields as $table_field) {
-            $found           = $this->getTransedField($basetable, $table_field, $combo_fields);
-            //debug($found);
+            $found           = $this->MFieldcfg->getTransedField($basetable, $table_field, $combo_fields);
+            
             $transed_field[] = $found['transed'];
             $ghosts[]        = $found['ghost'];
             $joins[]         = $found['join'];
@@ -59,49 +56,7 @@ class MDatafactory extends CI_Model
         return $sql_select;
     }
     
-    function getTransedField($basetable, $field, $combo_fileds)
-    {
-        
-        if ($field == 'pid') {
-            $transed = $basetable . "." . $field;
-            $join    = '';
-            return array(
-                'join' => '',
-                'transed' => $transed,
-                'ghost' => ''
-            );
-        }
-        
-        //根据combo方式,挨个对table_field进行检查,看是否需要进行join连接.
-        //如果combo_fields为空,则直接返回field.
-        if (!$combo_fileds) {
-            $transed = $basetable . "." . $field;
-            $join    = '';
-            $ghost   = '';
-        }
-        
-        //如果combo_fields不为空,则检查,找到则返回转后的,否则直接直接返回field.
-        
-        foreach ($combo_fileds as $combo_4meta) {
-            if ($field == $combo_4meta['field_e']) {
-                $transed = $combo_4meta['combo_table'] . "." . $combo_4meta['list_field'] . " as " . $combo_4meta['field_e'];
-                $join    = " left join   " . $combo_4meta['combo_table'] . " on " . $combo_4meta['combo_table'] . "." . $combo_4meta['value_field'] . "=" . $basetable . "." . $field;
-                $ghost   = " $basetable.$field  as ghost_$field";
-                break;
-            } else {
-                $join    = '';
-                $transed = $basetable . "." . $field;
-                $ghost   = '';
-            }
-        }
-        
-        reset($combo_fileds);
-        return array(
-            'join' => $join,
-            'transed' => $transed,
-            'ghost' => $ghost
-        );
-    }
+    
 
 
     function join_who_is_who($sql,$who_is_who_found)
@@ -288,9 +243,7 @@ class MDatafactory extends CI_Model
                            $data['dbok']=true;
                            $data['total'] = 1;
                            $effected=$this->db->affected_rows();
-                           $data['rows']=array(
-                                 array('sqltype'=>$sqltype,'effected'=>$effected)
-                            );
+                           $data['rows']=array(array('sqltype'=>$sqltype,'effected'=>$effected) );
                     }
                     
 
@@ -298,7 +251,9 @@ class MDatafactory extends CI_Model
                {
                 $data['dbok']=false;
                 $data['rows']=null;
-               }
+                $data['sql_code']=$this->db->_error_number();
+                $data['sql_error_msg']=   $this->db->_error_message();
+                }
 
         $data['sql']=$sql; 
         return $data;

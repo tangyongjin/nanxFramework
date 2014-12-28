@@ -30,7 +30,7 @@ var appCategory_List = [{
     },
     {
         category:'medias',
-        label:i18n.pic_mnt,
+        label:i18n.file_mnt,
         leaf:true
     }, {
         category:'syscfgs',
@@ -340,7 +340,8 @@ var contextMenu = [
     },
     {
         category: ['medias'],
-        menus:[{
+        menus:[
+        {
             title:i18n.pic_upload,
             place:'context',
             opcode:'upload_pic',
@@ -360,19 +361,115 @@ var contextMenu = [
             place:'context',
             itemcfg:[
             {
-                item_type:'pic_selector',
-                grid_ext_id:'grid_PIC',
+                code: 'NANX_FS_2_TABLE',
+                item_type:'file_selector',
+                grid_id:'grid_PIC',
                 grid_h:386,
+                media_type:'img',
+                file_trunk:5,
+                nosm:true,
+                hideHeaders:true,
+                checkbox:false,
+                pid_order:'desc',
+                os_path:'imgs',
                 file_anchor_id:'file_anchor_4_pic'
             },
+            
             {
                 item_type:'field',
-                hidden:true,
+                hidden:false,
                 id:'file_anchor_4_pic',
                 grid_ext_id:'grid_PIC'
             }
             ]
-        }]
+        },{
+            title:i18n.php_controller,
+            opcode:'manage_php_controller',
+            place:'context',
+            width:900,
+            itemcfg:[
+            {
+                code: 'NANX_FS_2_TABLE',
+                item_type:'file_selector',
+                grid_id:'grid_PIC',
+                grid_h:386,
+                media_type:'php',
+                file_trunk:5,
+                nosm:true,
+                hideHeaders:false,
+                checkbox:false,
+                pid_order:'desc',
+                os_path:'application/controllers',
+                file_anchor_id:'file_anchor_4_pic'
+            },
+            
+            {
+                item_type:'field',
+                hidden:false,
+                id:'file_anchor_4_pic',
+                grid_ext_id:'grid_PIC'
+            }
+            ]
+        },{
+            title:i18n.php_model,
+            opcode:'manage_php_model',
+            place:'context',
+             width:900,
+            itemcfg:[
+            {
+                code: 'NANX_FS_2_TABLE',
+                item_type:'file_selector',
+                grid_id:'grid_PIC',
+                grid_h:386,
+                media_type:'php',
+                file_trunk:5,
+                nosm:true,
+                hideHeaders:false,
+                checkbox:false,
+                pid_order:'desc',
+                os_path:'application/models',
+                file_anchor_id:'file_anchor_4_pic'
+            },
+            
+            {
+                item_type:'field',
+                hidden:false,
+                id:'file_anchor_4_pic',
+                grid_ext_id:'grid_PIC'
+            }
+            ]
+        },{
+            title:i18n.jsfile,
+            opcode:'manage_js_upload',
+            place:'context',
+            width:900,
+            itemcfg:[
+            {
+                code: 'NANX_FS_2_TABLE',
+                item_type:'file_selector',
+                grid_id:'grid_PIC',
+                grid_h:386,
+                media_type:'js',
+                file_trunk:5,
+                nosm:true,
+                hideHeaders:false,
+                checkbox:false,
+                pid_order:'desc',
+                os_path:'js/upload',
+                file_anchor_id:'file_anchor_4_pic'
+            },
+            
+            {
+                item_type:'field',
+                hidden:false,
+                id:'file_anchor_4_pic',
+                grid_ext_id:'grid_PIC'
+            }
+            ]
+        }
+
+
+        ]
     }, {
         category: ['table'],
         menus:[
@@ -1111,8 +1208,7 @@ var contextMenu = [
         category: ['sql_runner'],
         menus:[
              {
-                //title:i18n.delete_trigger_group,
-                title:'run_sql',
+                title:i18n.run_sql,
                 opcode:'run_sql',
                 place:'context',
                 width: 800,
@@ -1250,14 +1346,22 @@ var contextMenu = [
                 value:'#text'
             },
             {
-                item_type:'pic_selector',
-                grid_ext_id:'grid_PIC',
-                grid_h:360,
+                code: 'NANX_FS_2_TABLE',
+                item_type:'file_selector',
+                grid_id:'grid_PIC',
+                grid_h:386,
+                media_type:'img',
+                file_trunk:5,
+                nosm:true,
+                hideHeaders:true,
+                checkbox:false,
+                pid_order:'desc',
+                os_path:'imgs',
                 file_anchor_id:'file_anchor_4_pic'
             },
             {
                 item_type:'field',
-                  hidden:true,
+                hidden:true,
                 id:'file_anchor_4_pic'
             }
             ]
@@ -1281,12 +1385,12 @@ var contextMenu = [
             itemcfg:[{
                 item_type:'field',
                 value:800,
-                label:i18n.activity__display_w_width,
+                label:i18n.activity_display_w_width,
                 id:'win_size_width'
             }, {
                 item_type:'field',
                 value:644,
-                label:i18n.activity__display_w_height,
+                label:i18n.activity_display_w_height,
                 id:'win_size_height'
             }, {
                 item_type:'field',
@@ -1851,44 +1955,9 @@ var contextMenu = [
     }
 ];
 
-var gridAsForm = ['reorder_columns_grid', 'x_grid_for_dnd'];
-var Category = {
-    AppCategory_List: appCategory_List,
-    RawDBCategory_List: rawDBCategory_List,
-    GridAsForm: gridAsForm,
-    CategoryDnD: {
-        biz_table:['activity','activitys'],
-        table:['biz_tables'],
-        button:['activity'],
-        activity:['user_role_under_acls'],
-        activity_js:['user_role_under_acls'],
-        activity_sql:['user_role_under_acls'],
-        activity_html:['user_role_under_acls'],
-        activity_service:['user_role_under_acls'],
-        user:['user_role']
-    },
-    ContextMenu:contextMenu,
+//var gridAsForm = ['reorder_columns_grid', 'x_grid_for_dnd'];
 
-    getGirdIDsForExtraData: function(){
-        return this.GridAsForm;
-    },
-    getAppCategory: function(ctype){
-        return this[ctype];
-    },
-   
-    getDnDcfg: function(){
-        return this.CategoryDnD;
-    },
-    getContextMenus: function(){
-        return this.ContextMenu;
-    },
-
-    getMenuDefaultProcessor:function(){
-        return{
-            controller:'nanx',
-            func_name:'index'}
-    },
-    getCSSbyOpcode:function(opcode)
+var getCSSbyOpcode=function(opcode)
     {
      if(opcode.indexOf('add_')>=0){return 'menu_add';}
      if(opcode.indexOf('connect_')>=0){return 'menu_chain';}
@@ -1912,25 +1981,77 @@ var Category = {
      if(opcode.indexOf('backup_system')>=0){return 'menu_backup_system';}
      if(opcode.indexOf('backup_')>=0){return 'menu_backup';}
      if(opcode.indexOf('restore_')>=0){return 'menu_restore';}
-    },
+     if(opcode.indexOf('run_sql')>=0){return 'menu_sql_runner';}
+     if(opcode.indexOf('manage_php_model')>=0){return 'php';}
+     if(opcode.indexOf('manage_php_controller')>=0){return 'php';}
+     if(opcode.indexOf('manage_js_upload')>=0){return 'js_file';}
 
-    getCategoryMenusByCategory: function(category){
+
+
+    };
+
+
+var getCategoryMenusByCategory=function(category){
         var menus = [];
-        for (var i = 0; i < this.ContextMenu.length; i++){
-            var category_items = this.ContextMenu[i].category;
+        var ContextMenu=AppCategory.getContextMenus();
+        
+        for (var i = 0; i < ContextMenu.length; i++){
+            var category_items = ContextMenu[i].category;
             var ind = category_items.indexOf(category);
             if (!(ind == -1)){
-                for(var j=0;j<this.ContextMenu[i].menus.length;j++)
+                for(var j=0;j<ContextMenu[i].menus.length;j++)
                   {
-                    var opcode=this.ContextMenu[i].menus[j].opcode;
-                    var css_str=this.getCSSbyOpcode(opcode);
-                    this.ContextMenu[i].menus[j].iconCls=css_str;
+                    var opcode=ContextMenu[i].menus[j].opcode;
+                    var css_str=AppCategory.getCSSbyOpcode(opcode);
+                     ContextMenu[i].menus[j].iconCls=css_str;
                   }
-                menus = menus.concat(this.ContextMenu[i].menus);
+                menus = menus.concat(ContextMenu[i].menus);
             }
         }
+        
         return menus;
+    };
+    
+
+
+var AppCategory = {
+    AppCategory_List: appCategory_List,
+    RawDBCategory_List: rawDBCategory_List,
+    // FileManager_List:FileManager_List,
+    CategoryDnD: {
+        biz_table:['activity','activitys'],
+        table:['biz_tables'],
+        button:['activity'],
+        activity:['user_role_under_acls'],
+        activity_js:['user_role_under_acls'],
+        activity_sql:['user_role_under_acls'],
+        activity_html:['user_role_under_acls'],
+        activity_service:['user_role_under_acls'],
+        user:['user_role']
     },
+
+    ContextMenu:contextMenu,
+    getGirdIDsForExtraData: function(){
+        return this.GridAsForm;
+    },
+    getAppCategory: function(ctype){
+        return this[ctype];
+    },
+   
+    getDnDcfg: function(){
+        return this.CategoryDnD;
+    },
+    getContextMenus: function(){
+        return this.ContextMenu;
+    },
+
+    getMenuDefaultProcessor:function(){
+        return{
+            controller:'nanx',
+            func_name:'index'}
+    },
+    getCSSbyOpcode:getCSSbyOpcode,
+    getCategoryMenusByCategory:getCategoryMenusByCategory,
     getSubMenuCfg:function(category,opcode){
         var nodemenus=this.getCategoryMenusByCategory(category);
         for (var i=0;i<nodemenus.length;i++){

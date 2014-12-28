@@ -127,6 +127,7 @@ Act.prototype.setcfg = function(ret) {
     this.owner_data_only=ret.owner_data_only?ret.owner_data_only:null;
     this.sql_syntax_error=ret.sql_syntax_error?ret.sql_syntax_error:false;
     this.dataUrl = ret.data_url;
+    this.get_data_type=ret.get_data_type;
     this.pic_url = ret.pic_url;
     this.serviceUrl = ret.service_url;
     this.actBasedBtns = ret.activty_based_btns;
@@ -265,7 +266,7 @@ Act.prototype.createActivityGridPanel=function(){
              if( serverRet.hasOwnProperty('dbok'))
              {
               if(serverRet.dbok===false){
-                Ext.Msg.alert(i18n.error,i18n.sql_syntax_error+':<br/>'+serverRet.sql );
+                Ext.Msg.alert(i18n.error,i18n.sql_syntax_error+':<br/>'+serverRet.sql+'<br/>SQLcode:'+ serverRet.sql_code+'<br/>SQlmsg:'+serverRet.sql_error_msg);
               }
 
              }
@@ -529,11 +530,8 @@ Act.prototype.getMainStore=function(){
 }
 
 Act.prototype.getStoreByService=function(){
-    if (this.dataUrl.length>0){
-        var url=this.dataUrl;
-    } else{
-        var url='activity/callerIncaller_data';
-    }
+    
+    console.log(this);
     var url_obj={};
     for (p in this.cfg) {
         if ((p !=='host')&&(p !=='callback')){
@@ -541,6 +539,15 @@ Act.prototype.getStoreByService=function(){
         }
     }
     url_obj.serviceUrl=this.serviceUrl;
+    var url=this.dataUrl;
+
+    if(this.get_data_type=='model'){
+        url='dataproxy/index/';
+        url_obj.getDataUrl=this.dataUrl;
+    }
+
+
+
     var ds = new Ext.data.JsonStore({
         proxy: new Ext.data.HttpProxy({
             url:AJAX_ROOT+url,
@@ -1847,6 +1854,13 @@ Act.prototype.autoSizeColumn = function(colindex,header,dataIndex,asPic){
 }
 
 Act.prototype.actionWin = function(type,form,wincfg){
+
+    var  runStandSqlActivity=function(){
+        
+        new Act({'edit_type':'noedit','code': 'NANX_SQL_ACTIVITY',  'showwhere': 'autowin', 'host': null });
+
+    };
+
     if(type=='add'||type=='update'||type=='batch')
       { 
         var that=this;
@@ -1857,7 +1871,7 @@ Act.prototype.actionWin = function(type,form,wincfg){
         form.extra_url=url;
         form.extra_fn=refresh;
       } 
-    else
+    else  //for backend window
       { 
         var refresh = function(){
             if (wincfg.node.parentNode){
@@ -1865,12 +1879,16 @@ Act.prototype.actionWin = function(type,form,wincfg){
             }
         };
         var id='back_op_win';
-        var backendUrl=Category.getMenuDefaultProcessor();
+        var backendUrl=AppCategory.getMenuDefaultProcessor();
         var url=wincfg.url?wincfg.url:AJAX_ROOT+backendUrl.controller+'/'+backendUrl.func_name;
         
         var title ='<img src=' + BASE_URL+ 'imgs/thumbs/backop.png' + ' />&nbsp;'+wincfg.title;
         form.extra_url=url;
+        console.log(url);
+        console.log(wincfg);
+        
         form.extra_fn=refresh;
+        if (wincfg.opcode=='run_sql'){form.extra_fn=runStandSqlActivity;}
         form=Fb.formBuilder(form,wincfg.opcode);
       }
     
@@ -1923,6 +1941,7 @@ Act.prototype.actionWin = function(type,form,wincfg){
 }
 
 Act.prototype.ConfirmBtnHandler=function(btn){
+
         var w=btn.findParentByType('window');
         var fm_array= w.findByType('form');
         var fm=fm_array[0];
@@ -1937,10 +1956,10 @@ Act.prototype.ConfirmBtnHandler=function(btn){
         Act.prototype.FormAction(fm);
         this.disable();
         return;
-        if (this.btntype=='add')
-        {
-            this.disable();
-        }
+        // if (this.btntype=='add')
+        // {
+        //     this.disable();
+        // }
 }
 
 Act.prototype.FormAction=function(form){

@@ -1330,7 +1330,7 @@ Fb.getWhoami=function()
      xwin.show();
  }
 
- Fb.ajaxPostData = function(url, para, succ) {
+ Fb.ajaxPostData = function(url, para, callback) {
      WaitMask.show();
      var json = Ext.encode(para);
      var that = this;
@@ -1350,12 +1350,15 @@ Fb.getWhoami=function()
                      Fb.showDownload(ret.fname);
                      return;
                  }
-                 if (ret.msg.length > 0) {
+                 
+                 if ((ret.msg.length > 0) && (!ret.hasOwnProperty('show_msg_on_error'))) {
                      Ext.Msg.alert(i18n.msg, ret.msg);
                  }
-                 if (succ) {
-                     succ(ret);
+
+                 if (callback) {
+                     callback(ret);
                  }
+
              } else {
                  if(ret.errmsg){Ext.Msg.alert(i18n.error, ret.errmsg);}else{Ext.Msg.alert(i18n.error, ret.msg);}
              }
@@ -1556,7 +1559,10 @@ Fb.Piccellmenu=function(grid, row, col, event) {
              if (items[i].hasOwnProperty('layout_panel')) {
                  var layout = 'absolute';
              }
-             var f = Fb.getBackendFormItem(items, i, node);
+
+              var item = Fb.DeepClone(items[i]);
+              item = Fb.preProcessNodeAtt(item, node);
+              var f = Fb.getBackendFormItem(item, node);
              if (f){
                 if (f.isArray){
                  for (var j = 0; j < f.length; j++) {
@@ -1694,13 +1700,13 @@ Fb.Piccellmenu=function(grid, row, col, event) {
  }
 
 
- Fb.getBackendFormItem = function(items,i,node) {
-     var item = Fb.DeepClone(items[i]);
-     var item = Fb.preProcessNodeAtt(item, node);
+ Fb.getBackendFormItem = function(item,node) {
+
      var readonly = item.readonly ? item.readonly : false;
      var hidden = item.hidden ? item.hidden : false;
      var checked = item.all_checked ? item.all_checked : false;
      var field_v=item.value;
+   
 
      switch (item.item_type) {
          case 'field':
@@ -1895,8 +1901,9 @@ Fb.Piccellmenu=function(grid, row, col, event) {
              var f = Fb.getAttachmentEditor(item);
              break;
 
-         case 'pic_selector':
+         case 'file_selector':
               var container_id = 'media_grid_' + Ext.id();
+             
               var f = new Ext.Container({
                  layout: 'absolute',
                  height: item.grid_h,
@@ -1906,26 +1913,15 @@ Fb.Piccellmenu=function(grid, row, col, event) {
                  x: 0,
                  y: 0
              });
- 
-             var Act_f= new Act({
-                 code: 'NANX_FS_2_TABLE',
-                 pid_order:'desc',
-                 os_path:'imgs',
-                 file_anchor_id:item.file_anchor_id,
-                 file_trunk:5,
-                 checkbox:false,
-                 hideHeaders:true,
-                 nosm:true,
-                 grid_id: item.grid_ext_id,
-                 grid_h:item.grid_h,
-                 renderto: container_id,
-                 media_type:'img',
-                 showwhere: 'container',
-                 callback:[{
+             
+                var act_config = Fb.DeepClone(item);
+                act_config.renderto=f.id;
+                act_config.showwhere='container';   
+                act_config.callback=[{
                      event:'cellcontextmenu',
                      fn:Fb.Piccellmenu
-                 }]
-                   });
+                  }]
+             var Act_f= new Act(act_config);
              break;
 
          case 'combo_list':
@@ -1971,8 +1967,6 @@ Fb.Piccellmenu=function(grid, row, col, event) {
                  checkbox: false,
                  para_json: {
                      'table': field_v
-               //      'table': field_v
-               
                  },
                  callback:[{
                      event:'cellcontextmenu',
@@ -2085,7 +2079,7 @@ Fb.validate_password_input = function(v) {
  
 
  Fb.backendForm = function(category, opcode, xnode) {
-     var o_mcfg = Category.getSubMenuCfg(category, opcode);
+     var o_mcfg = AppCategory.getSubMenuCfg(category, opcode);
      var fixed_mcfg = Fb.preProcessNodeAtt(o_mcfg, xnode);
      var opform = Fb.getOperationForm(xnode, fixed_mcfg);
      return opform;
@@ -2094,7 +2088,7 @@ Fb.validate_password_input = function(v) {
 
 
  function helps_prod() {
-     var x = Category.getContextMenus();
+     var x = AppCategory.getContextMenus();
      for (var i = 0; i < x.length; i++) {
          menus = x[i].menus;
          for (var j = 0; j < menus.length; j++) {

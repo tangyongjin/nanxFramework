@@ -1,5 +1,8 @@
 <?php
 
+define("DIRECT_STRING_VALUE",     "#");
+define("COMMENT_TAG",     "#");
+
 class Nanx extends CI_Controller {
 	function actionCfg() {
 		$this->load->model('MSystempara');
@@ -232,6 +235,29 @@ class Nanx extends CI_Controller {
 					'activity_type'            => 'sql',
 					'pic_url'                  => 'act_sql.png',
 					'data_url'                 => 'curd/listData')),
+
+
+			'run_sql' => array(
+				'successmsg' => 'success_add_sql_activity',
+				'show_msg_on_error'=>true,
+				'tbused'     => 'nanx_activity',
+				'dbcmdtype'  => 'update_or_insert',
+				'wherecfg'   => array('activity_code'=>'#NANX_SQL_ACTIVITY'),
+				'paracfg'    => array(
+					'sql'           => 'sql'),
+				'default'        => array(
+					'win_size_height'          => $win_size_height,
+					'win_size_width'           => $win_size_width,
+					'win_size_width_operation' => $win_size_width_operation,
+					'activity_type'            => 'sql',
+					'grid_title'    => 'run_sql',
+					'level'=>'system',
+					'activity_code' => 'NANX_SQL_ACTIVITY',
+					'pic_url'                  => 'act_sql.png',
+					'data_url'                 => 'curd/listData')),
+
+
+
 
 			'add_public_item' => array(
 				'successmsg' => 'success_add_public_item',
@@ -830,7 +856,13 @@ class Nanx extends CI_Controller {
 		if (array_key_exists('wherecfg', $action_cfg)) {
 			$wherecfg = $action_cfg['wherecfg'];
 			foreach ($wherecfg as $key => $refer_key) {
-				$wherecfg[$key] = $data_received[$refer_key];
+			    if(  substr ($refer_key,0,1)=== DIRECT_STRING_VALUE){
+			    	 
+			    	$refer_key=str_replace (DIRECT_STRING_VALUE, '', $refer_key);
+                    $wherecfg[$key] = $refer_key;
+			    }else{
+                 $wherecfg[$key] = $data_received[$refer_key];
+			    }
 			}
 			return $wherecfg;
 		}
@@ -1059,7 +1091,7 @@ class Nanx extends CI_Controller {
 			$backup    = read_file($sql);
 			$sql_clean = '';
 			foreach (explode("\n", $backup) as $line) {
-				if (isset($line[0]) && $line[0] != "#") {
+				if (isset($line[0]) && $line[0] != COMMENT_TAG) {
 					$sql_clean .= $line . "\n";
 				}
 			}
@@ -1373,14 +1405,18 @@ class Nanx extends CI_Controller {
          $errmsg=$os_db_err['db_err_msg'].$os_db_err['os_err_msg'];
         }
 		
-
-
+    
 		$res = array(
 			'success' => $success,
 			'opcode'  => $actcfg['opcode'],
 			'msg'     => $successmsg,
 			'errcode' => $sqlresult_code,
 			'errmsg'  => $err_occur . "<br/> $errmsg");
+
+        if(array_key_exists('show_msg_on_error', $actcfg)){
+           $res['show_msg_on_error']=true;
+        }
+
 		return json_encode($res);
 	}
 

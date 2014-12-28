@@ -227,6 +227,12 @@ background-image:url(backimgs/icons/redtable.png) !important;
 }
 
 
+
+.menu_sql_runner{
+	background-image:url(backimgs/icons/menu_sql_runner.png) !important;
+}
+
+
 .menu_restore{
 	background-image:url(backimgs/icons/menu_restore.png) !important;
 }
@@ -530,6 +536,10 @@ background-image: url(backimgs/icons/biz_table.png) !important;
 	background-image: url(backimgs/icons/js_file.png) !important;
 }
 
+.php {
+	background-image: url(backimgs/icons/php.png) !important;
+}
+
 .controler_fun {
 	background-image: url(backimgs/icons/controler_fun.png) !important;
 }
@@ -691,7 +701,7 @@ background-image: url(backimgs/icons/sql_run.png) !important;
 }
 
 .medias {
-	background-image: url(backimgs/icons/media.png) !important;
+	background-image: url(backimgs/icons/filesystem.png) !important;
 }
 
 

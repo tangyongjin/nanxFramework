@@ -93,7 +93,8 @@ var Explorer={
                         id: 'tree_root_0',
                         level: 0,
                         expanded: true,
-                        children: [{
+                        children: [
+                        {
                                 text:i18n.biz_mnt,
                                 category:'app',
                                 expanded:true,
@@ -216,7 +217,7 @@ var ExplorerMenuItems={
 
 Ext.extend(Explorer.explorerTreePanel,Ext.tree.TreePanel,{
         getGroups: function(xtype){
-                var FirstLevel=Category.getAppCategory(xtype);
+                var FirstLevel=AppCategory.getAppCategory(xtype);
                 var retLevel=[];
                 for (var i=0;i<FirstLevel.length;i++) {
                         var r={};
@@ -242,10 +243,10 @@ Ext.extend(Explorer.explorerTreePanel,Ext.tree.TreePanel,{
                              node:node
                              };
                              
-                             var mcfg=Category.getSubMenuCfg( category,opcode);
+                             var mcfg=AppCategory.getSubMenuCfg( category,opcode);
                              if(!mcfg){alert('MCFG is null');return;};
                              if(mcfg.viewonly){wincfg.viewonly=true;}
-                             var defaultCF=Category.getMenuDefaultProcessor();
+                             var defaultCF=AppCategory.getMenuDefaultProcessor();
                              Ext.applyIf(mcfg,defaultCF);
                              var url=null;
                              if(!Ext.isEmpty(mcfg.controller))
@@ -255,6 +256,11 @@ Ext.extend(Explorer.explorerTreePanel,Ext.tree.TreePanel,{
                              wincfg.url=url;
                              wincfg.width=(mcfg&&mcfg.width)?mcfg.width:550;
                              wincfg.title=(mcfg && mcfg.title)?mcfg.title : '';
+
+                             console.log(opform);
+                             console.log(wincfg); 
+
+
                              var win=Act.prototype.actionWin('backend',opform,wincfg);
                 };
                 
@@ -321,7 +327,7 @@ Ext.extend(Explorer.explorerTreePanel,Ext.tree.TreePanel,{
                         this.menu.removeAll()
                 }
                 var nc=node.attributes.category;
-                var nodemenus=Category.getCategoryMenusByCategory(nc);
+                var nodemenus=AppCategory.getCategoryMenusByCategory(nc);
                 var menu=[];
                 for(i=0;i<nodemenus.length;i++){
                 	      var opcode=nodemenus[i].opcode;

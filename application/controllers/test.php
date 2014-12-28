@@ -15,11 +15,15 @@ function py()
 	
 function index()
 {
- $this->load->model('MFile');
- $f="hello";
- echo $this->MFile->getFileType($f);
- 
- 
+
+$tb='standx_abc';
+$m='MRdbms';
+$fun='fun1';
+ $this->load->model($m);
+// debug($model);
+$fd=$this->$m->$fun($tb);
+//$model->{$fun}(); 
+ debug($fd);
 }
 
  

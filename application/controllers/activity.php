@@ -22,7 +22,6 @@ class Activity extends CI_Controller
 	 
 	function getActCfg()
 	{ 
-
 		$post = file_get_contents('php://input');
 		$para = (array)json_decode($post);
     $this->load->model('MActivity');
