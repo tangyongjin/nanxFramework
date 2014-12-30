@@ -2,9 +2,6 @@
 
 class File extends CI_Controller {
 
-
-
-
    function deleteFile(){
         $post = file_get_contents('php://input');
         $para= (array )json_decode($post);
@@ -115,8 +112,9 @@ class File extends CI_Controller {
     $post = file_get_contents('php://input');
 		$para = (array)json_decode($post);
 		$fname=$para['fname'];
+    $os_path=$para['os_path'];
 		$this->load->helper('file');
-		$content=read_file( 'js/upload/'.$fname);
+		$content=read_file($os_path.'/'.$fname);
 	  $res=array(
 	  'content' =>$content
 	  );

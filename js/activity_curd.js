@@ -1619,6 +1619,13 @@ Act.prototype.editFile=function(grid){
         Ext.Msg.alert(i18n.tips,i18n.choose_record_to_del);
         return false;
     }
+
+    var vnode={attributes:{os_path:os_path,text:userRecord[0].get('Filename'),value:userRecord[0].get('Filename')}};
+    var category='js_file';
+    var opcode='update_file_content'; 
+    var title='AAA';
+    virtual_function=getMenuItemHandler(vnode,category,opcode,title,'VVVV_AAAA');
+    virtual_function();    
 }
 
 
@@ -1976,6 +1983,11 @@ Act.prototype.actionWin = function(type,form,wincfg){
             }
         };
         var id='back_op_win';
+
+        if (wincfg.hasOwnProperty('alt_id')){
+            id=wincfg.alt_id;
+        }
+        
         var backendUrl=AppCategory.getBackendCrontroller();
         var url=wincfg.url?wincfg.url:AJAX_ROOT+backendUrl.controller+'/'+backendUrl.func_name;
         
@@ -1987,7 +1999,7 @@ Act.prototype.actionWin = function(type,form,wincfg){
         formWrapper=Fb.formBuilder(form,wincfg.opcode);
       }
 
-      
+
     
       if(wincfg&&wincfg.althandler){
        var afterClick=wincfg.althandler;

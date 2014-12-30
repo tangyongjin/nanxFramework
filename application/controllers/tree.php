@@ -165,7 +165,7 @@ class Tree extends CI_Controller {
 				''         => false),
 
 			'activity_js' => array('sql' =>
-				"select extra_js as text, extra_js as value,'js_file' as category from
+				"select extra_js as text, extra_js as value,'js_file' as category ,'js/upload' as os_path from
              nanx_activity where activity_code='#value' ",
 				'leaf' => true),
 

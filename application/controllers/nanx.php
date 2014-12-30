@@ -652,11 +652,11 @@ class Nanx extends CI_Controller {
 				'dbcmdtype'  => 'restore_db',
 				'paracfg'    => array('restore_file' => 'restore_file')),
 
-			'update_js_content' => array(
-				'successmsg' => 'success_update_js_content',
+			'update_file_content' => array(
+				'successmsg' => 'success_update_file_content',
 				'tbused'     => null,
-				'dbcmdtype'  => 'update_js_content',
-				'paracfg'    => array('js_content' => 'js_content', 'js_file' => 'js_file')),
+				'dbcmdtype'  => 'update_file_content',
+				'paracfg'    => array('os_path'=>'os_path','file_content' => 'file_content', 'file' => 'file')),
 
 			'create_table' => array(
 				'successmsg' => 'success_create_table',
@@ -1036,10 +1036,12 @@ class Nanx extends CI_Controller {
 			$this->rdbms_action($dbcmdtype, $data_fixed);
 		}
 
-		if ($dbcmdtype == 'update_js_content') {
-			$fname                = 'js/upload/' . $data_fixed[0]['js_file'];
-			$content              = $data_fixed[0]['js_content'];
-			$action_cfg['opcode'] = 'update_js_content';
+		if ($dbcmdtype == 'update_file_content') {
+			$fname = $data_fixed[0]['file'];
+		    $os_path=$data_fixed[0]['os_path'];
+		    $fname=$os_path.'/'.$fname;
+			$content              = $data_fixed[0]['file_content'];
+			$action_cfg['opcode'] = 'update_file_content';
 			$this->load->model('MFile');
 			$result = $this->MFile->write_os_file($action_cfg, $fname, $content);
 			echo json_encode($result);

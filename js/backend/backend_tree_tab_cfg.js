@@ -1497,12 +1497,18 @@ var contextMenu = [
         category: ['js_file'],
         menus:[
         {
+
+//                            'paracfg'    => array('os_path'=>'os_path','file_content' => 'file_content', 'file' => 'file')),
+
+
+
             title:i18n.edit_js,
-            opcode:'update_js_content',
+            opcode:'update_file_content',
             width: 800,
             place:'context',
             callback_set_url:'file/getContent',
                 json:{
+                    os_path:'#os_path',
                     fname:'#value'
                 },
             callback_set_json_key:'/' ,
@@ -1511,14 +1517,22 @@ var contextMenu = [
                 label:i18n.edit,
                 value:'#text',
                 readonly:true,
-                id:'js_file'
+                id:'file'
             },{
                 item_type:'textarea',
                 width:850,
                 height:350,
-                id:'js_content',
+                id:'file_content',
                 path:'content'
-            }]
+            },
+               {
+                    item_type:'field',
+                    label:i18n.activity,
+                    value:'#os_path',
+                    hidden:true,
+                    id:'os_path'
+                }
+                ]
         }]
     }, {
         category: ['based_biz_table'],

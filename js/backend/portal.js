@@ -216,7 +216,7 @@ var ExplorerMenuItems={
 };
 
 
-function specialCodeRoute(node,category,opcode,title,css)
+function specialCodeRoute(node,category,opcode,title)
 {
 
      if (opcode=='mem_copy'){
@@ -273,18 +273,32 @@ function specialCodeRoute(node,category,opcode,title,css)
 }
 
 
-function  getMenuItemHandler(node,category,opcode,title,css)
+
+// function  triggerVirtualNode(node,category,opcode,title)
+// {
+//  var virtial_opform=Fb.backendForm(category,opcode,node);
+//  var wincfg={
+//                  category:category,
+//                  opcode:opcode, 
+//                  node:node
+//                  };
+//  var virtual_win=Act.prototype.actionWin('backend',virtial_opform,wincfg);
+// }
+
+
+function  getMenuItemHandler(node,category,opcode,title,alt_win_id)
 {
     var specialCodes = ["mem_copy", "mem_paste", "create_table", "preview_activity","edit_public_field"];
     var route = specialCodes.indexOf(opcode);
     if(route>=0)
     {
-      var common_fn=specialCodeRoute(node,category,opcode,title,css);
+      var common_fn=specialCodeRoute(node,category,opcode,title);
       return common_fn;
     }
-    console.log(node);
     
+
     var common_fn=function(){
+           
             var opform=Fb.backendForm(category,opcode,node);
               var wincfg={
                  category:category,
@@ -292,6 +306,7 @@ function  getMenuItemHandler(node,category,opcode,title,css)
                  node:node
                  };
                  
+                 if(alt_win_id){wincfg.alt_id=alt_win_id;}
                  var mcfg=AppCategory.getSubMenuCfg( category,opcode);
                  if(!mcfg){alert('MCFG is null');return;};
                  if(mcfg.viewonly){wincfg.viewonly=true;}
@@ -330,7 +345,7 @@ Ext.extend(Explorer.explorerTreePanel,Ext.tree.TreePanel,{
                 return retLevel;
         },
         menuItemProcessor:function(node,category,opcode,title,css){
-                var common_fn= getMenuItemHandler(node,category,opcode,title,css);
+                var common_fn= getMenuItemHandler(node,category,opcode,title);
                 return {
                         itemId:opcode,
                         text:title,
