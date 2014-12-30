@@ -2,30 +2,7 @@
 if ( ! defined('BASEPATH')) exit('No direct script access allowed');
 class backend extends CI_Controller
 {
-    function deleteFile(){
-    	  $post = file_get_contents('php://input');
-        $para= (array )json_decode($post);
-        $file2del=$para['file'];
-        $truefile=basename($file2del);  
-        if (strtoupper(substr(PHP_OS, 0, 3)) === 'WIN')
-        {
-        	$imgpath= (dirname(dirname(dirname(__FILE__)))).'\\imgs\\'; 
-        }
-        else
-        {
-        	$imgpath= (dirname(dirname(dirname(__FILE__)))).'/imgs/';
-        }
-        
-        if (unlink($imgpath.$truefile))
-           {
-           	$result=array(	'success' =>true,'msg'=> $this->lang->line('file_delete_success'));
-           }
-        else
-           {
-            $result=array(	'success' => false,'msg'=> $this->lang->line('file_delete_failed'));
-           }
-        echo json_encode($result);
-    }
+     
     
     function admin() 
     { 

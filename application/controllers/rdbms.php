@@ -13,13 +13,15 @@ class Rdbms extends CI_Controller
         $output->primary_keys = array();
 
         $cols4index = array();
-        $table_columns = $this->getTableColumnNames($table);
+        $this->load->model('MRdbms');
+
+        $table_columns = $this->MRdbms->getTableColumnNames($table);
         foreach ($table_columns as $column)
         {
             $cols4index[] = $column;
         }
 
-        $rows = $this->getTableKeys($table);
+        $rows = $this->MRdbms->getTableKeys($table);
         $indexes = array();
         for ($i = 0; $i < count($rows); $i++)
         {
@@ -29,7 +31,7 @@ class Rdbms extends CI_Controller
                 $output->primary_keys[] = $rows[$i]['Column_name'];
             }
 
-            $index = $this->index_with_key($rows[$i]['Key_name'], $indexes);
+            $index = $this->MRdbms->index_with_key($rows[$i]['Key_name'], $indexes);
             if ($index)
             {
                 $index->columns = $index->columns . ', ' . $rows[$i]['Column_name'];

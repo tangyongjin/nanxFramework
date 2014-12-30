@@ -127,7 +127,7 @@ $lang['field_e']                         = '字段名';
 $lang['field_c']                         = '显示为';
 $lang['field_width']                     = '显示长度';
 $lang['file_delete_success']             = '文件删除成功';
-$lang['file_delete_failed']              = '显示长度';
+$lang['file_delete_failed']              = '文件删除失败,请检查权限';
 $lang['success_backup']                  = '数据库成功备份';
 $lang['doc_operation']                   = '操作';
 $lang['doc_items_desc']                  = '字段说明:';
@@ -160,6 +160,9 @@ $lang['file_size_over']                  = '文件尺寸超过了';
 $lang['upload_only_part']                = '文件没有完全上传';
 $lang['only_one_col_be_produce_col']     = '对应的基础表必须有1列为操作者列';
 $lang['gd_pic_type_error']     = 'GD库错误,有可能不支持文件类型';
+$lang['activity_code_not_allow']     = '活动代码是保留字,请换一个名字';
+
+
 $lang['biz']     = '业务表';
 
 

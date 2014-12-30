@@ -286,7 +286,7 @@ Fb.toggle_combo=function(togglefalg)
                  table: combo_table,
                  filter_field: combox.valueField,
                  filter_value: combox.getValue(),
-                 nobtn: true,
+                 tbar_type:'hide',
                  win_size_height:150,
                  wintitle: i18n.detail + ':' + combox.getRawValue(),
                  showwhere: 'autowin',
@@ -1440,23 +1440,24 @@ Fb.getWhoami=function()
  };
 
 
-Fb.Piccellmenu=function(grid, row, col, event) {
+Fb.MediaCellMenu=function(grid, row, col, event) {
                  event.stopEvent();
-                 var cellValue = Fb.getCellStr(grid, row, col);
-                 var src = Fb.getHtmlAttribute(cellValue, 'src');
+                 var src = Fb.getFileValue(grid, row, col);
                  var menu = new Ext.menu.Menu({
                      items: [
                      {
                          text: i18n.view_file,
                          'iconCls': 'view_item',
                          handler:function()
-                         {Fb.showPic(src);} 
+                         {
+                            Fb.showPic(src.filename);
+                        } 
                      }, 
                      {
                          text: i18n.set_as_logo,
                          'iconCls': 'view_item',
                          handler: function(){
-                             var picname = src.split('/').pop();
+                             var picname = src.filename.split('/').pop();
                              var fmv = {
                                  rawdata: {
                                      'opcode': 'set_logo',
@@ -1470,24 +1471,32 @@ Fb.Piccellmenu=function(grid, row, col, event) {
                          text: i18n.download_file,
                          'iconCls': 'download_item',
                          handler: function() {
-                             //window.location.href = src;
-                             window.location = src;
-                             
+                              window.location = src.filename;
                          }
                      }, {
                          text: i18n.delete_file,
                          'iconCls': 'remove_item',
                          handler: function() {
+                              var delete_msg=i18n.confirm_delete_file + '<br/>' + src.filename ;
+                             if(grid.media_type=='img'){
+                                  delete_msg+=+ '&nbsp;?<br/><br/>' + "<img src='" + src.filename + "' />";
+                             }
+
+                             
+
                              Ext.MessageBox.show({
                                  title: i18n.delete_file,
-                                 msg: i18n.confirm_delete_file + '<br/>' + src + '&nbsp;?<br/><br/>' + "<img src='" + src + "' />",
+                                 msg: delete_msg,
                                  buttons: Ext.Msg.YESNO,
                                  fn: function(btn) {
                                      if (btn == 'yes') {
-                                         var file_op_url = AJAX_ROOT + 'backend/deleteFile';
+                                         var file_op_url = AJAX_ROOT + 'file/deleteFile';
                                          var file2del = {
-                                             'file': src
+                                             'cmd':'delete',
+                                             'os_path':src.os_path,
+                                             'file':src.filename
                                          };
+
                                          var succ = function() {
                                            grid.getStore().reload();
                                          };
@@ -1742,14 +1751,15 @@ Fb.Piccellmenu=function(grid, row, col, event) {
                  y:0
              });
                
-                new Act({
-            edit_type:'edit',
+            new Act({
+            edit_type:'noedit',
             code:'NANX_TBL_DATA',
             table:item.value,
             transfer:false,
             singleSelect:true,
             grid_id:'raw_table_grid_id',
             showwhere:'container',
+            tbar_type:'hide',
             renderto: container_id
                     });
              break;
@@ -1913,14 +1923,15 @@ Fb.Piccellmenu=function(grid, row, col, event) {
                  x: 0,
                  y: 0
              });
-             
+                
                 var act_config = Fb.DeepClone(item);
                 act_config.renderto=f.id;
+                act_config.tbar_type='file_'+item.media_type;
                 act_config.showwhere='container';   
                 act_config.callback=[{
                      event:'cellcontextmenu',
-                     fn:Fb.Piccellmenu
-                  }]
+                     fn:Fb.MediaCellMenu
+                  }];
              var Act_f= new Act(act_config);
              break;
 
@@ -1992,13 +2003,28 @@ Fb.getCellStr = function(grid, rowIndex, cellIndex) {
          return cellValue;
      };
      
-Fb.getHtmlAttribute = function(str, tag) {
+Fb.getFileValue = function(grid,row,col) {
+         var sgr='';
+         if(grid.media_type=='php'|| grid.media_type=='js' ){
+           col=1;  // point to Filename
+           str= Fb.getCellStr(grid, row, col);
+           return {os_path:grid.os_path,filename:str};
+         }
+         str= Fb.getCellStr(grid, row, col);
+         var tag='src';
          var reg_str = "<img[^>]+"+tag+'="http:\\\/\\\/([^">]+)';
          var reg_rule=new RegExp(reg_str,'g');
          var results = reg_rule.exec(str);
+
+         if(results){
          var found= results[1];
          if(tag=='src'){found="http://"+found}
-         return found;
+         return {os_path:grid.os_path,filename:found};
+         }
+            else
+            {
+              return {os_path:grid.os_path,filename:null};
+            }
      };    
      
      

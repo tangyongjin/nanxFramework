@@ -1,6 +1,38 @@
 <?php if ( ! defined('BASEPATH')) exit('No direct script access allowed');
 
 class File extends CI_Controller {
+
+
+
+
+   function deleteFile(){
+        $post = file_get_contents('php://input');
+        $para= (array )json_decode($post);
+
+         
+
+        $file2del=$para['files'];
+        $success=true;
+        foreach ($file2del as $onefile) {
+            $path=$onefile->os_path;
+            $truefile=basename($onefile->filename);  
+             if (strtoupper(substr(PHP_OS, 0, 3)) === 'WIN')
+            {
+              $realpath= (dirname(dirname(dirname(__FILE__)))).'\\'.$path.'\\'; 
+            }
+            else
+            {
+              $realpath= (dirname(dirname(dirname(__FILE__)))).'/'.$path.'/';
+            }
+
+            if(!@unlink($realpath.$truefile)){$success=false;}
+         }
+
+            $result=array(  'success' =>$success,'msg'=> $this->lang->line('file_delete_success'));
+           echo json_encode($result);
+    }
+
+
 	function upload() 
 	{
 	  

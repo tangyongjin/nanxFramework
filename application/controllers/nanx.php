@@ -175,7 +175,8 @@ class Nanx extends CI_Controller {
 				'paracfg'    => array('group_id' => 'group_id'),
 				'tbused'                         => array('nanx_biz_column_follow_cfg', 'nanx_biz_column_trigger_group')),
 
-			'create_table_activity' => array(
+			'add_table_activity' => array(
+ 				'pre_check_func'=>'filter',
 				'successmsg' => 'success_add_activity',
 				'tbused'     => 'nanx_activity',
 				'dbcmdtype'  => 'insert',
@@ -192,6 +193,7 @@ class Nanx extends CI_Controller {
 					'data_url'                 => 'curd/listData')),
 
 			'add_js_activity' => array(
+ 				'pre_check_func'=>'filter',
 				'successmsg'        => 'success_add_js_activity',
 				'tbused'            => 'nanx_activity',
 				'dbcmdtype'         => 'insert',
@@ -207,6 +209,7 @@ class Nanx extends CI_Controller {
 					'data_url'      => 'curd/listData')),
 
 			'add_service_activity' => array(
+ 				'pre_check_func'=>'filter',
 				'successmsg' => 'success_add_service_activity',
 				'tbused'     => 'nanx_activity',
 				'dbcmdtype'  => 'insert',
@@ -221,6 +224,7 @@ class Nanx extends CI_Controller {
 					'data_url'      => 'curd/listData')),
 
 			'add_sql_activity' => array(
+ 				'pre_check_func'=>'filter',
 				'successmsg' => 'success_add_sql_activity',
 				'tbused'     => 'nanx_activity',
 				'dbcmdtype'  => 'insert',
@@ -868,6 +872,35 @@ class Nanx extends CI_Controller {
 		}
 	}
 
+    function do_precheck($action_cfg,$data_received)
+    {
+        if($action_cfg['pre_check_func']=='check_have_produce_col'){
+          $pre_check=false;
+          $pre_check=call_user_func_array( array($this,'check_have_produce_col'),  array( $data_received ) );
+          		$res = array(
+								'success' => $pre_check,
+								'opcode'  => $opcode,
+								'msg'     => $this->lang->line('only_one_col_be_produce_col'),
+								'errcode' => -1,
+								'errmsg'  => $this->lang->line('only_one_col_be_produce_col'));
+    			return $res;
+          }
+
+        if($action_cfg['pre_check_func']=='filter'){
+            $pre_check=false;
+        	$this->load->model('MFilter');
+        	$activity_code=$data_received['activity_code'];
+            $pre_check=$this->MFilter->filter($activity_code,'activity');
+            $res = array(
+								'success' => $pre_check,
+								'opcode'  => $data_received['opcode'],
+								'msg'     => $this->lang->line('activity_code_not_allow'),
+								'errcode' => -1,
+								'errmsg'  => $this->lang->line('activity_code_not_allow'));
+    		return $res;
+        }      
+    }
+
 	function check_have_produce_col($para)
 	{
    
@@ -883,6 +916,8 @@ class Nanx extends CI_Controller {
 	if(1==$counter){$check=true;}
 	return $check;
 	}
+
+
 
 	function processOpcode($data_received, $opcode) {
 
@@ -906,20 +941,12 @@ class Nanx extends CI_Controller {
 		$action_cfg['opcode'] = $opcode;
 
         if(array_key_exists('pre_check_func', $action_cfg)){
-          $pre_check=false;
-          $pre_check=call_user_func_array( array($this,'check_have_produce_col'),  array( $data_received ) );
-          if (! $pre_check){
-				$res = array(
-								'success' => false,
-								'opcode'  => $opcode,
-								'msg'     => $this->lang->line('only_one_col_be_produce_col'),
-								'errcode' => -1,
-								'errmsg'  => $this->lang->line('only_one_col_be_produce_col'));
-		  return json_encode($res);
-          }
+	          $check_result=$this->do_precheck($action_cfg,$data_received);
+	          if(!$check_result['success']){
+	             return json_encode($check_result);
+	          }	
         }
-
-
+		
 		$tbused     = $action_cfg['tbused'];
 		$dbcmdtype  = $action_cfg['dbcmdtype'];
 		$data_fixed = $this->getFixedData($action_cfg, $data_received);

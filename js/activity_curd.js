@@ -70,12 +70,11 @@ Act.prototype.init_all = function(cfg) {
     this.border = cfg.hasOwnProperty('border') ? cfg.border : false;
     this.scroable = cfg.hasOwnProperty('scroable') ? cfg.scroable : false;  
     this.nosm = cfg.hasOwnProperty('nosm')?cfg.nosm:false;     
-    this.single_selection = cfg.hasOwnProperty('singleSelect')?cfg.singleSelect:false;     
-    
-    this.grid_h = cfg.hasOwnProperty('grid_h') ? cfg.grid_h:null;
-    
-   // this.query={};
+    this.media_type = cfg.hasOwnProperty('media_type')?cfg.media_type:'normal'; 
+    this.os_path = cfg.hasOwnProperty('os_path')?cfg.os_path:'/'; 
         
+    this.single_selection = cfg.hasOwnProperty('singleSelect')?cfg.singleSelect:false;     
+    this.grid_h = cfg.hasOwnProperty('grid_h') ? cfg.grid_h:null;
     this.getActCfgUrl = AJAX_ROOT + 'activity/getActCfg';
     this.excelUrl = AJAX_ROOT + 'grid2excel/index';
     this.deletedPIDs = [];
@@ -86,24 +85,21 @@ Act.prototype.init_all = function(cfg) {
         this.pic_url = cfg.pic_url;
     }
   
-  if (cfg.hasOwnProperty('file_anchor_id')) {
-        this.file_anchor_id = cfg.file_anchor_id;
-    }
+  if (cfg.hasOwnProperty('file_anchor_id')) {this.file_anchor_id = cfg.file_anchor_id; }
   
-    if (cfg.hasOwnProperty('win_size_height')) {
-        this.win_size_height = cfg.win_size_height;
-    }
+    if (cfg.hasOwnProperty('win_size_height')) {this.win_size_height = cfg.win_size_height; }
 
-    if (cfg.hasOwnProperty('gridTitle')) {
-        this.gridTitle = cfg.gridTitle;
-    }
+    if (cfg.hasOwnProperty('gridTitle')) {this.gridTitle = cfg.gridTitle; }
     
-    if (cfg.hasOwnProperty('pid_order')) {
-        this.pid_order = cfg.pid_order;
-    }
+    if (cfg.hasOwnProperty('pid_order')) {this.pid_order = cfg.pid_order; }
     
-    if (cfg.hasOwnProperty('nobtn')) {
-        this.gridTitle = cfg.nobtn;
+    if (cfg.hasOwnProperty('tbar_type')) {
+     } 
+    else{
+        cfg.tbar_type ='stand';
+        if(this.cfg.showwhere=='render_to_tabpanel'){
+           cfg.tbar_type='render_to_tabpanel';
+        }
     }
     if (cfg.hasOwnProperty('grid_id')) {
         this.grid_id = cfg.grid_id;
@@ -121,7 +117,6 @@ Act.prototype.setcfg = function(ret) {
     this.gridTitle = ret.grid_title;
     this.colsCfg = ret.colsCfg;
     this.layoutCfg = ret.layoutCfg;
-    
     this.whoami=ret.whoami;
     this.who_is_who=ret.who_is_who;
     this.owner_data_only=ret.owner_data_only?ret.owner_data_only:null;
@@ -183,7 +178,6 @@ Act.prototype.createActivityGridPanel=function(){
     if (this.sql_syntax_error){
         return;
     }
-
     var that=this;
     var gridcfg={
         store:this.mainStore,
@@ -196,13 +190,17 @@ Act.prototype.createActivityGridPanel=function(){
         file_anchor_id:this.file_anchor_id,
         trackMaskOver:true,
         cm:this.getColModel(),
+        media_type:this.media_type,
+        os_path:this.os_path,
         header:this.gridHeader,
         scroable:true,
         tbar:this.tBar,
         bbar:this.bBar,
         listeners:{
             rowdblclick:function(grid,row,col){
-                if(this.id=='grid_PIC'){return;}
+                
+                if(this.media_type=='img'){return;}
+                
                 grid.getStore().each(function(item,idx){
                     grid.getSelectionModel().clearSelections();
                     grid.getSelectionModel().selectRow(row);
@@ -215,12 +213,11 @@ Act.prototype.createActivityGridPanel=function(){
             cellclick:that.handleCellClick,
             celldblclick:function(grid,row,col)
             {
-               if(this.id=='grid_PIC')
+               if(this.media_type=='img')
                 {
-                   var cellValue = Fb.getCellStr(grid, row, col);
-                   var src = Fb.getHtmlAttribute(cellValue, 'src');
+                   var src = Fb.getFileValue(grid, row, col) ;
                    grid.stopEditing();
-                   Fb.showPic(src);
+                   Fb.showPic(src.filename);
                    return;
                 }           
             },
@@ -229,7 +226,7 @@ Act.prototype.createActivityGridPanel=function(){
                     return false;
                 }
 
-                if (this.id=='x_grid_for_dnd'|| this.id=='grid_PIC' ){
+                if (this.id=='x_grid_for_dnd'|| this.media=='img' ){
                     return false;
                 }
 
@@ -258,21 +255,14 @@ Act.prototype.createActivityGridPanel=function(){
             this.gridPanel.addListener(this.cfg.callback[i].event, this.cfg.callback[i].fn);
         }
     }
- 
         this.mainStore.addListener('load', function(store) {
-           
              var serverRet=store.reader.jsonData;
-             console.log(serverRet);
              if( serverRet.hasOwnProperty('dbok'))
              {
               if(serverRet.dbok===false){
                 Ext.Msg.alert(i18n.error,i18n.sql_syntax_error+':<br/>'+serverRet.sql+'<br/>SQLcode:'+ serverRet.sql_code+'<br/>SQlmsg:'+serverRet.sql_error_msg);
               }
-
              }
-
-
-
         });
 
 
@@ -324,12 +314,10 @@ Act.prototype.handleAfterEdit=function(row) {
  
          
 Act.prototype.handleCellClick=function(grid,rowIndex,columnIndex,e){
- 
-    if (grid.id=='grid_PIC') {
-         var cellValue = Fb.getCellStr(grid, rowIndex, columnIndex);
-         var src=Fb.getHtmlAttribute(cellValue, 'src');   
+    if (grid.media_type=='img') {
+         var src=Fb.getFileValue(grid, rowIndex, columnIndex);
          var file_anchor=Ext.getCmp(this.file_anchor_id);
-         file_anchor.setValue(src);
+         file_anchor.setValue(src.filename);
          grid.stopEditing();
       return false;
     }
@@ -506,7 +494,7 @@ Act.prototype.getColModel=function(){
         var onecolModel=this.getOneColModel(this.colsCfg[i]);
         cols.push(onecolModel);
     }
-    var sm=this.createSM();
+    //var sm=this.createSM();
     var sm=this.sm;
     var check_col=[sm];
     var cols_array =this.with_checkbox_col?check_col.concat(cols):cols;
@@ -530,8 +518,6 @@ Act.prototype.getMainStore=function(){
 }
 
 Act.prototype.getStoreByService=function(){
-    
-    console.log(this);
     var url_obj={};
     for (p in this.cfg) {
         if ((p !=='host')&&(p !=='callback')){
@@ -808,6 +794,11 @@ Act.prototype.insertQueryLine=function(table,holderid){
     holder.insert(lines+1,query_line);
     holder.ownerCt.doLayout();
 }
+
+
+
+ 
+
 
 
 Act.prototype.getPublicBtns=function(){
@@ -1337,6 +1328,8 @@ Act.prototype.batchUpdate=function(btn){
 }
 
 
+
+ 
 Act.prototype.delData=function(btn){
     var that=this;
     var host_grid_id=btn.ownerCt.ownerCt.id;
@@ -1545,6 +1538,7 @@ Act.prototype.cancelTableModifications=function(btn,e){
     var a = grid.getTopToolbar();
     a.get(1).disable();
 }
+
 Act.prototype.getModifiedFieldsValue=function(changedrows){
     var modified_kv=[];
     for (var i=0;i<changedrows.length;i++){
@@ -1560,13 +1554,110 @@ Act.prototype.getModifiedFieldsValue=function(changedrows){
 }
  
 Act.prototype.getBtns=function(){
+     console.log(this.cfg);
+    if (this.cfg.tbar_type=='stand'){
+        this.btns=this.getStandBtns();
+    }
+
+    if (this.cfg.tbar_type=='file_php'||this.cfg.tbar_type=='file_img'||this.cfg.tbar_type=='file_js'){
+        this.btns=this.getFileBasedBtns();
+    }
+
+}
+
+
+Act.prototype.getFileBasedBtns=function(){
+    var that=this;
+    var public_btns=[];
+        public_btns.push({
+            xtype:'button',
+            text:i18n.upload_file,
+            iconCls:'n_add',
+            style:{
+                marginRight:'6px'
+            },
+            ctCls:'x-btn-over',
+            handler:function(){
+                that.addData()
+            }
+        });
+    
+        public_btns.push({
+            text:i18n.view_or_edit,
+            iconCls:'n_edit',
+            style:{
+                marginRight: '6px'
+            },
+            ctCls:'x-btn-over',
+            id:'pub_edit',
+            handler:function(a){
+                that.editFile(a.findParentByType('grid'))
+            }
+        });
+    
+        public_btns.push({
+            text:i18n.delete_file,
+            iconCls:'n_del',
+            style:{
+                marginRight:'6px'
+            },
+            ctCls:'x-btn-over',
+            handler:function(a){
+                that.delFile(a.findParentByType('grid'))
+            }
+        });
+    return public_btns;
+}
+
+
+Act.prototype.editFile=function(grid){
+    var os_path=this.cfg.os_path;
+    var userRecord=grid.getSelectionModel().getSelections();
+    var len=userRecord.length;
+    if(len!=1)
+    {
+        Ext.Msg.alert(i18n.tips,i18n.choose_record_to_del);
+        return false;
+    }
+}
+
+
+Act.prototype.delFile=function(grid){
+    var os_path=this.cfg.os_path;
+    var userRecord=grid.getSelectionModel().getSelections();
+    var len=userRecord.length;
+    if (len==0){
+        Ext.Msg.alert(i18n.tips,i18n.choose_record_to_del);
+        return false;
+    }
+    Ext.Msg.confirm(i18n.confirm,i18n.really_delete+"?",function(btn){
+        var file_to_del=[];
+        if (btn=='yes'){
+            var files_to_del=[];
+            for (var i=0;i<len;i++){
+                    files_to_del.push({ os_path:os_path,filename:userRecord[i].get('Filename')});
+            }
+            var del_data={
+                'cmd':'delete',
+                'files':files_to_del
+            };
+            var succ=function(){
+                 grid.getStore().load();
+            }
+            Fb.ajaxPostData(AJAX_ROOT+'file/deleteFile',del_data,succ);
+        }
+    });
+}
+
+
+Act.prototype.getStandBtns=function(){
+    console.log(this.cfg);
     var publicBtns=this.getPublicBtns();
     var rowBasedActBtns=this.getRowBasedActBtns();
     var jsBtns=this.getJsBtns();
     var batchBtns=this.getBatchBtns();
-    this.btns=publicBtns.concat(rowBasedActBtns,jsBtns,batchBtns);
+    return  publicBtns.concat(rowBasedActBtns,jsBtns,batchBtns);
 }
-
 
 Act.prototype.getRowBasedActBtns=function(){
     var that=this;
@@ -1661,14 +1752,27 @@ Act.prototype.rowBasedActivityHandler=function(btn){
 }
 
 Act.prototype.getTbar=function(){
-    if (this.cfg.nobtn){
+    
+
+    if (this.cfg.tbar_type=='hide'){
         return null;
     }
-    if (this.cfg.showwhere=='autowin'){
+    if (this.cfg.tbar_type=='stand'){
         var bar=this.btns;
-    } else{
-        var bar=this.buildTopToolbar_backend();
     }
+    if (this.cfg.tbar_type=='render_to_tabpanel'){
+         var bar=this.buildTopToolbar_backend();
+    }
+
+    if (this.cfg.tbar_type=='file_php'||this.cfg.tbar_type=='file_js'){
+        var bar=this.btns;
+    }
+    
+    if (this.cfg.tbar_type=='file_img'){
+        var bar=this.btns;
+    }
+    
+     
     return bar;
 }
 
@@ -1689,6 +1793,7 @@ Act.prototype.getRefreshButtonGroup=function(){
         items:[b]
     }]
 }
+
 Act.prototype.refreshCurrentPage=function(){
     this.gridPanel.getStore().rejectChanges();
     this.paginator.doRefresh();
@@ -1725,12 +1830,6 @@ Act.prototype.showWindow = function(){
         return;
     }
 
-
-
-
-
-
-
     var title ='<img src='+BASE_URL+'imgs/thumbs/'+this.pic_url+' />&nbsp;'+this.gridTitle;
     if (this.cfg.wintitle){
         var title=this.cfg.wintitle;
@@ -1741,6 +1840,7 @@ Act.prototype.showWindow = function(){
     var win_h=this.win_size_height||this.cfg.height;
 
     if (this.cfg.showwhere=='autowin'){
+        this.cfg.tbar_type='stand';
         this.gridPanel.height=win_h * 1.0 - 34;
         var winid = 'win_' + this.actcode;
         if (!Ext.getCmp(winid)){
@@ -1784,11 +1884,7 @@ Act.prototype.showWindow = function(){
 
   if (this.cfg.showwhere == 'container'  )
     {
-      this.gridPanel.getTopToolbar().hide();
-      if(!(this.cfg.grid_id=='grid_PIC'))
-        { 
-       this.gridPanel.getBottomToolbar().hide();
-        }
+        //this.gridPanel.getTopToolbar().hide();
         var motherBoard = Ext.getCmp(this.renderto);
         var h=motherBoard.getHeight();
         this.gridPanel.setTitle(i18n.layout);
@@ -1800,11 +1896,12 @@ Act.prototype.showWindow = function(){
  
 
 Act.prototype.autoHeader =function(){
-    if(this.gridPanel.id=='grid_PIC')
+    
+    if(this.gridPanel.media_type=='img')
     {
       for(var i=0;i<this.gridPanel.colModel.columns.length;i++)
       {
-          this.gridPanel.colModel.setColumnWidth(i,98);
+       this.gridPanel.colModel.setColumnWidth(i,98);
       }
      return;
     }
@@ -1854,7 +1951,7 @@ Act.prototype.autoSizeColumn = function(colindex,header,dataIndex,asPic){
 }
 
 Act.prototype.actionWin = function(type,form,wincfg){
-
+     
     var  runStandSqlActivity=function(){
         
         new Act({'edit_type':'noedit','code': 'NANX_SQL_ACTIVITY',  'showwhere': 'autowin', 'host': null });
@@ -1879,18 +1976,18 @@ Act.prototype.actionWin = function(type,form,wincfg){
             }
         };
         var id='back_op_win';
-        var backendUrl=AppCategory.getMenuDefaultProcessor();
+        var backendUrl=AppCategory.getBackendCrontroller();
         var url=wincfg.url?wincfg.url:AJAX_ROOT+backendUrl.controller+'/'+backendUrl.func_name;
         
         var title ='<img src=' + BASE_URL+ 'imgs/thumbs/backop.png' + ' />&nbsp;'+wincfg.title;
         form.extra_url=url;
-        console.log(url);
-        console.log(wincfg);
         
         form.extra_fn=refresh;
         if (wincfg.opcode=='run_sql'){form.extra_fn=runStandSqlActivity;}
-        form=Fb.formBuilder(form,wincfg.opcode);
+        formWrapper=Fb.formBuilder(form,wincfg.opcode);
       }
+
+      
     
       if(wincfg&&wincfg.althandler){
        var afterClick=wincfg.althandler;
@@ -1900,17 +1997,17 @@ Act.prototype.actionWin = function(type,form,wincfg){
         var afterClick=Act.prototype.ConfirmBtnHandler;  
       }
       
-      form.on('render',function(){
-      var roots = form.find('nanx_type','root');
-      for(var i=0;i<roots.length;i++)
-      {
-        roots[i].getStore().load();
-      }
+      formWrapper.on('render',function(){
+          var roots = formWrapper.find('nanx_type','root');
+          for(var i=0;i<roots.length;i++)
+          {
+            roots[i].getStore().load();
+          }
       });
       
       var win_cfg={
         title:title,
-        items:form,
+        items:formWrapper,
         stateful:false,
         constrain:true,
         draggable:true,
@@ -1956,6 +2053,7 @@ Act.prototype.ConfirmBtnHandler=function(btn){
         Act.prototype.FormAction(fm);
         this.disable();
         return;
+
         // if (this.btntype=='add')
         // {
         //     this.disable();
@@ -1978,7 +2076,6 @@ Act.prototype.FormAction=function(form){
             };
              if(!Ext.isEmpty(form.extra_url))
              {
-             console.log(form.extra_url);    
              Fb.ajaxPostData(form.extra_url,dataSend,form.extra_fn);
              }
         }

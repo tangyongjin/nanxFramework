@@ -394,8 +394,8 @@ var contextMenu = [
                 grid_id:'grid_PIC',
                 grid_h:386,
                 media_type:'php',
-                file_trunk:5,
                 nosm:true,
+                edit_type:'noedit',
                 hideHeaders:false,
                 checkbox:false,
                 pid_order:'desc',
@@ -421,8 +421,8 @@ var contextMenu = [
                 item_type:'file_selector',
                 grid_id:'grid_PIC',
                 grid_h:386,
+                edit_type:'noedit',
                 media_type:'php',
-                file_trunk:5,
                 nosm:true,
                 hideHeaders:false,
                 checkbox:false,
@@ -450,7 +450,7 @@ var contextMenu = [
                 grid_id:'grid_PIC',
                 grid_h:386,
                 media_type:'js',
-                file_trunk:5,
+                edit_type:'noedit',
                 nosm:true,
                 hideHeaders:false,
                 checkbox:false,
@@ -604,13 +604,11 @@ var contextMenu = [
             place:'context',
             opcode:'connect_user',
             itemcfg:[
-             {
+             {      
                     item_type:'raw_table',
                     grid_h:256,
                     code:'preview_activity',
-                    value:'#table',
-                    showwhere:'autowin',
-                    'edit_type':'noedit'
+                    value:'#table'
                 },
                 {       item_type:'combo_list',
                         id:'field_e',
@@ -1224,14 +1222,11 @@ var contextMenu = [
             } 
         ]
     }, 
-    
-    
-    
     {
         category: ['activitys'],
         menus:[{
             title:i18n.add_table_activity,
-            opcode:'create_table_activity',
+            opcode:'add_table_activity',
             place:'context',
             itemcfg:[{
                 item_type:'field',
@@ -1500,7 +1495,8 @@ var contextMenu = [
         }]
     }, {
         category: ['js_file'],
-        menus:[{
+        menus:[
+        {
             title:i18n.edit_js,
             opcode:'update_js_content',
             width: 800,
@@ -2045,7 +2041,7 @@ var AppCategory = {
         return this.ContextMenu;
     },
 
-    getMenuDefaultProcessor:function(){
+    getBackendCrontroller:function(){
         return{
             controller:'nanx',
             func_name:'index'}
