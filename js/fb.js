@@ -99,7 +99,7 @@ Fb.toggle_combo=function(togglefalg)
       var meta = name.split('.').pop().toLowerCase();
       var ftype='unknow';
       if(pictype.indexOf(meta)!== -1){
-         ftype = 'pic';
+         ftype = 'img';
       }
       if(sqltype.indexOf(meta)!== -1){
          ftype = 'sql';
@@ -149,6 +149,8 @@ Fb.toggle_combo=function(togglefalg)
  }
 
  Fb.getAttachmentEditor = function(cfg) {
+     console.log(cfg);
+
      var xid = Ext.id();
      var fake_id = cfg.name;
      upload_field = [{
@@ -167,7 +169,10 @@ Fb.toggle_combo=function(togglefalg)
                   var ftype=Fb.getFileType(file);
                   if(cfg.file_type)
                    {
-                    if(cfg.file_type!==ftype){alert('check file type'); return;}
+                    if(cfg.file_type!==ftype){
+                           Ext.Msg.alert(i18n.message, i18n.check_file_type);
+                           return;
+                          }
                    }
                   
                  var form=Ext.getCmp(xid).findParentByType('form');
@@ -197,7 +202,7 @@ Fb.toggle_combo=function(togglefalg)
                  WaitMask.show('upload');
                  var p = {
                      'formfield': cfg.name,
-                     'dest': cfg.dest || 'uploads'
+                     'os_path': cfg.os_path || 'uploads'
                  };
                  var postcfg = {
                      'params': Ext.encode(p)
@@ -786,9 +791,6 @@ Fb.toggle_combo=function(togglefalg)
      return found;
  }
 
- Fb.getCurrentValue=function(id)
- {
- }
 
  Fb.getBasicCombo = function(cfg, store,_readOnly) {
  
@@ -1439,76 +1441,7 @@ Fb.getWhoami=function()
      });
  };
 
-
-Fb.MediaCellMenu=function(grid, row, col, event) {
-                 event.stopEvent();
-                 var src = Fb.getFileValue(grid, row, col);
-                 var menu = new Ext.menu.Menu({
-                     items: [
-                     {
-                         text: i18n.view_file,
-                         'iconCls': 'view_item',
-                         handler:function()
-                         {
-                            Fb.showPic(src.filename);
-                        } 
-                     }, 
-                     {
-                         text: i18n.set_as_logo,
-                         'iconCls': 'view_item',
-                         handler: function(){
-                             var picname = src.filename.split('/').pop();
-                             var fmv = {
-                                 rawdata: {
-                                     'opcode': 'set_logo',
-                                     'input_0': picname,
-                                     'key': 'COMPANY_LOGO'
-                                 }
-                             };
-                             Fb.ajaxPostData(AJAX_ROOT + 'nanx', fmv, function() {});
-                         }
-                     }, {
-                         text: i18n.download_file,
-                         'iconCls': 'download_item',
-                         handler: function() {
-                              window.location = src.filename;
-                         }
-                     }, {
-                         text: i18n.delete_file,
-                         'iconCls': 'remove_item',
-                         handler: function() {
-                              var delete_msg=i18n.confirm_delete_file + '<br/>' + src.filename ;
-                             if(grid.media_type=='img'){
-                                  delete_msg+=+ '&nbsp;?<br/><br/>' + "<img src='" + src.filename + "' />";
-                             }
-
-                             
-
-                             Ext.MessageBox.show({
-                                 title: i18n.delete_file,
-                                 msg: delete_msg,
-                                 buttons: Ext.Msg.YESNO,
-                                 fn: function(btn) {
-                                     if (btn == 'yes') {
-                                         var file_op_url = AJAX_ROOT + 'file/deleteFile';
-                                         var file2del = {
-                                             'cmd':'delete',
-                                             'os_path':src.os_path,
-                                             'file':src.filename
-                                         };
-
-                                         var succ = function() {
-                                           grid.getStore().reload();
-                                         };
-                                         Fb.ajaxPostData(file_op_url, file2del, succ);
-                                     }
-                                 }
-                             });
-                         }
-                     }]
-                 });
-                 menu.showAt(event.xy);
-}
+ 
 
  Fb.RestoreField = function(grid, row, col, event) {
      var cellMenu = new Ext.menu.Menu({
@@ -1698,8 +1631,18 @@ Fb.MediaCellMenu=function(grid, row, col, event) {
             if(fixed.value===true){fixed.value='true';}
             else{ fixed.value = fix_obj_tag(fixed.value, xnode);}
           }
-     
      }
+
+    if (fixed.file_type) {
+             fixed.file_type = fix_obj_tag(fixed.file_type, xnode);
+     }
+
+
+    if (fixed.os_path) {
+             fixed.os_path = fix_obj_tag(fixed.os_path, xnode);
+     }
+
+
      if (fixed.json) {
          for (var subkey in fixed.json) {
              fixed.json[subkey] = fix_obj_tag(fixed.json[subkey], xnode);
@@ -1926,12 +1869,10 @@ Fb.MediaCellMenu=function(grid, row, col, event) {
                 
                 var act_config = Fb.DeepClone(item);
                 act_config.renderto=f.id;
-                act_config.tbar_type='file_'+item.media_type;
-                act_config.showwhere='container';   
-                act_config.callback=[{
-                     event:'cellcontextmenu',
-                     fn:Fb.MediaCellMenu
-                  }];
+                act_config.tbar_type='file_'+item.file_type;
+                act_config.showwhere='container';
+
+
              var Act_f= new Act(act_config);
              break;
 
@@ -2005,7 +1946,7 @@ Fb.getCellStr = function(grid, rowIndex, cellIndex) {
      
 Fb.getFileValue = function(grid,row,col) {
          var sgr='';
-         if(grid.media_type=='php'|| grid.media_type=='js' ){
+         if(grid.file_type=='php'|| grid.file_type=='js' ){
            col=1;  // point to Filename
            str= Fb.getCellStr(grid, row, col);
            return {os_path:grid.os_path,filename:str};

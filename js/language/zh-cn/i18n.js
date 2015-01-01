@@ -308,5 +308,6 @@ run_sql:'运行',
 jsfile:'Javascript文件',
 php_model:'CI模型文件',
 php_controller:'CI控制器文件',
+check_file_type:'检查文件类型',
 zzz:'zzz'
 } 

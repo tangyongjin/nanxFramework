@@ -17,10 +17,10 @@ function fs2array()
   { 
      $para = (array )json_decode(file_get_contents('php://input'));
      $os_path=$para['os_path'];
-     $media_type=$para['media_type'];
-     $files=$this->getFileList($os_path,$media_type);
+     $file_type=$para['file_type'];
+     $files=$this->getFileList($os_path,$file_type);
      
-     if($media_type=='img')
+     if($file_type=='img')
      {
          $file_trunk=$para['file_trunk'];
          $picArray=$this->picFile2Array($files,$file_trunk,$_GET);
@@ -228,6 +228,12 @@ function fs2array()
     	   
        $files  = glob($path.$ext, GLOB_BRACE);
       
+
+
+      usort($files, function($a, $b) {
+         return filemtime($a) < filemtime($b);
+      });
+
        
        $rows=array();
        $pid=0;

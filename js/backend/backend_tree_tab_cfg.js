@@ -344,15 +344,16 @@ var contextMenu = [
         {
             title:i18n.pic_upload,
             place:'context',
-            opcode:'upload_pic',
+            opcode:'upload_file',
+            enable:false,
             controller:null,
             itemcfg:[{
                 item_type:'upload',
-                file_type:'pic',
+                file_type:'#file_type',
                 label:i18n.select_pic,
                 name:'file2upload',
                 id:'file2upload',
-                dest:'imgs',
+                os_path:'#os_path',
                 value:''
             }]
         }, {
@@ -365,7 +366,7 @@ var contextMenu = [
                 item_type:'file_selector',
                 grid_id:'grid_PIC',
                 grid_h:386,
-                media_type:'img',
+                file_type:'img',
                 file_trunk:5,
                 nosm:true,
                 hideHeaders:true,
@@ -377,7 +378,7 @@ var contextMenu = [
             
             {
                 item_type:'field',
-                hidden:false,
+                hidden:true,
                 id:'file_anchor_4_pic',
                 grid_ext_id:'grid_PIC'
             }
@@ -393,7 +394,7 @@ var contextMenu = [
                 item_type:'file_selector',
                 grid_id:'grid_PIC',
                 grid_h:386,
-                media_type:'php',
+                file_type:'php',
                 nosm:true,
                 edit_type:'noedit',
                 hideHeaders:false,
@@ -405,7 +406,7 @@ var contextMenu = [
             
             {
                 item_type:'field',
-                hidden:false,
+                hidden:true,
                 id:'file_anchor_4_pic',
                 grid_ext_id:'grid_PIC'
             }
@@ -422,7 +423,7 @@ var contextMenu = [
                 grid_id:'grid_PIC',
                 grid_h:386,
                 edit_type:'noedit',
-                media_type:'php',
+                file_type:'php',
                 nosm:true,
                 hideHeaders:false,
                 checkbox:false,
@@ -433,7 +434,7 @@ var contextMenu = [
             
             {
                 item_type:'field',
-                hidden:false,
+                hidden:true,
                 id:'file_anchor_4_pic',
                 grid_ext_id:'grid_PIC'
             }
@@ -449,7 +450,7 @@ var contextMenu = [
                 item_type:'file_selector',
                 grid_id:'grid_PIC',
                 grid_h:386,
-                media_type:'js',
+                file_type:'js',
                 edit_type:'noedit',
                 nosm:true,
                 hideHeaders:false,
@@ -461,7 +462,7 @@ var contextMenu = [
             
             {
                 item_type:'field',
-                hidden:false,
+                hidden:true,
                 id:'file_anchor_4_pic',
                 grid_ext_id:'grid_PIC'
             }
@@ -1345,7 +1346,7 @@ var contextMenu = [
                 item_type:'file_selector',
                 grid_id:'grid_PIC',
                 grid_h:386,
-                media_type:'img',
+                file_type:'img',
                 file_trunk:5,
                 nosm:true,
                 hideHeaders:true,
@@ -1497,11 +1498,6 @@ var contextMenu = [
         category: ['js_file'],
         menus:[
         {
-
-//                            'paracfg'    => array('os_path'=>'os_path','file_content' => 'file_content', 'file' => 'file')),
-
-
-
             title:i18n.edit_js,
             opcode:'update_file_content',
             width: 800,
@@ -1986,7 +1982,7 @@ var getCSSbyOpcode=function(opcode)
      if(opcode.indexOf('paste')>=0){return 'menu_paste';}
      if(opcode.indexOf('preview')>=0){return 'menu_preview';}
      if(opcode.indexOf('view')>=0){return 'menu_preview';}
-     if(opcode.indexOf('upload_pic')>=0){return 'menu_upload_pic';}
+     if(opcode.indexOf('upload_file')>=0){return 'menu_upload_pic';}
      if(opcode.indexOf('manage_pic')>=0){return 'menu_pic_management';}
      if(opcode.indexOf('backup_system')>=0){return 'menu_backup_system';}
      if(opcode.indexOf('backup_')>=0){return 'menu_backup';}

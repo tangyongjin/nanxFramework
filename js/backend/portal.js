@@ -216,7 +216,7 @@ var ExplorerMenuItems={
 };
 
 
-function specialCodeRoute(node,category,opcode,title)
+function specialCodeRoute(node,category,opcode)
 {
 
      if (opcode=='mem_copy'){
@@ -274,25 +274,15 @@ function specialCodeRoute(node,category,opcode,title)
 
 
 
-// function  triggerVirtualNode(node,category,opcode,title)
-// {
-//  var virtial_opform=Fb.backendForm(category,opcode,node);
-//  var wincfg={
-//                  category:category,
-//                  opcode:opcode, 
-//                  node:node
-//                  };
-//  var virtual_win=Act.prototype.actionWin('backend',virtial_opform,wincfg);
-// }
 
 
-function  getMenuItemHandler(node,category,opcode,title,alt_win_id)
+function  getMenuItemHandler(node,category,opcode,alt_win_id)
 {
     var specialCodes = ["mem_copy", "mem_paste", "create_table", "preview_activity","edit_public_field"];
     var route = specialCodes.indexOf(opcode);
     if(route>=0)
     {
-      var common_fn=specialCodeRoute(node,category,opcode,title);
+      var common_fn=specialCodeRoute(node,category,opcode);
       return common_fn;
     }
     
@@ -345,7 +335,7 @@ Ext.extend(Explorer.explorerTreePanel,Ext.tree.TreePanel,{
                 return retLevel;
         },
         menuItemProcessor:function(node,category,opcode,title,css){
-                var common_fn= getMenuItemHandler(node,category,opcode,title);
+                var common_fn= getMenuItemHandler(node,category,opcode);
                 return {
                         itemId:opcode,
                         text:title,

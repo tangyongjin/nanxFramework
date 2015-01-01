@@ -11,10 +11,10 @@ class Nanx extends CI_Controller {
 		$win_size_width_operation = $this->MSystempara->getCfgItem('WIN_SIZE_WIDTH_OPERATION');
 
 		$cfg = array(
-			'upload_pic' => array(
+			'upload_file' => array(
 				'successmsg' => 'success_upload_file',
 				'tbused'     => null,
-				'dbcmdtype'  => 'upload_pic',
+				'dbcmdtype'  => 'upload_file',
 				'paracfg'    => array()
 			),
 
@@ -1408,7 +1408,7 @@ class Nanx extends CI_Controller {
 
 	function sendOperationResult($actcfg, $os_db_err) {
         
-		if ($actcfg['dbcmdtype'] == 'upload_pic') {
+		if ($actcfg['dbcmdtype'] == 'upload_file') {
 			$res = array(
 				'success'        => true,
 				'file_operation' => true

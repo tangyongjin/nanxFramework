@@ -195,14 +195,14 @@ class MActivity extends CI_Model
                 if ( $activity_code=='NANX_FS_2_TABLE')
                 {
                     $col_cfg    = array();
-                    if( in_array($para_array['media_type'],array('php','js'))){
+                    if( in_array($para_array['file_type'],array('php','js'))){
                        array_push($col_cfg, array('field_e'=>'pid','display_cfg'=>array('field_c'=>'pid','value'=>'pid')));
                        array_push($col_cfg, array('field_e'=>'Filename','display_cfg'=>array('field_c'=>'Filename','value'=>'Filename')));
                        array_push($col_cfg, array('field_e'=>'Size','display_cfg'=>array('field_c'=>'Size','value'=>'Size')));
                        array_push($col_cfg, array('field_e'=>'Date','display_cfg'=>array('field_c'=>'Date','value'=>'Date')));
                     }
 
-                    if( in_array($para_array['media_type'],array('img'))){
+                    if( in_array($para_array['file_type'],array('img'))){
                              $file_trunk = $para_array['file_trunk'];
                              for ($i = 0; $i < $file_trunk; $i++) {
                                 $col_i = array(

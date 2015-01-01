@@ -1,7 +1,7 @@
 Ext.ns('Ext.ux.form');
 Ext.ux.form.FileUploadField = Ext.extend(Ext.form.TextField,  {
     
-    buttonText: 'Browse...',
+    buttonText: '',
     buttonOnly: false,
     buttonOffset: 3,
     readOnly: true,

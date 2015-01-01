@@ -25,7 +25,9 @@ class File extends CI_Controller {
             if(!@unlink($realpath.$truefile)){$success=false;}
          }
 
-            $result=array(  'success' =>$success,'msg'=> $this->lang->line('file_delete_success'));
+            $result=array(  'success' =>$success,
+                             'errmsg' =>$this->lang->line('file_delete_failed'),
+                              'msg'=> $this->lang->line('file_delete_success'));
            echo json_encode($result);
     }
 
@@ -44,7 +46,7 @@ class File extends CI_Controller {
       $this->load->model('MFile');
     	$params = (array)json_decode($_REQUEST['params']); 
  	    $formfield=$params['formfield'];
-      $dest=$params['dest'];
+      $dest=$params['os_path'];
       
  	    $show_client_upload_info=false;
       if(array_key_exists('opcode',$_REQUEST))
