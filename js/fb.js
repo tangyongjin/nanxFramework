@@ -47,18 +47,14 @@ Fb.getDate=function()
         var dd = today.getDate();
         var mm = today.getMonth()+1; //January is 0!
         var yyyy = today.getFullYear();
-
         if(dd<10) {
             dd='0'+dd
         } 
-
         if(mm<10) {
             mm='0'+mm
         } 
-
         today = yyyy+'-'+ mm+'-'+dd;
         return today;
-
 }
 
 
@@ -126,7 +122,7 @@ Fb.toggle_combo=function(togglefalg)
 
      var fname = field.value.split('/').pop();
      var ftype=Fb.getFileType(fname);
-     if (ftype == 'pic'){
+     if (ftype == 'img'){
          var box = {
              xtype: 'box',
              html: '<div class=pic_holder><span>' + i18n.dbl_click_to_viewe_origin_pic + '</br></span><img id="' + field.name + '_img_mask" src="' + field.value + '"></div>',
@@ -149,8 +145,6 @@ Fb.toggle_combo=function(togglefalg)
  }
 
  Fb.getAttachmentEditor = function(cfg) {
-     console.log(cfg);
-
      var xid = Ext.id();
      var fake_id = cfg.name;
      upload_field = [{
@@ -198,8 +192,6 @@ Fb.toggle_combo=function(togglefalg)
                      form.uptasks--;
                      return;
                  }
-                 
-                 WaitMask.show('upload');
                  var p = {
                      'formfield': cfg.name,
                      'os_path': cfg.os_path || 'uploads'
@@ -244,12 +236,16 @@ Fb.toggle_combo=function(togglefalg)
      return [compo, box];
  }
 
- Fb.showUploadResult=function(r,cfg)
+ Fb.showUploadResult=function(r)
  {
    if(r.result.show_client_upload_info)
         {
         Ext.Msg.alert(i18n.message, r.result.msg);
         }
+ 
+   if(Ext.getCmp('grid_FILE')){
+     Ext.getCmp('grid_FILE').getStore().reload();
+   }
  }
  
 
@@ -1850,7 +1846,7 @@ Fb.getWhoami=function()
              });
              break;
 
-         case 'upload':
+         case 'uploadFile':
              var f = Fb.getAttachmentEditor(item);
              break;
 
@@ -1866,14 +1862,13 @@ Fb.getWhoami=function()
                  x: 0,
                  y: 0
              });
-                
+
+                item.grid_id='grid_FILE';
                 var act_config = Fb.DeepClone(item);
                 act_config.renderto=f.id;
                 act_config.tbar_type='file_'+item.file_type;
                 act_config.showwhere='container';
-
-
-             var Act_f= new Act(act_config);
+               var Act_f= new Act(act_config);
              break;
 
          case 'combo_list':
@@ -1912,6 +1907,7 @@ Fb.getWhoami=function()
                  code: "NANX_TB_LAYOUT",
                  activity_type: "sql",
                  edit_type: 'edit',
+                 tbar_type:'hide',
                  showwhere:"container",
                  grid_id: item.grid_ext_id,
                  renderto: container_id,
@@ -1937,21 +1933,22 @@ Fb.getWhoami=function()
  }
 
 
-Fb.getCellStr = function(grid, rowIndex, cellIndex) {
+Fb.getCellStr = function(grid, rowIndex, colIndex) {
          var rec = grid.getStore().getAt(rowIndex);
-         var columnName = grid.getColumnModel().getDataIndex(cellIndex);
+         var columnName = grid.getColumnModel().getDataIndex(colIndex);
          var cellValue = rec.get(columnName);
          return cellValue;
      };
      
 Fb.getFileValue = function(grid,row,col) {
-         var sgr='';
+         var str='';
+         str= Fb.getCellStr(grid, row, col);
+         
          if(grid.file_type=='php'|| grid.file_type=='js' ){
            col=1;  // point to Filename
-           str= Fb.getCellStr(grid, row, col);
            return {os_path:grid.os_path,filename:str};
          }
-         str= Fb.getCellStr(grid, row, col);
+
          var tag='src';
          var reg_str = "<img[^>]+"+tag+'="http:\\\/\\\/([^">]+)';
          var reg_rule=new RegExp(reg_str,'g');

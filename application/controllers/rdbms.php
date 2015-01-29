@@ -217,11 +217,9 @@ class Rdbms extends CI_Controller
 
     function tb_structure_adu($para)
     {
-
         $table = $para['table'];
-        $cols_all = $this->getTableColInfo($table);
-        
-        
+        $this->load->model('MRdbms');
+        $cols_all = $this->MRdbms->getTableColInfo($table);
         $a = $para['a'];
         $d = $para['d'];
         $u = $para['u'];
@@ -274,18 +272,11 @@ class Rdbms extends CI_Controller
             $pid = $u_row['pid'];
             $col_orginal_name = $cols_all[$pid]['field_name'];
             $col_orginal_datatype = $cols_all[$pid]['datatype'];
-            
             $col_orginal_len = '(' . $cols_all[$pid]['length'] . ')';
-           
             $col_orginal_comment=" comment '". $cols_all[$pid]['comment']."'";
-            
-            
-            
-            
             $new_col_name = $col_orginal_name;
             $new_col_datatype = $col_orginal_datatype;
             $new_col_len = $col_orginal_len;
-
             $comment_string='';
             
             if (array_key_exists('field_name', $u_row))
@@ -302,9 +293,6 @@ class Rdbms extends CI_Controller
             {
             $comment_string=$col_orginal_comment;
             }
-
-
-
 
             if (array_key_exists('datatype', $u_row))
             {

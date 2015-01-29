@@ -186,7 +186,7 @@ var contextMenu = [
             itemcfg:
             [
             {
-               item_type:'upload',
+                item_type:'uploadFile',
                 label:i18n.select_db_restore_file,
                 name:'restore_file',
                 id:'restore_file' 
@@ -219,7 +219,7 @@ var contextMenu = [
                 id:'table_name',
                 value:APP_PREFIX+'_'
             },{
-                item_type:'upload',
+                item_type:'uploadFile',
                 file_type:'xls',
                 label:i18n.select_excel_file,
                 name:'excel',
@@ -305,7 +305,7 @@ var contextMenu = [
                 id:'btn_name'
             }, 
             {
-                item_type:'upload',
+                item_type:'uploadFile',
                 file_type:'js',
                 label:i18n.select_js_file,
                 name:'jsfile',
@@ -348,7 +348,7 @@ var contextMenu = [
             enable:false,
             controller:null,
             itemcfg:[{
-                item_type:'upload',
+                item_type:'uploadFile',
                 file_type:'#file_type',
                 label:i18n.select_pic,
                 name:'file2upload',
@@ -364,7 +364,6 @@ var contextMenu = [
             {
                 code: 'NANX_FS_2_TABLE',
                 item_type:'file_selector',
-                grid_id:'grid_PIC',
                 grid_h:386,
                 file_type:'img',
                 file_trunk:5,
@@ -372,16 +371,8 @@ var contextMenu = [
                 hideHeaders:true,
                 checkbox:false,
                 pid_order:'desc',
-                os_path:'imgs',
-                file_anchor_id:'file_anchor_4_pic'
-            },
-            
-            {
-                item_type:'field',
-                hidden:true,
-                id:'file_anchor_4_pic',
-                grid_ext_id:'grid_PIC'
-            }
+                os_path:'imgs'
+            } 
             ]
         },{
             title:i18n.php_controller,
@@ -392,7 +383,6 @@ var contextMenu = [
             {
                 code: 'NANX_FS_2_TABLE',
                 item_type:'file_selector',
-                grid_id:'grid_PIC',
                 grid_h:386,
                 file_type:'php',
                 nosm:true,
@@ -400,15 +390,7 @@ var contextMenu = [
                 hideHeaders:false,
                 checkbox:false,
                 pid_order:'desc',
-                os_path:'application/controllers',
-                file_anchor_id:'file_anchor_4_pic'
-            },
-            
-            {
-                item_type:'field',
-                hidden:true,
-                id:'file_anchor_4_pic',
-                grid_ext_id:'grid_PIC'
+                os_path:'application/controllers'
             }
             ]
         },{
@@ -420,7 +402,6 @@ var contextMenu = [
             {
                 code: 'NANX_FS_2_TABLE',
                 item_type:'file_selector',
-                grid_id:'grid_PIC',
                 grid_h:386,
                 edit_type:'noedit',
                 file_type:'php',
@@ -428,15 +409,7 @@ var contextMenu = [
                 hideHeaders:false,
                 checkbox:false,
                 pid_order:'desc',
-                os_path:'application/models',
-                file_anchor_id:'file_anchor_4_pic'
-            },
-            
-            {
-                item_type:'field',
-                hidden:true,
-                id:'file_anchor_4_pic',
-                grid_ext_id:'grid_PIC'
+                os_path:'application/models'
             }
             ]
         },{
@@ -448,7 +421,6 @@ var contextMenu = [
             {
                 code: 'NANX_FS_2_TABLE',
                 item_type:'file_selector',
-                grid_id:'grid_PIC',
                 grid_h:386,
                 file_type:'js',
                 edit_type:'noedit',
@@ -456,20 +428,10 @@ var contextMenu = [
                 hideHeaders:false,
                 checkbox:false,
                 pid_order:'desc',
-                os_path:'js/upload',
-                file_anchor_id:'file_anchor_4_pic'
-            },
-            
-            {
-                item_type:'field',
-                hidden:true,
-                id:'file_anchor_4_pic',
-                grid_ext_id:'grid_PIC'
+                os_path:'js/upload'
             }
             ]
         }
-
-
         ]
     }, {
         category: ['table'],
@@ -1278,7 +1240,7 @@ var contextMenu = [
                 id:'grid_title'
             },
              {
-                item_type:'upload',
+                item_type:'uploadFile',
                 label:i18n.select_js_file,
                 name:'extra_js',
                 file_type:'js',
@@ -1344,7 +1306,6 @@ var contextMenu = [
             {
                 code: 'NANX_FS_2_TABLE',
                 item_type:'file_selector',
-                grid_id:'grid_PIC',
                 grid_h:386,
                 file_type:'img',
                 file_trunk:5,
@@ -1352,14 +1313,8 @@ var contextMenu = [
                 hideHeaders:true,
                 checkbox:false,
                 pid_order:'desc',
-                os_path:'imgs',
-                file_anchor_id:'file_anchor_4_pic'
-            },
-            {
-                item_type:'field',
-                hidden:true,
-                id:'file_anchor_4_pic'
-            }
+                os_path:'imgs'
+            } 
             ]
         }, {
             title:i18n.delete_activity,

@@ -268,7 +268,6 @@ function specialCodeRoute(node,category,opcode)
                         new Act({edit_type:'edit',table:'nanx_activity_field_public_display_cfg',code:'NANX_TBL_DATA',showwhere:'autowin',wintitle:i18n.title_setdisplycfg,host:null});
                         }
                 }
-
           return common_fn;
 }
 
@@ -285,11 +284,8 @@ function  getMenuItemHandler(node,category,opcode,alt_win_id)
       var common_fn=specialCodeRoute(node,category,opcode);
       return common_fn;
     }
-    
-
     var common_fn=function(){
-           
-            var opform=Fb.backendForm(category,opcode,node);
+              var opform=Fb.backendForm(category,opcode,node);
               var wincfg={
                  category:category,
                  opcode:opcode, 

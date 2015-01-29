@@ -84,15 +84,9 @@ Act.prototype.init_all = function(cfg) {
     if (cfg.hasOwnProperty('pic_url')) {
         this.pic_url = cfg.pic_url;
     }
-  
-  if (cfg.hasOwnProperty('file_anchor_id')) {this.file_anchor_id = cfg.file_anchor_id; }
-  
     if (cfg.hasOwnProperty('win_size_height')) {this.win_size_height = cfg.win_size_height; }
-
     if (cfg.hasOwnProperty('gridTitle')) {this.gridTitle = cfg.gridTitle; }
-    
     if (cfg.hasOwnProperty('pid_order')) {this.pid_order = cfg.pid_order; }
-    
     if (cfg.hasOwnProperty('tbar_type')) {
      } 
     else{
@@ -187,7 +181,6 @@ Act.prototype.createActivityGridPanel=function(){
         hideHeaders:this.hideHeaders,
         bodyBorder:true,
         columnLines:true,
-        file_anchor_id:this.file_anchor_id,
         trackMaskOver:true,
         cm:this.getColModel(),
         file_type:this.file_type,
@@ -222,11 +215,12 @@ Act.prototype.createActivityGridPanel=function(){
                 }           
             },
             beforeedit:function(col){
+                console.log(this);
                 if (col.field=='pid'){
                     return false;
                 }
 
-                if (this.id=='x_grid_for_dnd'|| this.media=='img' ){
+                if (this.id=='x_grid_for_dnd'|| this.file_type=='img'||this.id=='grid_FILE' ){
                     return false;
                 }
 
@@ -314,13 +308,7 @@ Act.prototype.handleAfterEdit=function(row) {
  
          
 Act.prototype.handleCellClick=function(grid,rowIndex,columnIndex,e){
-    if (grid.file_type=='img') {
-         var src=Fb.getFileValue(grid, rowIndex, columnIndex);
-         var file_anchor=Ext.getCmp(this.file_anchor_id);
-         file_anchor.setValue(src.filename);
-         grid.stopEditing();
-      return false;
-    }
+    if (grid.file_type=='img') {return;}
      
     if (grid.id=='grid_NANX_TBL_INDEX') {
         if (columnIndex==3){
@@ -1562,7 +1550,6 @@ Act.prototype.getBtns=function(){
     if (this.cfg.tbar_type=='file_php'||this.cfg.tbar_type=='file_img'||this.cfg.tbar_type=='file_js'){
         this.btns=this.getFileBasedBtns();
     }
-
 }
 
 
@@ -1583,8 +1570,6 @@ Act.prototype.getFileBasedBtns=function(){
                 that.setLogo(a.findParentByType('grid') || a.findParentByType('editorgrid'))
             }
         });
-    
-
         }
 
         public_btns.push({
@@ -1673,7 +1658,7 @@ Act.prototype.uploadFile=function(grid){
     var category='medias';
     var opcode='upload_file';
     view_file_fun=getMenuItemHandler(vnode,category,opcode,Ext.id());
-    view_file_fun();    
+    view_file_fun();
 }
 
 Act.prototype.editFile=function(grid){
@@ -2028,9 +2013,7 @@ Act.prototype.autoSizeColumn = function(colindex,header,dataIndex,asPic){
 Act.prototype.actionWin = function(type,form,wincfg){
      
     var  runStandSqlActivity=function(){
-        
         new Act({'edit_type':'noedit','code': 'NANX_SQL_ACTIVITY',  'showwhere': 'autowin', 'host': null });
-
     };
 
     if(type=='add'||type=='update'||type=='batch')
@@ -2066,8 +2049,6 @@ Act.prototype.actionWin = function(type,form,wincfg){
         if (wincfg.opcode=='run_sql'){form.extra_fn=runStandSqlActivity;}
         form=Fb.formBuilder(form,wincfg.opcode);
       }
-
-
     
       if(wincfg&&wincfg.althandler){
        var afterClick=wincfg.althandler;
