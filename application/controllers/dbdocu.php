@@ -35,13 +35,52 @@ table td{
 
 	}
 
+   function t2(){
+ 	$webroot = $this->config->item('webroot');
+   $c= "\$i18n=\"{a:'name',sex:'22'}\";" ;
+   
+   $this->load->helper('file');
+
+   $cjs = $webroot . '/js/language/zh-cn/i18n.js';
+
+
+   $string ='$'. read_file($cjs ) .';';
+   
+   
+
+
+   echo $string;
+  
+    eval($string);
+    
+
+   echo $c;
+    
+   eval($c);
+   
+
+
+   $dd=  json_encode($i18n);
+   var_dump( $dd );
+   
+   var_dump( json_decode($dd) );
+
+   $xx=array( 'a'=>'name','sex'=>'22'  ) ;
+
+   $a=json_encode($xx);
+   var_dump($a);
+
+   $p=json_decode($a);
+
+   debug($p);
+
+
+
+   }
+
 	function test() {
 
 		$tables = $this->db->list_tables();
-
-//select table_name,table_comment FROM information_schema.`TABLES` T where  table_name='activity' ;
-
-//SELECT  C.`COLUMN_NAME`, C.`COLUMN_COMMENT`  FROM information_schema.`COLUMNS` C where  table_schema='kx1000'  and  table_name='activity';
 
 		foreach ($tables as $table) {
 			$tab_info         = array();
@@ -70,7 +109,9 @@ table td{
 
 	function lang_js() {
 		$this->load->helper('file');
-		//$this->config->item('item name');
+
+		echo "/js/language/en/i18n.js  与 /js/language/zh-cn/i18n.js 比较: <br/>";
+		
 
 		$webroot = $this->config->item('webroot');
 		$ejs     = $webroot . '/js/language/en/i18n.js';
@@ -104,7 +145,12 @@ table td{
 		debug($e_arr);
 		debug($c_arr);
 		$diff = array_diff($e_arr, $c_arr);
+
+		echo "中文缺少:";
 		debug($diff);
+
+        echo "英文缺少:";
+
 		$diff = array_diff($c_arr, $e_arr);
 		debug($diff);
 
@@ -118,55 +164,30 @@ table td{
 	}
 
 	function lang_php() {
-		$this->load->helper('file');
-		//  //$config['webroot']  = '/Library/WebServer/Documents/cloud/standx/';
 
+		echo " /application/language/en/messages_lang.php  与 /application/language/zh-cn/messages_lang.php 比较: <br/>";
 		$webroot = $this->config->item('webroot');
+        require( $webroot . '/application/language/en/messages_lang.php' );
+        $e_config=$lang;
+        $e_arr=array_keys($e_config);
+        debug($e_arr);
+        unset($lang);
+        require( $webroot . '/application/language/zh-cn/messages_lang.php' );
+        $c_config=$lang;
+        $c_arr=array_keys($c_config);
+        debug($c_arr);
 
-		$e     = fopen($webroot . '/application/language/en/messages_lang.php', 'r');
-		$e_arr = array();
-		while (!feof($e)) {
-			$line = fgets($e);
-			$line = str_replace('<?php', '', $line);
-			$line = str_replace('?>', '', $line);
-			if (strpos($line, 'lang[') == true) {
-				$kv      = explode("=", $line);
-				$key     = $kv[0];
-				$key     = str_replace('$lang[', '', $key);
-				$key     = str_replace(']', '', $key);
-				$key     = str_replace("'", '', $key);
-				$key     = str_replace("'", '', $key);
-				$e_arr[] = $key;
-			}
-		}
-
-		debug($e_arr);
-		$c     = fopen($webroot . '/application/language/zh-cn/messages_lang.php', 'r');
-		$c_arr = array();
-		while (!feof($c)) {
-			$line = fgets($c);
-			$line = str_replace('<?php', '', $line);
-			$line = str_replace('?>', '', $line);
-			if (strpos($line, 'lang[') == true) {
-				$kv      = explode("=", $line);
-				$key     = $kv[0];
-				$key     = str_replace('$lang[', '', $key);
-				$key     = str_replace(']', '', $key);
-				$key     = str_replace("'", '', $key);
-				$key     = str_replace("'", '', $key);
-				$c_arr[] = $key;
-			}
-		}
-
-		debug($c_arr);
-		$diff = array_diff($e_arr, $c_arr);
-		debug($diff);
 		$diff = array_diff($c_arr, $e_arr);
-		debug($diff);
-
+        echo "中文缺少:";
+        debug($diff);
+        
+        $diff = array_diff($e_arr, $c_arr);
+        echo "英文缺少:";
+        debug($diff);
+        
+		
 		$sql = "select  concat('cp  en/messages_lang.php   ',id,'/messages_lang.php   ' ) as vv from  nanx_lang where id not in ('en','zh-cn');";
 		$bat = $this->db->query($sql)->result_array();
-		//debug($bat);
 		foreach ($bat as $cp) {
 			echo $cp['vv'] . "<br/>";
 		}
