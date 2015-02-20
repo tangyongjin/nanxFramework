@@ -52,7 +52,7 @@ $db['default']['hostname'] = '127.0.0.1';
 $db['default']['username'] = 'root';
 $db['default']['password'] = '';
 
-$db['default']['database'] = 'nanx_master';
+$db['default']['database'] = 'nanx';
 
 $db['default']['dbdriver'] = 'mysql';
 $db['default']['dbprefix'] = '';
