@@ -34,7 +34,7 @@ HTMLEditor = Ext.extend(Ext.form.HtmlEditor, {
 					if (!imgform.form.isValid()) {return;}
 					imgform.form.submit({
 						waitMsg : '正在上传......',
-						url : URL_ROOT+'index.php/pic/upload',
+						url : BASE_URL+'index.php/pic/upload',
 						success : function(form, action) 
 						{
 							var element = document.createElement("img");
@@ -84,7 +84,7 @@ HTMLEditor = Ext.extend(Ext.form.HtmlEditor, {
 		HTMLEditor.superclass.createToolbar.call(this, editor);
 		this.tb.insertButton(16, {
 					cls : "x-btn-icon",
-					icon : URL_ROOT+"imgs/picture.png",
+					icon : BASE_URL+"imgs/picture.png",
 					handler : this.addImage,
 					scope : this
 				});

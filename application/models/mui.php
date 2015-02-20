@@ -13,6 +13,7 @@ class MUI extends CI_Model
      'jslib/jquery/jquery-1.7.1.min.js',
      'jslib/jquery/country.js',
      'js/login.js',
+     'js/fixheight.js',
      'js/globalvars.js',
      'js/jquery.reveal.js')
   ),
@@ -40,6 +41,7 @@ class MUI extends CI_Model
         'js/activity_curd.js',
         'js/backend/backend_tree_tab_cfg.js',
         'js/fb.js', 
+        'js/fixheight.js',
         'js/event_list.js', 
         'js/boot.js')
   ),
@@ -130,7 +132,7 @@ class MUI extends CI_Model
    
  function getActionBlock($acts)
 	{
-		$left= '<div id="cpanel-left"  class="cpanel-left"><div class="cpanel">';
+		$left= '<div  id="cpanel-left" class="cpanel-left"><div class="cpanel">';
 		$divs = '';
 		foreach($acts as $one_activity)
 		{
@@ -196,7 +198,7 @@ class MUI extends CI_Model
 	   
 	    if($act_type=='url')
      { 
-     	 $url= $base_url . "/index.php/".$data['url_for_get_cfg'];
+     	 $url= $base_url . "/index.php/".$data['service_url'];
      	 $onclick="alert('$url')";
      	 $onediv = " 
             <div class='icon'  onClick=$onclick>  
@@ -213,7 +215,7 @@ class MUI extends CI_Model
      	 $memo="'".$this->lang->line('service_memo').":".$data['memo']."'";
      	 $onediv = " 
             <div class='icon'>  
-              <a href=# class='nanx-4-ext' activity_type='service' memo=$memo  id=$acode  url_for_get_cfg=$url>
+              <a href=# class='nanx-4-ext' activity_type='service' memo=$memo  id=$acode  service_url=$url>
                 <img src='$base_url/imgs/{$data['pic_url']}'/>
                 <span>{$data['grid_title']}</span>
               </a>
@@ -225,7 +227,7 @@ class MUI extends CI_Model
      	 $url=$data['service_url'];
      	 $onediv = " 
             <div class='icon'>  
-              <a href=# class='nanx-4-ext' activity_type='sql' id=$acode  url_for_get_cfg=$url>
+              <a href=# class='nanx-4-ext' activity_type='sql' id=$acode  service_url=$url>
                 <img src='$base_url/imgs/{$data['pic_url']}'/>
                 <span>{$data['grid_title']}</span>
               </a>
@@ -241,7 +243,7 @@ class MUI extends CI_Model
 	{
 		$sql = 'select distinct jsfile ,function_name  from nanx_activity_js_btns where jsfile is not null and length(jsfile)>3
 		        union 
-		        select distinct extra_js as jsfile,url_for_get_cfg as function_name from nanx_activity where activity_type="js" ';
+		        select distinct extra_js as jsfile,service_url as function_name from nanx_activity where activity_type="js" ';
 		$query = $this->db->query($sql);
 		$js = $query->result_array();
 		$js = array_retrieve($js, array('jsfile','function_name'));
@@ -285,10 +287,16 @@ class MUI extends CI_Model
      if (!empty($user)) {
      	   $s=$this->session->all_userdata();
          $staff_name        = $this->session->userdata('staff_name');
+         $inner_table_value        = $this->session->userdata('inner_table_value');
+         $inner_table_column       = $this->session->userdata('inner_table_column');
+          
+         
          date_default_timezone_set('PRC');
-         $date=date('Y年-m月-d日');
          $current_user_info ="<a class=tbar_a href=# id=userpanel>$user/$staff_name</a>";
          $current_user_info.="<span style='display:none;' id=whoami>$user</span>"; 
+         $current_user_info.="<span style='display:none;' id=inner_table_value>$inner_table_value</span>"; 
+         $current_user_info.="<span style='display:none;' id=inner_table_column>$inner_table_column</span>"; 
+         
          $sms_info =    '<a class=tbar_a  href=# id=send_sms>'.$this->lang->line('sms').'</a>';
          
          

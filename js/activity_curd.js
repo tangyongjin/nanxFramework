@@ -70,10 +70,12 @@ Act.prototype.init_all = function(cfg) {
     this.border = cfg.hasOwnProperty('border') ? cfg.border : false;
     this.scroable = cfg.hasOwnProperty('scroable') ? cfg.scroable : false;  
     this.nosm = cfg.hasOwnProperty('nosm')?cfg.nosm:false;     
+    this.file_type = cfg.hasOwnProperty('file_type')?cfg.file_type:'normal'; 
+    this.os_path = cfg.hasOwnProperty('os_path')?cfg.os_path:'/'; 
+        
+    this.single_selection = cfg.hasOwnProperty('singleSelect')?cfg.singleSelect:false;     
     this.grid_h = cfg.hasOwnProperty('grid_h') ? cfg.grid_h:null;
-     
-       
-    this.getCfgUrl = AJAX_ROOT + 'activity/getActCfg';
+    this.getActCfgUrl = AJAX_ROOT + 'activity/getActCfg';
     this.excelUrl = AJAX_ROOT + 'grid2excel/index';
     this.deletedPIDs = [];
     if (cfg.hasOwnProperty('renderto')) {
@@ -82,25 +84,16 @@ Act.prototype.init_all = function(cfg) {
     if (cfg.hasOwnProperty('pic_url')) {
         this.pic_url = cfg.pic_url;
     }
-  
-  if (cfg.hasOwnProperty('file_anchor_id')) {
-        this.file_anchor_id = cfg.file_anchor_id;
-    }
-  
-    if (cfg.hasOwnProperty('win_size_height')) {
-        this.win_size_height = cfg.win_size_height;
-    }
-
-    if (cfg.hasOwnProperty('gridTitle')) {
-        this.gridTitle = cfg.gridTitle;
-    }
-    
-    if (cfg.hasOwnProperty('pid_order')) {
-        this.pid_order = cfg.pid_order;
-    }
-    
-    if (cfg.hasOwnProperty('nobtn')) {
-        this.gridTitle = cfg.nobtn;
+    if (cfg.hasOwnProperty('win_size_height')) {this.win_size_height = cfg.win_size_height; }
+    if (cfg.hasOwnProperty('gridTitle')) {this.gridTitle = cfg.gridTitle; }
+    if (cfg.hasOwnProperty('pid_order')) {this.pid_order = cfg.pid_order; }
+    if (cfg.hasOwnProperty('tbar_type')) {
+     } 
+    else{
+        cfg.tbar_type ='stand';
+        if(this.cfg.showwhere=='render_to_tabpanel'){
+           cfg.tbar_type='render_to_tabpanel';
+        }
     }
     if (cfg.hasOwnProperty('grid_id')) {
         this.grid_id = cfg.grid_id;
@@ -111,13 +104,19 @@ Act.prototype.init_all = function(cfg) {
 
 
 Act.prototype.setcfg = function(ret) {
+
     this.actcode = ret.activity_code;
     this.activity_type = ret.activity_type;
     this.table = ret.base_table;
     this.gridTitle = ret.grid_title;
     this.colsCfg = ret.colsCfg;
     this.layoutCfg = ret.layoutCfg;
+    this.whoami=ret.whoami;
+    this.who_is_who=ret.who_is_who;
+    this.owner_data_only=ret.owner_data_only?ret.owner_data_only:null;
+    this.sql_syntax_error=ret.sql_syntax_error?ret.sql_syntax_error:false;
     this.dataUrl = ret.data_url;
+    this.get_data_type=ret.get_data_type;
     this.pic_url = ret.pic_url;
     this.serviceUrl = ret.service_url;
     this.actBasedBtns = ret.activty_based_btns;
@@ -144,7 +143,7 @@ Act.prototype.showActivityWindow=function(){
     var that=this;
     var subcfg={};
     for (var p in this.cfg) {
-        if ((p !=='host')&&(p !=='callback')){
+        if ((p !=='host')&&(p !=='callback')&&(p!=='filter_field')&&(p!=='filter_value')){
             subcfg[p]=this.cfg[p];
         }
     }
@@ -152,7 +151,7 @@ Act.prototype.showActivityWindow=function(){
     var jsondata=Ext.encode(subcfg);
     WaitMask.show();
     Ext.Ajax.request({
-        url:that.getCfgUrl,
+        url:that.getActCfgUrl,
         jsonData:jsondata,
         callback:function(options,success,response){
             WaitMask.hide();
@@ -168,73 +167,11 @@ Act.prototype.showActivityWindow=function(){
     });
 };
 
-
-Act.Piccellmenu=function(grid, row, col, event) {
-                 event.stopEvent();
-                 var cellValue = Fb.getCellStr(grid, row, col);
-                 var src = Fb.getHtmlAttribute(cellValue, 'src');
-                 var menu = new Ext.menu.Menu({
-                     items: [
-                     {
-                         text: i18n.view_file,
-                         'iconCls': 'view_item',
-                         handler:function()
-                         {Fb.showPic(src);} 
-                     }, 
-                     {
-                         text: i18n.set_as_logo,
-                         'iconCls': 'view_item',
-                         handler: function(){
-                             var picname = src.split('/').pop();
-                             var fmv = {
-                                 rawdata: {
-                                     'opcode': 'set_logo',
-                                     'input_0': picname,
-                                     'key': 'COMPANY_LOGO'
-                                 }
-                             };
-                             Fb.ajaxPostData(AJAX_ROOT + 'nanx', fmv, function() {});
-                         }
-                     }, {
-                         text: i18n.download_file,
-                         'iconCls': 'download_item',
-                         handler: function() {
-                             //window.location.href = src;
-                             window.location = src;
-                             
-                         }
-                     }, {
-                         text: i18n.delete_file,
-                         'iconCls': 'remove_item',
-                         handler: function() {
-                             Ext.MessageBox.show({
-                                 title: i18n.delete_file,
-                                 msg: i18n.confirm_delete_file + '<br/>' + src + '&nbsp;?<br/><br/>' + "<img src='" + src + "' />",
-                                 buttons: Ext.Msg.YESNO,
-                                 fn: function(btn) {
-                                     if (btn == 'yes') {
-                                         var file_op_url = AJAX_ROOT + 'backend/deleteFile';
-                                         var file2del = {
-                                             'file': src
-                                         };
-                                         var succ = function() {
-                                           console.log(grid);
-                                           grid.getStore().reload();
-                                         };
-                                         Fb.ajaxPostData(file_op_url, file2del, succ);
-                                     }
-                                 }
-                             });
-                         }
-                     }]
-                 });
-                 menu.showAt(event.xy);
-}
-
-
              
 Act.prototype.createActivityGridPanel=function(){
-   
+    if (this.sql_syntax_error){
+        return;
+    }
     var that=this;
     var gridcfg={
         store:this.mainStore,
@@ -244,17 +181,19 @@ Act.prototype.createActivityGridPanel=function(){
         hideHeaders:this.hideHeaders,
         bodyBorder:true,
         columnLines:true,
-        file_anchor_id:this.file_anchor_id,
         trackMaskOver:true,
         cm:this.getColModel(),
+        file_type:this.file_type,
+        os_path:this.os_path,
         header:this.gridHeader,
         scroable:true,
         tbar:this.tBar,
         bbar:this.bBar,
         listeners:{
-            cellcontextmenu:Act.Piccellmenu,
             rowdblclick:function(grid,row,col){
-                if(this.id=='grid_PIC'){return;}
+                
+                if(this.file_type=='img'){return;}
+                
                 grid.getStore().each(function(item,idx){
                     grid.getSelectionModel().clearSelections();
                     grid.getSelectionModel().selectRow(row);
@@ -267,32 +206,28 @@ Act.prototype.createActivityGridPanel=function(){
             cellclick:that.handleCellClick,
             celldblclick:function(grid,row,col)
             {
-              
-               if(this.id=='grid_PIC')
+               if(this.file_type=='img')
                 {
-                    console.log(grid);
-                    console.log(row);
-                    console.log(col);
-                    
-                   var cellValue = Fb.getCellStr(grid, row, col);
-                   console.log(cellValue);
-                   var src = Fb.getHtmlAttribute(cellValue, 'src');
+                   var src = Fb.getFileValue(grid, row, col) ;
                    grid.stopEditing();
-                   Fb.showPic(src);
+                   Fb.showPic(src.filename);
                    return;
                 }           
-                
-                
             },
             beforeedit:function(col){
-                if ((this.id=='grid_NANX_SYS_CONFIG')&&(col.field=='config_key')){
-                    return false;
-                }
-                
-                if(this.id=='grid_PIC'){return false;}
-                
+                console.log(this);
                 if (col.field=='pid'){
                     return false;
+                }
+
+                if (this.id=='x_grid_for_dnd'|| this.file_type=='img'||this.id=='grid_FILE' ){
+                    return false;
+                }
+
+                if (this.id=='grid_NANX_SYS_CONFIG'){
+                  if( col.field=='config_key' || col.field=='config_memo' ||col.field=='memo_of_config_item'  ) {
+                    return false;
+                  }                
                 }
             },
             afteredit:function(row){
@@ -302,6 +237,7 @@ Act.prototype.createActivityGridPanel=function(){
     };
     
     if(!this.nosm){gridcfg.sm=this.sm;}
+
     this.gridPanel=(this.cfg.edit_type==='noedit')?new Ext.grid.GridPanel(gridcfg):new Ext.grid.EditorGridPanel(gridcfg);
     this.gridPanel.getStore().on('load',function(ds){
        this.autoHeader();
@@ -313,20 +249,24 @@ Act.prototype.createActivityGridPanel=function(){
             this.gridPanel.addListener(this.cfg.callback[i].event, this.cfg.callback[i].fn);
         }
     }
-    this.mainStore.load({
+        this.mainStore.addListener('load', function(store) {
+             var serverRet=store.reader.jsonData;
+             if( serverRet.hasOwnProperty('dbok'))
+             {
+              if(serverRet.dbok===false){
+                Ext.Msg.alert(i18n.error,i18n.sql_syntax_error+':<br/>'+serverRet.sql+'<br/>SQLcode:'+ serverRet.sql_code+'<br/>SQlmsg:'+serverRet.sql_error_msg);
+              }
+             }
+        });
+
+
+       this.mainStore.load({
         params:{
             start:0,
             limit:pageSize
         }
     });
 }
-
-Act.prototype.getGridPanel=function(){
-   console.log('called  getGridPanel');
-   console.log(this.cfg);
-   console.log(this.gridPanel);
-}
-
 
 
 Act.prototype.createActivityHtmlPanel=function(){
@@ -368,18 +308,7 @@ Act.prototype.handleAfterEdit=function(row) {
  
          
 Act.prototype.handleCellClick=function(grid,rowIndex,columnIndex,e){
- 
-    if (grid.id=='grid_PIC') {
-         var cellValue = Fb.getCellStr(grid, rowIndex, columnIndex);
-         var src=Fb.getHtmlAttribute(cellValue, 'src');   
-         console.log(src);
-         console.log(grid);
-         var file_anchor=Ext.getCmp(this.file_anchor_id);
-          console.log(file_anchor);
-         file_anchor.setValue(src);
-         grid.stopEditing();
-      return false;
-    }
+    if (grid.file_type=='img') {return;}
      
     if (grid.id=='grid_NANX_TBL_INDEX') {
         if (columnIndex==3){
@@ -399,9 +328,11 @@ Act.prototype.handleCellClick=function(grid,rowIndex,columnIndex,e){
 
 
 Act.prototype.createSM =function(){
-     
+    
+    var is_singleSelect = this.cfg.hasOwnProperty('singleSelect') ? this.cfg.singleSelect :false;
     var checksm=new Ext.grid.CheckboxSelectionModel({
         checkOnly:true,
+        singleSelect:is_singleSelect,
         listeners:{
             selectionchange:function(c){
                 if (['grid_NANX_TBL_DATA','grid_NANX_TBL_STRU','grid_NANX_TBL_INDEX'].indexOf(this.grid.id)==-1){
@@ -465,7 +396,7 @@ Act.prototype.editIndexCols=function(rowindex,a){
         opcode:'manage_index',
         node:{},
         width:550,
-        title:'<img src='+URL_ROOT+'imgs/thumbs/backop.png' + ' />&nbsp;'+i18n.manage_index,
+        title:'<img src='+BASE_URL+'imgs/thumbs/backop.png' + ' />&nbsp;'+i18n.manage_index,
         althandler:handler
     };
     this.actionWin('backend',opform,wincfg);
@@ -551,7 +482,7 @@ Act.prototype.getColModel=function(){
         var onecolModel=this.getOneColModel(this.colsCfg[i]);
         cols.push(onecolModel);
     }
-    var sm=this.createSM();
+    //var sm=this.createSM();
     var sm=this.sm;
     var check_col=[sm];
     var cols_array =this.with_checkbox_col?check_col.concat(cols):cols;
@@ -575,11 +506,6 @@ Act.prototype.getMainStore=function(){
 }
 
 Act.prototype.getStoreByService=function(){
-    if (this.dataUrl.length>0){
-        var url=this.dataUrl;
-    } else{
-        var url='activity/callerIncaller_data';
-    }
     var url_obj={};
     for (p in this.cfg) {
         if ((p !=='host')&&(p !=='callback')){
@@ -587,6 +513,15 @@ Act.prototype.getStoreByService=function(){
         }
     }
     url_obj.serviceUrl=this.serviceUrl;
+    var url=this.dataUrl;
+
+    if(this.get_data_type=='model'){
+        url='dataproxy/index/';
+        url_obj.getDataUrl=this.dataUrl;
+    }
+
+
+
     var ds = new Ext.data.JsonStore({
         proxy: new Ext.data.HttpProxy({
             url:AJAX_ROOT+url,
@@ -622,19 +557,45 @@ Act.prototype.getStoreBySql=function(){
     return ds;
 }
 
+
+
+Act.prototype.filter2QueryCfg=function(cfg)
+{
+  var querycfg=null;   
+  if(cfg.filter_field){
+    var querydata={};
+    querydata['field_0']=cfg.filter_field;
+    querydata['operator_0']='=';
+    querydata['and_or_0']='and';
+    querydata['vset_0']=cfg.filter_value;
+    querycfg={
+            count:1,
+            lines:querydata
+          }
+    }
+   return querycfg;
+}
+
+
 Act.prototype.getStoreByTableAndField=function(basetable,fields,cfg){
+    var whoami=this.whoami;
+    
     if (this.pid_order) {
         var pid_order = this.pid_order.pid_order;
     } else {
         pid_order = 'asc';
     }
+    var querycfg=this.filter2QueryCfg(cfg);
     var table_query_obj={
         table:basetable,
         code:this.actcode,
+        whoami:this.whoami,
+        who_is_who:this.who_is_who,
+        owner_data_only:this.owner_data_only,
         pid_order:pid_order,
-        filter_field:(cfg.filter_field)?cfg.filter_field:null,
-        filter_value:(cfg.filter_value)?cfg.filter_value:null
+        query_cfg:querycfg
     };
+
     var table_query_json=Ext.encode(table_query_obj);
     var ds=new Ext.data.JsonStore({
         proxy:new Ext.data.HttpProxy({
@@ -667,7 +628,6 @@ Act.prototype.getStoreByTableAndField=function(basetable,fields,cfg){
 
 Act.prototype.insertQueryLine=function(table,holderid){
     var field_def=[];
-    console.log(this.colsCfg);
     for (var i=0;i<this.colsCfg.length;i++){
         field_def.push([this.colsCfg[i].field_e, this.colsCfg[i]['display_cfg'].field_c, this.colsCfg[i]['editor_cfg'].datetime]);
     }
@@ -791,7 +751,7 @@ Act.prototype.insertQueryLine=function(table,holderid){
     });
 
     var btn_remove=new Ext.Button({
-        text:i18n.remvoe,
+        text:i18n.remove,
         disabled:lines==0?true:false,
         style:{
             'margin-left': '10px'
@@ -824,6 +784,11 @@ Act.prototype.insertQueryLine=function(table,holderid){
 }
 
 
+
+ 
+
+
+
 Act.prototype.getPublicBtns=function(){
     var that=this;
     var public_btns=[];
@@ -837,7 +802,7 @@ Act.prototype.getPublicBtns=function(){
             },
             ctCls:'x-btn-over',
             handler:function(){
-                that.addData(that)
+                that.addData()
             }
         });
     }
@@ -932,7 +897,6 @@ Act.prototype.getQueryBtn = function(){
 
 
 Act.prototype.getSerachPanel=function(table,storeId,winid){
-    console.log(storeId);
     var that=this;
     var btn_add=new Ext.Button({
         text:i18n.addquerylien,
@@ -979,12 +943,19 @@ Act.prototype.getSerachPanel=function(table,storeId,winid){
                 count:condition_rows.length,
                 lines:puredata
             };
-            ds.reload();
-            delete ds.proxy.conn.jsonData.query_cfg;
+
+
+            ds.load({
+                params:{
+                    start:0,
+                    limit:pageSize
+                }
+            });
+            delete ds.proxy.conn.jsonData.nanx_query_cfg;
         }
     });
 
-    var btn_close = new Ext.Button({
+    var btn_close_query = new Ext.Button({
         text:i18n.close,
         iconCls:'n_close',
         style:{
@@ -992,6 +963,15 @@ Act.prototype.getSerachPanel=function(table,storeId,winid){
         },
         listeners:{
             'click':function(){
+                var qb=Ext.getCmp('query_builder');
+
+                var hostwin=qb.ownerCt;
+                var hostgrid=hostwin.findByType('grid');
+                var hoststore=hostgrid[0].getStore();
+
+                hoststore.reload();
+
+
                 Ext.getCmp('query_builder').hide();
                 var gp=Ext.getCmp(winid).findByType('panel');
                 gp[2].setHeight(gp[2].getHeight() + 100);
@@ -1001,15 +981,15 @@ Act.prototype.getSerachPanel=function(table,storeId,winid){
     });
 
 
-    var btn3=new Ext.Container({
+    var btn_search_bar=new Ext.Container({
         layout:'table',
         height:30,
-        items:[btn_add, execute, btn_close]
+        items:[btn_add, execute, btn_close_query]
     });
 
     var pnl=new Ext.FormPanel({
         id:'nanx_query_holder',
-        items:[btn3]
+        items:[btn_search_bar]
     });
 
     var sp=new Ext.Panel({
@@ -1128,7 +1108,10 @@ Act.prototype.buildTopToolbar_backend=function(){
 }
 
 
-Act.prototype.getLayoutedForms=function(layoutCfg,optype,row){
+Act.prototype.getLayoutedForms=function(total_cfg,optype,row){
+    
+    var layoutCfg=total_cfg.layoutCfg;
+    var whoami_cfg={whoami:total_cfg.whoami,who_is_who:total_cfg.who_is_who,owner_data_only:total_cfg.owner_data_only };
     var all_lines=[];
     var max_col=0;
     var line_width=0;
@@ -1147,7 +1130,7 @@ Act.prototype.getLayoutedForms=function(layoutCfg,optype,row){
                     }
                 }
  
-                var item_one=Fb.getFieldEditor(optype,colsCfg_found,row);
+                var item_one=Fb.getFieldEditor(optype,colsCfg_found,row,whoami_cfg);
                 if (item_one){
                     var tmp={};
                     tmp.layout='form';
@@ -1218,27 +1201,19 @@ Act.prototype.getLayoutWidth=function(x)
   return w;
 }
 
-Act.prototype.addData=function(curdObj){
+Act.prototype.addData=function( ){
     var that=this;
     if (Ext.getCmp('add_win')){
         Ext.getCmp('add_win').close();
     }
-
-    if ((curdObj.cfg)&&(curdObj.cfg.col)){
-        var default_cfg={
-            col:curdObj.cfg.col,
-            default_value:curdObj.cfg.value
-        };
-    } else{
-        var default_cfg=null;
-    }
     this.fixLayout('add');
-    var x=this.getLayoutedForms(this.layoutCfg,'add',null);
-    var w=this.getLayoutWidth(x);
+
+    var x=this.getLayoutedForms(this,'add',null);
+    var width=this.getLayoutWidth(x);
     var add_form = new Ext.form.FormPanel({
         xtype:'form',
         id:'add_form',
-        width:w,
+        width:width,
         table:this.table,
         actcode:this.actcode,
         fileUpload:true,
@@ -1266,7 +1241,7 @@ Act.prototype.editData=function(btn){
         return false;
     }
     this.fixLayout('update');
-    var x=this.getLayoutedForms(this.layoutCfg, 'update', userRecord[0]);
+    var x=this.getLayoutedForms(this, 'update', userRecord[0]);
     var w=this.getLayoutWidth(x)*1.0;
     var updateForm =new Ext.form.FormPanel({
         xtype:'form',
@@ -1304,12 +1279,13 @@ Act.prototype.batchUpdate=function(btn){
         'field_list': btn.op_field,
         'row':0
     }];
-    var x = this.getLayoutedForms(this.layoutCfg,'update',userRecord[0]);
+    
+
+    var x = this.getLayoutedForms(this,'update',userRecord[0]);
     var pids_batch = [];
     for (var i = 0; i < len; i++) {
         pids_batch.push(userRecord[i].get('pid'));
     }
-    console.log(pids_batch);
     var helper_btns = that.getbatchHelpBtns(btn.op_field);
     var batchForm = new Ext.form.FormPanel({
         xtype:'form',
@@ -1340,6 +1316,8 @@ Act.prototype.batchUpdate=function(btn){
 }
 
 
+
+ 
 Act.prototype.delData=function(btn){
     var that=this;
     var host_grid_id=btn.ownerCt.ownerCt.id;
@@ -1404,13 +1382,17 @@ Act.prototype.getbatchHelpBtns=function(opfield){
 }
 
 Act.prototype.writeExcel=function(btn,e){
+
+    var querycfg=this.filter2QueryCfg(this.cfg);
     var girdtitle = this.gridTitle;
     var excel_cfg={
         code:this.cfg.code,
         table:this.table,
-        filter_field:this.cfg.col||'',
-        filter_value:this.cfg.value||'',
         transfer:btn.transfer,
+        whoami:this.whoami,
+        query_cfg:querycfg,
+        who_is_who:this.who_is_who,
+        owner_data_only:this.owner_data_only,
         activity_type:this.activity_type,
         excel_name:(this.actcode=="NANX_TBL_DATA")?this.table:girdtitle
     };
@@ -1544,6 +1526,7 @@ Act.prototype.cancelTableModifications=function(btn,e){
     var a = grid.getTopToolbar();
     a.get(1).disable();
 }
+
 Act.prototype.getModifiedFieldsValue=function(changedrows){
     var modified_kv=[];
     for (var i=0;i<changedrows.length;i++){
@@ -1559,13 +1542,182 @@ Act.prototype.getModifiedFieldsValue=function(changedrows){
 }
  
 Act.prototype.getBtns=function(){
+     console.log(this.cfg);
+    if (this.cfg.tbar_type=='stand'){
+        this.btns=this.getStandBtns();
+    }
+
+    if (this.cfg.tbar_type=='file_php'||this.cfg.tbar_type=='file_img'||this.cfg.tbar_type=='file_js'){
+        this.btns=this.getFileBasedBtns();
+    }
+}
+
+
+Act.prototype.getFileBasedBtns=function(){
+    var that=this;
+    var public_btns=[];
+    console.log(this.cfg);
+        if (this.cfg.file_type=='img'){
+        public_btns.push({
+            text:i18n.set_as_logo,
+            iconCls:'view_item',
+            style:{
+                marginRight: '6px'
+            },
+            ctCls:'x-btn-over',
+            id:'pub_upload',
+            handler:function(a){
+                that.setLogo(a.findParentByType('grid') || a.findParentByType('editorgrid'))
+            }
+        });
+        }
+
+        public_btns.push({
+            xtype:'button',
+            text:i18n.upload_file,
+            iconCls:'n_add',
+            style:{
+                marginRight:'6px'
+            },
+            ctCls:'x-btn-over',
+            handler:function(a){
+            that.uploadFile(a.findParentByType('grid') || a.findParentByType('editorgrid'))
+
+            }
+        });
+    
+        public_btns.push({
+            text:i18n.view_or_edit,
+            iconCls:'n_edit',
+            style:{
+                marginRight: '6px'
+            },
+            ctCls:'x-btn-over',
+            id:'pub_edit',
+            handler:function(a){
+                that.editFile(a.findParentByType('grid') || a.findParentByType('editorgrid'))
+            }
+        });
+    
+        public_btns.push({
+            text:i18n.delete_file,
+            iconCls:'n_del',
+            style:{
+                marginRight:'6px'
+            },
+            ctCls:'x-btn-over',
+            handler:function(a){
+                that.delFile(a.findParentByType('grid') || a.findParentByType('editorgrid'))
+            }
+        });
+    return public_btns;
+}
+
+
+Act.prototype.getMediaGridValue=function(grid){
+     var selected=[];
+     if(grid.getXType()=='grid')
+     {
+            var userRecord=grid.getSelectionModel().getSelections();
+            var len=userRecord.length;
+            for (var i = 0; i < userRecord.length; i++) {
+                selected.push(userRecord[i].get('Filename')); 
+            };
+  
+     }else  
+      {
+       if(grid.getSelectionModel().selection){
+            var cell= Fb.getFileValue(grid,grid.getSelectionModel().selection.cell[0],grid.getSelectionModel().selection.cell[1]);
+            selected.push(cell.filename);
+       }
+     }
+    return selected;     
+}
+
+Act.prototype.setLogo=function(grid){
+      var meida_value=this.getMediaGridValue(grid);
+      if(meida_value.length==0){
+                Ext.Msg.alert(i18n.alert,i18n.choose_atleast_one_record);
+                return false;
+      }
+
+      var picname = meida_value[0].split('/').pop();
+      var fmv = {
+             rawdata: {
+                 'opcode': 'set_logo',
+                 'input_0': picname,
+                 'key': 'COMPANY_LOGO'
+             }
+         };
+     Fb.ajaxPostData(AJAX_ROOT + 'nanx', fmv, function() {});
+}
+
+Act.prototype.uploadFile=function(grid){
+    var os_path=this.cfg.os_path;
+    var vnode={attributes:{os_path:os_path,file_type:this.cfg.file_type}};
+    var category='medias';
+    var opcode='upload_file';
+    view_file_fun=getMenuItemHandler(vnode,category,opcode,Ext.id());
+    view_file_fun();
+}
+
+Act.prototype.editFile=function(grid){
+    var os_path=this.cfg.os_path;
+    var meida_value=this.getMediaGridValue(grid);
+     if(meida_value.length==0){
+                Ext.Msg.alert(i18n.alert,i18n.choose_atleast_one_record);
+                return false;
+     }
+
+     if (grid.file_type=='img'){
+          Fb.showPic(meida_value[0]);
+     }
+        else
+        {
+          var vnode={attributes:{os_path:os_path,text:meida_value[0],value:meida_value[0]}};
+          var category='js_file';
+          var opcode='update_file_content';
+          view_file_fun=getMenuItemHandler(vnode,category,opcode,Ext.id());
+          view_file_fun();    
+        }
+}
+
+Act.prototype.delFile=function(grid){
+    var os_path=this.cfg.os_path;
+    var meida_value=this.getMediaGridValue(grid);
+    if(meida_value.length==0){
+                Ext.Msg.alert(i18n.alert,i18n.choose_atleast_one_record);
+                return false;
+     }
+
+    Ext.Msg.confirm(i18n.confirm,i18n.really_delete+"?",function(btn){
+        var file_to_del=[];
+        if (btn=='yes'){
+            var files_to_del=[];
+            for (var i=0;i<meida_value.length;i++){
+                    files_to_del.push({ os_path:os_path,filename:meida_value[i]});
+            }
+            var del_data={
+                'cmd':'delete',
+                'files':files_to_del
+            };
+            var succ=function(){
+                 grid.getStore().load();
+            }
+            Fb.ajaxPostData(AJAX_ROOT+'file/deleteFile',del_data,succ);
+        }
+    });
+}
+
+
+Act.prototype.getStandBtns=function(){
+    console.log(this.cfg);
     var publicBtns=this.getPublicBtns();
     var rowBasedActBtns=this.getRowBasedActBtns();
     var jsBtns=this.getJsBtns();
     var batchBtns=this.getBatchBtns();
-    this.btns=publicBtns.concat(rowBasedActBtns,jsBtns,batchBtns);
+    return  publicBtns.concat(rowBasedActBtns,jsBtns,batchBtns);
 }
-
 
 Act.prototype.getRowBasedActBtns=function(){
     var that=this;
@@ -1660,14 +1812,27 @@ Act.prototype.rowBasedActivityHandler=function(btn){
 }
 
 Act.prototype.getTbar=function(){
-    if (this.cfg.nobtn){
+    
+
+    if (this.cfg.tbar_type=='hide'){
         return null;
     }
-    if (this.cfg.showwhere=='autowin'){
+    if (this.cfg.tbar_type=='stand'){
         var bar=this.btns;
-    } else{
-        var bar=this.buildTopToolbar_backend();
     }
+    if (this.cfg.tbar_type=='render_to_tabpanel'){
+         var bar=this.buildTopToolbar_backend();
+    }
+
+    if (this.cfg.tbar_type=='file_php'||this.cfg.tbar_type=='file_js'){
+        var bar=this.btns;
+    }
+    
+    if (this.cfg.tbar_type=='file_img'){
+        var bar=this.btns;
+    }
+    
+     
     return bar;
 }
 
@@ -1688,6 +1853,7 @@ Act.prototype.getRefreshButtonGroup=function(){
         items:[b]
     }]
 }
+
 Act.prototype.refreshCurrentPage=function(){
     this.gridPanel.getStore().rejectChanges();
     this.paginator.doRefresh();
@@ -1718,7 +1884,13 @@ Act.prototype.getBbar=function(){
     });
 };
 Act.prototype.showWindow = function(){
-    var title ='<img src='+URL_ROOT+'imgs/thumbs/'+this.pic_url+' />&nbsp;'+this.gridTitle;
+    if (this.sql_syntax_error){
+        Ext.MessageBox.minWidth=250;
+        Ext.Msg.alert(i18n.error,i18n.sql_syntax_error);
+        return;
+    }
+
+    var title ='<img src='+BASE_URL+'imgs/thumbs/'+this.pic_url+' />&nbsp;'+this.gridTitle;
     if (this.cfg.wintitle){
         var title=this.cfg.wintitle;
     }
@@ -1728,6 +1900,7 @@ Act.prototype.showWindow = function(){
     var win_h=this.win_size_height||this.cfg.height;
 
     if (this.cfg.showwhere=='autowin'){
+        this.cfg.tbar_type='stand';
         this.gridPanel.height=win_h * 1.0 - 34;
         var winid = 'win_' + this.actcode;
         if (!Ext.getCmp(winid)){
@@ -1766,29 +1939,29 @@ Act.prototype.showWindow = function(){
         this.cfg.host.doLayout();
     }
 
-    if (this.cfg.showwhere == 'container'  )
- {
-      this.gridPanel.getTopToolbar().hide();
-      if(!(this.cfg.grid_id=='grid_PIC'))
-        { 
-       this.gridPanel.getBottomToolbar().hide();
-        }
+   
+
+
+  if (this.cfg.showwhere == 'container'  )
+    {
+        //this.gridPanel.getTopToolbar().hide();
         var motherBoard = Ext.getCmp(this.renderto);
         var h=motherBoard.getHeight();
         this.gridPanel.setTitle(i18n.layout);
         this.gridPanel.render(this.renderto);
         this.gridPanel.setHeight(this.grid_h||h);
-        console.log(this);
     }
+
 }
  
 
 Act.prototype.autoHeader =function(){
-    if(this.gridPanel.id=='grid_PIC')
+    
+    if(this.gridPanel.file_type=='img')
     {
       for(var i=0;i<this.gridPanel.colModel.columns.length;i++)
       {
-          this.gridPanel.colModel.setColumnWidth(i,98);
+       this.gridPanel.colModel.setColumnWidth(i,98);
       }
      return;
     }
@@ -1838,6 +2011,11 @@ Act.prototype.autoSizeColumn = function(colindex,header,dataIndex,asPic){
 }
 
 Act.prototype.actionWin = function(type,form,wincfg){
+     
+    var  runStandSqlActivity=function(){
+        new Act({'edit_type':'noedit','code': 'NANX_SQL_ACTIVITY',  'showwhere': 'autowin', 'host': null });
+    };
+
     if(type=='add'||type=='update'||type=='batch')
       { 
         var that=this;
@@ -1848,7 +2026,7 @@ Act.prototype.actionWin = function(type,form,wincfg){
         form.extra_url=url;
         form.extra_fn=refresh;
       } 
-    else
+    else  //for backend window
       { 
         var refresh = function(){
             if (wincfg.node.parentNode){
@@ -1856,12 +2034,19 @@ Act.prototype.actionWin = function(type,form,wincfg){
             }
         };
         var id='back_op_win';
-        var backendUrl=Category.getMenuDefaultProcessor();
+
+        if (wincfg.hasOwnProperty('alt_id')){
+            id=wincfg.alt_id;
+        }
+        
+        var backendUrl=AppCategory.getBackendCrontroller();
         var url=wincfg.url?wincfg.url:AJAX_ROOT+backendUrl.controller+'/'+backendUrl.func_name;
         
-        var title ='<img src=' + URL_ROOT + 'imgs/thumbs/backop.png' + ' />&nbsp;'+wincfg.title;
+        var title ='<img src=' + BASE_URL+ 'imgs/thumbs/backop.png' + ' />&nbsp;'+wincfg.title;
         form.extra_url=url;
+        
         form.extra_fn=refresh;
+        if (wincfg.opcode=='run_sql'){form.extra_fn=runStandSqlActivity;}
         form=Fb.formBuilder(form,wincfg.opcode);
       }
     
@@ -1874,11 +2059,11 @@ Act.prototype.actionWin = function(type,form,wincfg){
       }
       
       form.on('render',function(){
-      var roots = form.find('nanx_type','root');
-      for(var i=0;i<roots.length;i++)
-      {
-        roots[i].getStore().load();
-      }
+          var roots = form.find('nanx_type','root');
+          for(var i=0;i<roots.length;i++)
+          {
+            roots[i].getStore().load();
+          }
       });
       
       var win_cfg={
@@ -1914,6 +2099,7 @@ Act.prototype.actionWin = function(type,form,wincfg){
 }
 
 Act.prototype.ConfirmBtnHandler=function(btn){
+
         var w=btn.findParentByType('window');
         var fm_array= w.findByType('form');
         var fm=fm_array[0];
@@ -1928,23 +2114,17 @@ Act.prototype.ConfirmBtnHandler=function(btn){
         Act.prototype.FormAction(fm);
         this.disable();
         return;
-        if (this.btntype=='add')
-        {
-            this.disable();
-        }
+
+        // if (this.btntype=='add')
+        // {
+        //     this.disable();
+        // }
 }
 
 Act.prototype.FormAction=function(form){
         var that=this;
-        console.log(form);
         if((form.uptasks==0)&&(form.upload_errcount==0))
         {
-          
-           console.log ('all finished ok,doning --->');
-           console.log (form.uptasks);
-           console.log(form.upload_errcount);
-           
-           
             var formData=Fb.getFormData(form);
             if (!formData){
                 return;
@@ -1957,7 +2137,6 @@ Act.prototype.FormAction=function(form){
             };
              if(!Ext.isEmpty(form.extra_url))
              {
-             console.log(form.extra_url);    
              Fb.ajaxPostData(form.extra_url,dataSend,form.extra_fn);
              }
         }
@@ -1977,16 +2156,23 @@ function Act_service(acode,service_url,memo){
         iconAlign:"left",
         width:90,
         handler:function(){
-            Ext.MessageBox.confirm(i18n.confirm,i18n.confirm_execute,function(btn){
+            Ext.Msg.confirm(i18n.confirm,i18n.confirm_execute,function(btn){
                 if (btn=='yes'){
                     WaitMask.show();
                     Ext.Ajax.request({
                         url: AJAX_ROOT + service_url,
                         success: function(response, opts) {
                             WaitMask.hide();
-                            Ext.Msg.alert(i18n.message, i18n.service_exec_done);
-                            var obj = Ext.decode(response.responseText);
-                            Ext.Msg.alert(i18n.message, obj.msg);
+                            if(response.responseText){
+                              var obj = Ext.decode(response.responseText);
+                              if(obj&& obj.msg){ Ext.Msg.alert(i18n.message,obj.msg);}
+                            }
+                            else
+                            {
+                              Ext.Msg.alert(i18n.message,i18n.service_exec_done);
+                            }
+                            
+
                         },
                         failure: function(response, opts) {
                             WaitMask.hide();

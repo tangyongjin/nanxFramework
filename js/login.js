@@ -33,29 +33,29 @@ function login(){
 }
 
  
-function resize()
-{
-    var viewHigh=$(window).height();
-    var viewWidth=$(window).width();
-    if (viewHigh<580){
-        viewHigh=580;
-    }
-    var height_header_footer=$("#border-top").height()+$("#footer").height();
-    $("#content-box").height(viewHigh - height_header_footer);
-    var margin_left=(viewWidth-550)/2 -15;
-    if (margin_left<0){
-        margin_left=2;
-    }
-    $("#login_main_form").css({
-        'margin-left': margin_left
-    });
-    $("#login_main_form").show();
-    fit_img('img_logo_150',"lock");
-}
+// function resize()
+// {
+//     var viewHigh=$(window).height();
+//     var viewWidth=$(window).width();
+//     if (viewHigh<580){
+//         viewHigh=580;
+//     }
+//     var height_header_footer=$("#border-top").height()+$("#footer").height();
+//     $("#content-box").height(viewHigh - height_header_footer);
+//     var margin_left=(viewWidth-550)/2 -15;
+//     if (margin_left<0){
+//         margin_left=2;
+//     }
+//     $("#login_main_form").css({
+//         'margin-left': margin_left
+//     });
+//     $("#login_main_form").show();
+//     fit_img('img_logo_150',"lock");
+// }
 
 function fit_img(imgid,divid){
     var divElem = $("#" + divid);
-    console.log(divElem);
+   
     var container_h = divElem.height();
     var container_w = divElem.width();
     var imgElem = $("#" + imgid);
@@ -118,10 +118,12 @@ $(document).ready(function(){
             }
         }
     });
-    $(window).resize(function(){
-        resize();
-    });
-    resize();
+
+    // $(window).resize(function(){
+    //     resize();
+    // });
+    // resize();
+
 });
 
   

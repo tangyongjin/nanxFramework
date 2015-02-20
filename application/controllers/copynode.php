@@ -5,6 +5,20 @@ if (!defined('BASEPATH'))
 class Copynode extends CI_Controller
 {
   
+  function index()
+    {
+        $post = file_get_contents('php://input');
+        $para = (array )json_decode($post);
+        $source=(array)$para['source'];
+        $target=(array)$para['target'];
+        $copy_paste_code=$source['category'].'_to_'.$target['category'];
+        $cfg = $this->src_dest_cfg();
+        $actcfg = $cfg[$copy_paste_code];
+        $this->paste($source,$actcfg);
+    }
+    
+
+
     function src_dest_cfg()
     {
      $cfg=array(
@@ -28,20 +42,11 @@ class Copynode extends CI_Controller
      return $cfg;
     } 
 
-    function index()
-    {
-        $post = file_get_contents('php://input');
-        $para = (array )json_decode($post);
-        $source=(array)$para['source'];
-        $target=(array)$para['target'];
-        $copy_paste_code=$source['category'].'_to_'.$target['category'];
-        $cfg = $this->src_dest_cfg();
-        $actcfg = $cfg[$copy_paste_code];
-        $this->paste($source,$actcfg);
-    }
     
     function paste($source,$cfg)
     {
+    
+
      $this->db->where($cfg['root_table_selector'],$source[$cfg['root_table_selector']]); 
      $seed=$this->db->get($cfg['root_table'])->result_array();
      $seed=$seed[0];
@@ -55,6 +60,9 @@ class Copynode extends CI_Controller
         $new_values[$field_to_set]= $new_value;
       }
      
+     $this->db->trans_start();
+     $trans_err_msg='';
+     $trans_err_code='';
      foreach($cfg['related_tables'] as  $related_table)
      {
         $this->db->where($hook_field,$hook);
@@ -67,25 +75,39 @@ class Copynode extends CI_Controller
               }
             reset($new_values);  
             $this->db->insert($related_table,$related_row);
+            $trans_err_msg.=$this->db->_error_message().'|';
+            $trans_err_code.=$this->db->_error_number().'|';
           }
-     }
+       }
      
+       $this->db->trans_complete();
        
+
+
+       if ($this->db->trans_status() === FALSE)
+        {
+              $success = false;
+              $errmsg=$trans_err_msg;
+              $errcode=$trans_err_code;
+              $this->db->trans_rollback();
+        }
+        else
+        {
+             $success = true;
+             $this->db->trans_commit();
+             $errcode=0;
+             $text =$this->lang->line('act_copy_success');
+             $errmsg='';  
+    }
+      
       
         $text =$this->lang->line('act_copy_success');
-        $success = true;
-        $sqlresult_code = $this->db->_error_number();
-        $errmsg = $this->db->_error_message();
-        if ($sqlresult_code > 0)
-        {
-            $success = false;
-        }
         $res = array(
             'success' => $success,
             'opcode' =>'activity_paste',
             'msg'=> $text,
-            'errcode' => $sqlresult_code,
-             'errmsg' =>   $this->lang->line('err_occur').$errmsg);
+            'errcode' => $errcode,
+            'errmsg' =>   $this->lang->line('err_occur').$errmsg);
         echo json_encode($res);
     }
 }

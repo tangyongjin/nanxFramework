@@ -1,6 +1,37 @@
 <?php if ( ! defined('BASEPATH')) exit('No direct script access allowed');
 
 class File extends CI_Controller {
+
+   function deleteFile(){
+        $post = file_get_contents('php://input');
+        $para= (array )json_decode($post);
+
+         
+
+        $file2del=$para['files'];
+        $success=true;
+        foreach ($file2del as $onefile) {
+            $path=$onefile->os_path;
+            $truefile=basename($onefile->filename);  
+             if (strtoupper(substr(PHP_OS, 0, 3)) === 'WIN')
+            {
+              $realpath= (dirname(dirname(dirname(__FILE__)))).'\\'.$path.'\\'; 
+            }
+            else
+            {
+              $realpath= (dirname(dirname(dirname(__FILE__)))).'/'.$path.'/';
+            }
+
+            if(!@unlink($realpath.$truefile)){$success=false;}
+         }
+
+            $result=array(  'success' =>$success,
+                             'errmsg' =>$this->lang->line('file_delete_failed'),
+                              'msg'=> $this->lang->line('file_delete_success'));
+           echo json_encode($result);
+    }
+
+
 	function upload() 
 	{
 	  
@@ -15,15 +46,14 @@ class File extends CI_Controller {
       $this->load->model('MFile');
     	$params = (array)json_decode($_REQUEST['params']); 
  	    $formfield=$params['formfield'];
-      $dest=$params['dest'];
+      $dest=$params['os_path'];
       
  	    $show_client_upload_info=false;
       if(array_key_exists('opcode',$_REQUEST))
       {
         if($_REQUEST['opcode']=='upload_pic'){$show_client_upload_info=true;}
       }
-		
-       
+		   
       $write_able=$this->MFile->checkWriteAble($dest);
       if(!$write_able){
       $ret=array('success'=>false,'msg'=>'['.$dest.']'.$this->lang->line('check_write_able'),'show_client_upload_info'=>true);
@@ -84,56 +114,15 @@ class File extends CI_Controller {
     $post = file_get_contents('php://input');
 		$para = (array)json_decode($post);
 		$fname=$para['fname'];
+    $os_path=$para['os_path'];
 		$this->load->helper('file');
-		$content=read_file( 'js/upload/'.$fname);
+		$content=read_file($os_path.'/'.$fname);
 	  $res=array(
 	  'content' =>$content
 	  );
    echo json_encode($res);    
   }
-  
-  
-  function getFSGridFields()
-  {
-    $header=array(
-    'filename'=>0
-    );
-
-    return array($header);
-  }
-  
-  
-  function fs2array()
-  {
-      if(isset($_GET['start']))
-		   {
-		   	$start = $_GET['start'];
-		  	$limit = $_GET['limit'];
-		   }
-     $para = (array )json_decode(file_get_contents('php://input'));
-     $os_path=$para['os_path'];
-     $file_trunk=$para['file_trunk'];
-     $this->load->model('MFile');
-     $files=$this->MFile->getFileList('imgs','all');
-     $result=array();
-     $tr=array_chunk($files,5);
-      
-      if(isset($_GET['start']))
-		   {
-		   	$start = $_GET['start'];
-		  	$limit = $_GET['limit'];
-		    $segment=array_slice($tr,$start,$limit);
-		   }
-		   else
-		   {
-		    $segment=$tr;
-		   }
-     $result['rows']=$segment;
-     $result['total']=count($tr);
-     $result['table']='vstable';
-     $json = json_encode($result,JSON_UNESCAPED_UNICODE);
-     echo $json;
-  }
+   
 
 }
 ?>

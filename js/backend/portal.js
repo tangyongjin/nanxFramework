@@ -93,7 +93,8 @@ var Explorer={
                         id: 'tree_root_0',
                         level: 0,
                         expanded: true,
-                        children: [{
+                        children: [
+                        {
                                 text:i18n.biz_mnt,
                                 category:'app',
                                 expanded:true,
@@ -214,52 +215,11 @@ var ExplorerMenuItems={
         }
 };
 
-Ext.extend(Explorer.explorerTreePanel,Ext.tree.TreePanel,{
-        getGroups: function(xtype){
-                var FirstLevel=Category.getAppCategory(xtype);
-                var retLevel=[];
-                for (var i=0;i<FirstLevel.length;i++) {
-                        var r={};
-                        r.id='tree_'+FirstLevel[i].category;
-                        r.category=FirstLevel[i].category;
-                        r.refer=FirstLevel[i].refer || '';
-                        r.level=1;
-                        r.value=FirstLevel[i].label;
-                        r.text=FirstLevel[i].label;
-                        r.leaf=FirstLevel[i].leaf;
-                        r.iconCls=FirstLevel[i].category;
-                        r.expanded=false;
-                        retLevel.push(r);
-                };
-                return retLevel;
-        },
-        getsubMenuItem:function(node,category,opcode,title,css){
-                var common_fn=function(){
-                        var opform=Fb.backendForm(category,opcode,node);
-                          var wincfg={
-                             category:category,
-                             opcode:opcode, 
-                             node:node
-                             };
-                             
-                             var mcfg=Category.getSubMenuCfg( category,opcode);
-                             if(!mcfg){alert('MCFG is null');return;};
-                             if(mcfg.viewonly){wincfg.viewonly=true;}
-                             var defaultCF=Category.getMenuDefaultProcessor();
-                             console.log(mcfg);
-                             Ext.applyIf(mcfg,defaultCF);
-                             var url=null;
-                             if(!Ext.isEmpty(mcfg.controller))
-                             {
-                             var  url=AJAX_ROOT+mcfg.controller+'/'+mcfg.func_name;
-                             }
-                             wincfg.url=url;
-                             wincfg.width=(mcfg&&mcfg.width)?mcfg.width:550;
-                             wincfg.title=(mcfg && mcfg.title)?mcfg.title : '';
-                             var win=Act.prototype.actionWin('backend',opform,wincfg);
-                };
-                
-                if (opcode=='mem_copy'){
+
+function specialCodeRoute(node,category,opcode)
+{
+
+     if (opcode=='mem_copy'){
                   common_fn=function(){
                   var  copypaste_src={'category':node.attributes.category,
                                     'id':node.attributes.id,
@@ -307,14 +267,76 @@ Ext.extend(Explorer.explorerTreePanel,Ext.tree.TreePanel,{
                         var host=Ext.getCmp('table_data');
                         new Act({edit_type:'edit',table:'nanx_activity_field_public_display_cfg',code:'NANX_TBL_DATA',showwhere:'autowin',wintitle:i18n.title_setdisplycfg,host:null});
                         }
-                     }
+                }
+          return common_fn;
+}
+
+
+
+
+
+function  getMenuItemHandler(node,category,opcode,alt_win_id)
+{
+    var specialCodes = ["mem_copy", "mem_paste", "create_table", "preview_activity","edit_public_field"];
+    var route = specialCodes.indexOf(opcode);
+    if(route>=0)
+    {
+      var common_fn=specialCodeRoute(node,category,opcode);
+      return common_fn;
+    }
+    var common_fn=function(){
+              var opform=Fb.backendForm(category,opcode,node);
+              var wincfg={
+                 category:category,
+                 opcode:opcode, 
+                 node:node
+                 };
+                 
+                 if(alt_win_id){wincfg.alt_id=alt_win_id;}
+                 var mcfg=AppCategory.getSubMenuCfg( category,opcode);
+                 if(!mcfg){alert('MCFG is null');return;};
+                 if(mcfg.viewonly){wincfg.viewonly=true;}
+                 var defaultCF=AppCategory.getBackendCrontroller();
+                 Ext.applyIf(mcfg,defaultCF);
+                 var url=null;
+                 if(!Ext.isEmpty(mcfg.controller))
+                 {
+                 var  url=AJAX_ROOT+mcfg.controller+'/'+mcfg.func_name;
+                 }
+                 wincfg.url=url;
+                 wincfg.width=(mcfg&&mcfg.width)?mcfg.width:550;
+                 wincfg.title=(mcfg && mcfg.title)?mcfg.title : '';
+                 var win=Act.prototype.actionWin('backend',opform,wincfg);
+    };
+    return common_fn;
+}
+
+Ext.extend(Explorer.explorerTreePanel,Ext.tree.TreePanel,{
+        getGroups: function(xtype){
+                var FirstLevel=AppCategory.getAppCategory(xtype);
+                var retLevel=[];
+                for (var i=0;i<FirstLevel.length;i++) {
+                        var r={};
+                        r.id='tree_'+FirstLevel[i].category;
+                        r.category=FirstLevel[i].category;
+                        r.refer=FirstLevel[i].refer || '';
+                        r.level=1;
+                        r.value=FirstLevel[i].label;
+                        r.text=FirstLevel[i].label;
+                        r.leaf=FirstLevel[i].leaf;
+                        r.iconCls=FirstLevel[i].category;
+                        r.expanded=false;
+                        retLevel.push(r);
+                };
+                return retLevel;
+        },
+        menuItemProcessor:function(node,category,opcode,title,css){
+                var common_fn= getMenuItemHandler(node,category,opcode);
                 return {
                         itemId:opcode,
                         text:title,
                         iconCls:css,
-                        listeners:{
-                                click:common_fn
-                        }
+                        listeners:{click:common_fn}
                 }
         },
         onContextMenu: function(node,g){
@@ -322,15 +344,15 @@ Ext.extend(Explorer.explorerTreePanel,Ext.tree.TreePanel,{
                         this.menu.removeAll()
                 }
                 var nc=node.attributes.category;
-                var nodemenus=Category.getCategoryMenusByCategory(nc);
+                var nodemenus=AppCategory.getCategoryMenusByCategory(nc);
                 var menu=[];
                 for(i=0;i<nodemenus.length;i++){
                 	      var opcode=nodemenus[i].opcode;
                 	      var title=nodemenus[i].title;
                 	      var css=nodemenus[i].iconCls;
-                        var submenuitem=this.getsubMenuItem(node,nc,opcode,title,css);
-                        var enabled=nodemenus[i].hasOwnProperty('enable')?nodemenus[i].enable:true;
-                        if(enabled){ menu.push(submenuitem);}
+                          var submenuitem=this.menuItemProcessor(node,nc,opcode,title,css);
+                          var enabled=nodemenus[i].hasOwnProperty('enable')?nodemenus[i].enable:true;
+                          if(enabled){ menu.push(submenuitem);}
                         
                 }
                 menu.push("-",ExplorerMenuItems.refreshTreeNode(node), ExplorerMenuItems.whatisthis(node));

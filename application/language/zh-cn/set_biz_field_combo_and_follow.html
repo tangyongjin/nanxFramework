@@ -1,8 +1,8 @@
 <div class=back_help>
-<h1>操作:配置数据源/跟随项...</h1>
-<div class=operation_desc>设置某字段的来源,并设置跟随字段</div>
+<h1>操作:设置字段下拉及继承选项...</h1>
+<div class=operation_desc>设置某字段的下拉来源,并设置继承字段</div>
 <div class=back_item_list><h1 class=back_items>字段说明:</h1>
-<table class=docu_table>
+<table class=thin-table>
   <tr><td>字段</td><td><div clsss=field_desc>要设置的字段,如:产品</div></td></tr>
   <tr><td>参照表</td><td><div clsss=field_desc>参照的表格,比如:产品列表</div></td></tr>
   <tr><td>参照表-值字段</td><td><div clsss=field_desc>参照表的某个代码列,如产品列表的产品代码</div></td></tr>
@@ -10,24 +10,23 @@
   <tr><td>业务表中的列</td><td><div clsss=field_desc>业务表中的某列(非参照表)</div></td></tr>
   <tr><td>参照表中的列</td><td><div clsss=field_desc>参照表中某列(如列表价)</div></td></tr>
  </table>
+  此功能有些容易混淆,举例如下,在录入销售记录时候,销售的产品由产品列表中下拉选择,
+  销售的价格"继承"产品列表中的列表价,但仍然可以修改.
+
 </div>
 <div class=back_demo></div> 
 <div class=back_notice>注意事项:</div>
 </div><div class=operation_notice>
-  此功能有些容易混淆,举例如下,你经营一个图书店,你会从代理商进货,每本书会有一个ISBN(国际书号),
-  一个书名,还有一个价格(批发价格).
-  所有这些数据存放于表格<span class=blue>[图书列表]</span>,
-  数据如下:
-  <table class=thin-table>
-  <tr><td>ISBN</td><td>书名</td><td>批发价格</td></tr>
-  <tr><td>9787020002207</td><td>红楼梦</td><td>56.2</td></tr>
-  <tr><td>9787806577738</td><td>指环王</td><td>19.70</td></tr>
-  <tr><td>9787538250855</td><td>一九八四(精装)</td><td>89.64</td></tr>
-  </table>
-  同时,你会零售这些书籍,为了保证数据一致性,你希望在录入销售数据时候,
-  书名可以从<span class=blue>[图书列表]</span>选取,销售价格可以设置为跟随字段,
-  这样当你选取了书籍后,批发价格自动显示到销售价格字段上,并显示红星.你仍然可以修改销售价格.
-  <br/><br/>
-  <img src="../../application/language/zh-cn/follow_demo.png" />
-  <br/>
+     你可以只设置下拉选项,而不设置"继承"字段
   </div>
+
+
+<div class='back_demopic'>示范</div>
+<img src=#IMGPATH#nanx_set_biz_field_combo_and_follow_1.png  />
+<img src=#IMGPATH#nanx_set_biz_field_combo_and_follow_2.png  />
+<br/>
+设置完成后,录入界面将如下图所示意,其中销售价格"继承"产品列表中的列表价格,但仍然可以修改.
+<img src=#IMGPATH#nanx_set_biz_field_combo_and_follow_3.png  />
+ 
+ 
+

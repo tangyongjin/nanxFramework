@@ -1,28 +1,12 @@
 Ext.ns('App');
 App.init = function(){
      Ext.QuickTips.init();
-     Ext.EventManager.onWindowResize(App.resize);
-     App.resize();
      App.bind();
-        
-var viewH=Ext.getBody().getViewSize();
-var topH=Ext.get('border-top').getHeight();
-var footerH=Ext.get('footer').getHeight();
-var h_contentbox=(viewH.height - topH - footerH );
-if(h_contentbox <664){h_contentbox=664;}
- 
-Ext.get('content-box').setStyle('height',h_contentbox+'px');
 };
   
 
-App.resize = function() {
-        var wh = Ext.getBody().getViewSize();
-        var w=wh.height;
-        if(w<752){w=752;}
-        var height_header_footer=Ext.get("border-top").getHeight()+ Ext.get("footer").getHeight();
-        Ext.get('content-box').setStyle('height', w-height_header_footer);
-}
 
+   
 App.bind = function() {
         if (Ext.get('cpanel-left')){
                 Ext.get('cpanel-left').on('click', function(e, target) {
@@ -143,8 +127,5 @@ App.route = function(activity_type, code,fnname,service_url,memo){
 Ext.onReady(function(){
         App.init();
         getevent();
-    //    App.rightAccordion();
-       // Ext.QuickTips.init();
-        //helps_prod();
 })
   

@@ -30,7 +30,7 @@ var appCategory_List = [{
     },
     {
         category:'medias',
-        label:i18n.pic_mnt,
+        label:i18n.file_mnt,
         leaf:true
     }, {
         category:'syscfgs',
@@ -146,7 +146,7 @@ var contextMenu = [
         menus:[{
             title:i18n.create_new_biztable,
             place:'context',
-            opcode:'create_base_table',
+            opcode:'create_biz_table',
             itemcfg:[{
                 item_type:'field',
                 label:i18n.business_table_name,
@@ -186,7 +186,7 @@ var contextMenu = [
             itemcfg:
             [
             {
-               item_type:'upload',
+                item_type:'uploadFile',
                 label:i18n.select_db_restore_file,
                 name:'restore_file',
                 id:'restore_file' 
@@ -219,7 +219,7 @@ var contextMenu = [
                 id:'table_name',
                 value:APP_PREFIX+'_'
             },{
-                item_type:'upload',
+                item_type:'uploadFile',
                 file_type:'xls',
                 label:i18n.select_excel_file,
                 name:'excel',
@@ -305,7 +305,7 @@ var contextMenu = [
                 id:'btn_name'
             }, 
             {
-                item_type:'upload',
+                item_type:'uploadFile',
                 file_type:'js',
                 label:i18n.select_js_file,
                 name:'jsfile',
@@ -340,18 +340,20 @@ var contextMenu = [
     },
     {
         category: ['medias'],
-        menus:[{
+        menus:[
+        {
             title:i18n.pic_upload,
             place:'context',
-            opcode:'upload_pic',
+            opcode:'upload_file',
+            enable:false,
             controller:null,
             itemcfg:[{
-                item_type:'upload',
-                file_type:'pic',
+                item_type:'uploadFile',
+                file_type:'#file_type',
                 label:i18n.select_pic,
                 name:'file2upload',
                 id:'file2upload',
-                dest:'imgs',
+                os_path:'#os_path',
                 value:''
             }]
         }, {
@@ -360,19 +362,77 @@ var contextMenu = [
             place:'context',
             itemcfg:[
             {
-                item_type:'pic_selector',
-                grid_ext_id:'grid_PIC',
+                code: 'NANX_FS_2_TABLE',
+                item_type:'file_selector',
                 grid_h:386,
-                file_anchor_id:'file_anchor_4_pic'
-            },
+                file_type:'img',
+                file_trunk:5,
+                nosm:true,
+                hideHeaders:true,
+                checkbox:false,
+                pid_order:'desc',
+                os_path:'imgs'
+            } 
+            ]
+        },{
+            title:i18n.php_controller,
+            opcode:'manage_php_controller',
+            place:'context',
+            width:900,
+            itemcfg:[
             {
-                item_type:'field',
-                hidden:true,
-                id:'file_anchor_4_pic',
-                grid_ext_id:'grid_PIC'
+                code: 'NANX_FS_2_TABLE',
+                item_type:'file_selector',
+                grid_h:386,
+                file_type:'php',
+                nosm:true,
+                edit_type:'noedit',
+                hideHeaders:false,
+                checkbox:false,
+                pid_order:'desc',
+                os_path:'application/controllers'
             }
             ]
-        }]
+        },{
+            title:i18n.php_model,
+            opcode:'manage_php_model',
+            place:'context',
+             width:900,
+            itemcfg:[
+            {
+                code: 'NANX_FS_2_TABLE',
+                item_type:'file_selector',
+                grid_h:386,
+                edit_type:'noedit',
+                file_type:'php',
+                nosm:true,
+                hideHeaders:false,
+                checkbox:false,
+                pid_order:'desc',
+                os_path:'application/models'
+            }
+            ]
+        },{
+            title:i18n.jsfile,
+            opcode:'manage_js_upload',
+            place:'context',
+            width:900,
+            itemcfg:[
+            {
+                code: 'NANX_FS_2_TABLE',
+                item_type:'file_selector',
+                grid_h:386,
+                file_type:'js',
+                edit_type:'noedit',
+                nosm:true,
+                hideHeaders:false,
+                checkbox:false,
+                pid_order:'desc',
+                os_path:'js/upload'
+            }
+            ]
+        }
+        ]
     }, {
         category: ['table'],
         menus:[
@@ -501,7 +561,29 @@ var contextMenu = [
         }]
     }, {
         category: ['biz_table'],
-        menus:[{
+        menus:[
+        {
+            title:i18n.connect_user, 
+            place:'context',
+            opcode:'connect_user',
+            itemcfg:[
+             {      
+                    item_type:'raw_table',
+                    grid_h:256,
+                    code:'preview_activity',
+                    value:'#table'
+                },
+                {       item_type:'combo_list',
+                        id:'field_e',
+                        label:i18n.select_system_user,
+                        level:1,
+                        value:'#value',
+                        category_to_use:'system_users' 
+               }
+                 
+                ]
+        },
+        {
             title:i18n.select_table, 
             place:'context',
             opcode:'set_biz_table_ref',
@@ -607,25 +689,26 @@ var contextMenu = [
                 label:i18n.erase,
                 value:'#value'
             }]
-        }, {
-            title:i18n.set_display_text,
-            opcode:'set_col_displayname',
-            place:'context',
-            itemcfg:[{
-                item_type:'field',
-                label:i18n.display_text,
-                value:'#value',
-                id:'field_c'
-            }]
-        }, {
+        }, 
+        {
             title:i18n.rename_column,
             opcode:'rename_col',
             place:'context',
-            itemcfg:[{
+            itemcfg:[
+            {
                 item_type:'field',
-                label:i18n.new_column_name, 
+                label:i18n.new_column_name,
                 value:'#value'
-            }]
+            },
+            {
+                item_type:'field',
+                label:i18n.new_column_name,
+                id:'field_def',
+                value:'#field_def'
+            }
+                        
+
+            ]
         }]
     },
     {
@@ -793,18 +876,28 @@ var contextMenu = [
                 title:i18n.set_to_me,
                 opcode:'set_to_me',
                 place:'context',
-                itemcfg:[{
+                itemcfg:[
+                 {
+                 item_type:'field',
+                 hidden:true,
+                 id:'force_not_check'
+                 },
+
+                {
                     item_type:'field',
                     label:i18n.field,
                     readonly:true,
                     value:'#text',
                     json:{'vvv':'##category','ddd':'#category'}
-                }, {
+                },
+                                {
                     item_type:'checkbox',
                     label:i18n.set_to_me,
                     checkbox:'true',
                     id:'is_produce_col'
-                }]
+                }
+
+                 ]
             }, {
                 title:i18n.using_html_editor,
                 opcode:'set_use_html_editor',
@@ -854,7 +947,8 @@ var contextMenu = [
                 title:i18n.set_field_default_value,
                 opcode:'set_field_default_value',
                 place:'context',
-                itemcfg:[{
+                itemcfg:[
+                    {
                     item_type:'radio_group',
                     label:i18n.default_value_type,
                     id:'field_default_type',
@@ -978,6 +1072,8 @@ var contextMenu = [
                 {       item_type:'combo_list',
                         id:'field_e',
                         label:'基础列',
+                        //'基础列',
+
                         //i18n.value_col_in_source_table,
                         level:1,
                         value:'#value',
@@ -1066,15 +1162,34 @@ var contextMenu = [
             } 
         ]
     }, 
-    
-    
-    
-    
+
+            
+
+    {
+        category: ['sql_runner'],
+        menus:[
+             {
+                title:i18n.run_sql,
+                opcode:'run_sql',
+                place:'context',
+                width: 800,
+                itemcfg:[
+                    {
+                        item_type:'textarea',
+                        label:i18n.sql,
+                        textarea:1,
+                        id:'sql'
+                    }      
+                ]
+                
+            } 
+        ]
+    }, 
     {
         category: ['activitys'],
         menus:[{
             title:i18n.add_table_activity,
-            opcode:'add_activity',
+            opcode:'add_table_activity',
             place:'context',
             itemcfg:[{
                 item_type:'field',
@@ -1125,7 +1240,7 @@ var contextMenu = [
                 id:'grid_title'
             },
              {
-                item_type:'upload',
+                item_type:'uploadFile',
                 label:i18n.select_js_file,
                 name:'extra_js',
                 file_type:'js',
@@ -1189,16 +1304,17 @@ var contextMenu = [
                 value:'#text'
             },
             {
-                item_type:'pic_selector',
-                grid_ext_id:'grid_PIC',
-                grid_h:360,
-                file_anchor_id:'file_anchor_4_pic'
-            },
-            {
-                item_type:'field',
-                  hidden:true,
-                id:'file_anchor_4_pic'
-            }
+                code: 'NANX_FS_2_TABLE',
+                item_type:'file_selector',
+                grid_h:386,
+                file_type:'img',
+                file_trunk:5,
+                nosm:true,
+                hideHeaders:true,
+                checkbox:false,
+                pid_order:'desc',
+                os_path:'imgs'
+            } 
             ]
         }, {
             title:i18n.delete_activity,
@@ -1220,12 +1336,12 @@ var contextMenu = [
             itemcfg:[{
                 item_type:'field',
                 value:800,
-                label:i18n.activity__display_w_width,
+                label:i18n.activity_display_w_width,
                 id:'win_size_width'
             }, {
                 item_type:'field',
                 value:644,
-                label:i18n.activity__display_w_height,
+                label:i18n.activity_display_w_height,
                 id:'win_size_height'
             }, {
                 item_type:'field',
@@ -1242,7 +1358,7 @@ var contextMenu = [
         category: ['activity'],
         menus:[{
                 title:i18n.setting_biz_table,
-                opcode:'set_activity_base_table',
+                opcode:'set_activity_table',
                 place:'context',
                 itemcfg:[
                 {
@@ -1293,6 +1409,23 @@ var contextMenu = [
                 place:'context',
                 itemcfg:
                  []
+            },{
+                title:i18n.set_owner_data_only,
+                opcode:'set_owner_data_only',
+                place:'context',
+                itemcfg:[
+                {
+                    item_type:'field',
+                    label:i18n.activity,
+                    value:'#text',
+                    readonly:true
+                }
+                   ,{
+                   item_type:'checkbox',
+                    label:i18n.set_owner_data_only,
+                    checkbox:true,
+                    id:'owner_data_only'
+                }] 
             }
         ]
     }, {
@@ -1318,13 +1451,15 @@ var contextMenu = [
         }]
     }, {
         category: ['js_file'],
-        menus:[{
+        menus:[
+        {
             title:i18n.edit_js,
-            opcode:'update_js_content',
+            opcode:'update_file_content',
             width: 800,
             place:'context',
             callback_set_url:'file/getContent',
                 json:{
+                    os_path:'#os_path',
                     fname:'#value'
                 },
             callback_set_json_key:'/' ,
@@ -1333,14 +1468,22 @@ var contextMenu = [
                 label:i18n.edit,
                 value:'#text',
                 readonly:true,
-                id:'js_file'
+                id:'file'
             },{
                 item_type:'textarea',
                 width:850,
                 height:350,
-                id:'js_content',
+                id:'file_content',
                 path:'content'
-            }]
+            },
+               {
+                    item_type:'field',
+                    label:i18n.activity,
+                    value:'#os_path',
+                    hidden:true,
+                    id:'os_path'
+                }
+                ]
         }]
     }, {
         category: ['based_biz_table'],
@@ -1773,46 +1916,12 @@ var contextMenu = [
     }
 ];
 
-var gridAsForm = ['reorder_columns_grid', 'x_grid_for_dnd'];
-var Category = {
-    AppCategory_List: appCategory_List,
-    RawDBCategory_List: rawDBCategory_List,
-    GridAsForm: gridAsForm,
-    CategoryDnD: {
-        biz_table:['activity','activitys'],
-        table:['biz_table'],
-        button:['activity'],
-        activity:['user_role_under_acls'],
-        activity_js:['user_role_under_acls'],
-        activity_sql:['user_role_under_acls'],
-        activity_html:['user_role_under_acls'],
-        activity_service:['user_role_under_acls'],
-        user:['user_role']
-    },
-    ContextMenu:contextMenu,
+//var gridAsForm = ['reorder_columns_grid', 'x_grid_for_dnd'];
 
-    getGirdIDsForExtraData: function(){
-        return this.GridAsForm;
-    },
-    getAppCategory: function(ctype){
-        return this[ctype];
-    },
-   
-    getDnDcfg: function(){
-        return this.CategoryDnD;
-    },
-    getContextMenus: function(){
-        return this.ContextMenu;
-    },
-
-    getMenuDefaultProcessor:function(){
-        return{
-            controller:'nanx',
-            func_name:'index'}
-    },
-    getCSSbyOpcode:function(opcode)
+var getCSSbyOpcode=function(opcode)
     {
      if(opcode.indexOf('add_')>=0){return 'menu_add';}
+     if(opcode.indexOf('connect_')>=0){return 'menu_chain';}
      if(opcode.indexOf('create_')>=0){return 'menu_add';}
      if(opcode.indexOf('remove_')>=0){return 'menu_del';}
      if(opcode.indexOf('rename_')>=0){return 'menu_update';}
@@ -1828,30 +1937,82 @@ var Category = {
      if(opcode.indexOf('paste')>=0){return 'menu_paste';}
      if(opcode.indexOf('preview')>=0){return 'menu_preview';}
      if(opcode.indexOf('view')>=0){return 'menu_preview';}
-     if(opcode.indexOf('upload_pic')>=0){return 'menu_upload_pic';}
+     if(opcode.indexOf('upload_file')>=0){return 'menu_upload_pic';}
      if(opcode.indexOf('manage_pic')>=0){return 'menu_pic_management';}
      if(opcode.indexOf('backup_system')>=0){return 'menu_backup_system';}
      if(opcode.indexOf('backup_')>=0){return 'menu_backup';}
      if(opcode.indexOf('restore_')>=0){return 'menu_restore';}
-    },
+     if(opcode.indexOf('run_sql')>=0){return 'menu_sql_runner';}
+     if(opcode.indexOf('manage_php_model')>=0){return 'php';}
+     if(opcode.indexOf('manage_php_controller')>=0){return 'php';}
+     if(opcode.indexOf('manage_js_upload')>=0){return 'js_file';}
 
-    getCategoryMenusByCategory: function(category){
+
+
+    };
+
+
+var getCategoryMenusByCategory=function(category){
         var menus = [];
-        for (var i = 0; i < this.ContextMenu.length; i++){
-            var category_items = this.ContextMenu[i].category;
+        var ContextMenu=AppCategory.getContextMenus();
+        
+        for (var i = 0; i < ContextMenu.length; i++){
+            var category_items = ContextMenu[i].category;
             var ind = category_items.indexOf(category);
             if (!(ind == -1)){
-                for(var j=0;j<this.ContextMenu[i].menus.length;j++)
+                for(var j=0;j<ContextMenu[i].menus.length;j++)
                   {
-                    var opcode=this.ContextMenu[i].menus[j].opcode;
-                    var css_str=this.getCSSbyOpcode(opcode);
-                    this.ContextMenu[i].menus[j].iconCls=css_str;
+                    var opcode=ContextMenu[i].menus[j].opcode;
+                    var css_str=AppCategory.getCSSbyOpcode(opcode);
+                     ContextMenu[i].menus[j].iconCls=css_str;
                   }
-                menus = menus.concat(this.ContextMenu[i].menus);
+                menus = menus.concat(ContextMenu[i].menus);
             }
         }
+        
         return menus;
+    };
+    
+
+
+var AppCategory = {
+    AppCategory_List: appCategory_List,
+    RawDBCategory_List: rawDBCategory_List,
+    // FileManager_List:FileManager_List,
+    CategoryDnD: {
+        biz_table:['activity','activitys'],
+        table:['biz_tables'],
+        button:['activity'],
+        activity:['user_role_under_acls'],
+        activity_js:['user_role_under_acls'],
+        activity_sql:['user_role_under_acls'],
+        activity_html:['user_role_under_acls'],
+        activity_service:['user_role_under_acls'],
+        user:['user_role']
     },
+
+    ContextMenu:contextMenu,
+    getGirdIDsForExtraData: function(){
+        return this.GridAsForm;
+    },
+    getAppCategory: function(ctype){
+        return this[ctype];
+    },
+   
+    getDnDcfg: function(){
+        return this.CategoryDnD;
+    },
+    getContextMenus: function(){
+        return this.ContextMenu;
+    },
+
+    getBackendCrontroller:function(){
+        return{
+            controller:'nanx',
+            func_name:'index'}
+    },
+    getCSSbyOpcode:getCSSbyOpcode,
+    getCategoryMenusByCategory:getCategoryMenusByCategory,
     getSubMenuCfg:function(category,opcode){
         var nodemenus=this.getCategoryMenusByCategory(category);
         for (var i=0;i<nodemenus.length;i++){

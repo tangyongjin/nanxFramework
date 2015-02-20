@@ -1,7 +1,6 @@
   Ext.override(Ext.Component,{
         Callback_setValue:function(value){
                 var xtype=this.getXType();
-                console.log(xtype);
                 if(xtype=='textfield'||xtype=='textarea'||xtype=='combo'||xtype=='StarHtmleditor') {this.setValue(value);}
                 if((xtype=='panel') &&( this.items.itemAt(0).getXType()=='checkbox' )) 
                 {
@@ -20,7 +19,7 @@
         } 
 });
 
-
+ 
  Ext.ns('Fb');
 
  var Fb = {};
@@ -42,9 +41,26 @@
      }
  }
  
+Fb.getDate=function()
+{
+        var today = new Date();
+        var dd = today.getDate();
+        var mm = today.getMonth()+1; //January is 0!
+        var yyyy = today.getFullYear();
+        if(dd<10) {
+            dd='0'+dd
+        } 
+        if(mm<10) {
+            mm='0'+mm
+        } 
+        today = yyyy+'-'+ mm+'-'+dd;
+        return today;
+}
+
+
+
  
  Fb.showPic = function(pic) {
-     console.log(pic);
      var xwin = new Ext.Window({
          constrain: true,
          modal: true,
@@ -55,6 +71,16 @@
  }
 
  
+
+Fb.toggle_combo=function(togglefalg)
+{
+   //enable or disable all combo in form
+   var current_form = Ext.getCmp('back_opform');
+   var cbs = current_form.findByType(['combo']);
+   for (var i = 0; i < cbs.length; i++){
+       if (togglefalg){cbs[i].enable(); }else{cbs[i].disable(); }
+   }
+}
 
  Fb.getFileType=function(name)
  {    
@@ -69,7 +95,7 @@
       var meta = name.split('.').pop().toLowerCase();
       var ftype='unknow';
       if(pictype.indexOf(meta)!== -1){
-         ftype = 'pic';
+         ftype = 'img';
       }
       if(sqltype.indexOf(meta)!== -1){
          ftype = 'sql';
@@ -96,7 +122,7 @@
 
      var fname = field.value.split('/').pop();
      var ftype=Fb.getFileType(fname);
-     if (ftype == 'pic'){
+     if (ftype == 'img'){
          var box = {
              xtype: 'box',
              html: '<div class=pic_holder><span>' + i18n.dbl_click_to_viewe_origin_pic + '</br></span><img id="' + field.name + '_img_mask" src="' + field.value + '"></div>',
@@ -112,14 +138,13 @@
      } else {
          var box = {
              xtype:'box',
-             html: '<div  style="height:44px"  class=pic_holder><table><tr><td><img src="' + URL_ROOT + 'css/images/' + ftype + '.png "></td><td><a onClick=Fb.showDownload(' + "'" + field.value + "'" + ')  href=#>' + fname + '</a></td></tr></div>',
+             html: '<div  style="height:44px"  class=pic_holder><table><tr><td><img src="' + BASE_URL+ 'css/images/' + ftype + '.png "></td><td><a onClick=Fb.showDownload(' + "'" + field.value + "'" + ')  href=#>' + fname + '</a></td></tr></div>',
          };
      }
      return box;
  }
 
  Fb.getAttachmentEditor = function(cfg) {
-     console.log(cfg);
      var xid = Ext.id();
      var fake_id = cfg.name;
      upload_field = [{
@@ -135,19 +160,17 @@
          width: 200,
          listeners:{
              'fileselected':function(obj,file){
-                  console.log(file);
                   var ftype=Fb.getFileType(file);
-                  console.log(ftype);
                   if(cfg.file_type)
                    {
-                    if(cfg.file_type!==ftype){alert('check file type'); return;}
+                    if(cfg.file_type!==ftype){
+                           Ext.Msg.alert(i18n.message, i18n.check_file_type);
+                           return;
+                          }
                    }
                   
                  var form=Ext.getCmp(xid).findParentByType('form');
                  if (form) {
-                     console.log('In fileselected,form found');
-                     console.log('this.ownerct is');
-                     console.log(this.ownerCt);
                      this.ownerCt.field_realupload=true;
                      form.uptasks++;
                      form.realupload = true;
@@ -164,20 +187,14 @@
          hidden: true,
          listeners: {
              'click': function(){
-                 console.log(this.ownerCt);
-                 console.log(this.ownerCt.field_realupload);
                  var form = Ext.getCmp(xid).findParentByType('form');
                  if (!this.ownerCt.field_realupload) {
-                     console.log('hidden clicked,and  delete  uptasks');
-                     console.log('now taks is'+form.uptasks);
                      form.uptasks--;
                      return;
                  }
-                 
-                 WaitMask.show('upload');
                  var p = {
                      'formfield': cfg.name,
-                     'dest': cfg.dest || 'uploads'
+                     'os_path': cfg.os_path || 'uploads'
                  };
                  var postcfg = {
                      'params': Ext.encode(p)
@@ -189,7 +206,6 @@
                          failure: function(f, r) {
                              WaitMask.hide();
                              Fb.showUploadResult(r,postcfg);
-                             console.log('failed,and delte  uptasks');
                              form.uptasks--;
                              form.upload_errcount++;
                          },
@@ -198,7 +214,6 @@
                              if (r.result.success){
                                  var fd = form.getForm().findField(cfg.name);
                                  fd.setValue(r.result.serverURL);
-                                 console.log('succeed,and delte  uptasks');
                                  form.uptasks--;
                                  Act.prototype.FormAction(form);
                              }
@@ -221,12 +236,16 @@
      return [compo, box];
  }
 
- Fb.showUploadResult=function(r,cfg)
+ Fb.showUploadResult=function(r)
  {
    if(r.result.show_client_upload_info)
         {
         Ext.Msg.alert(i18n.message, r.result.msg);
         }
+ 
+   if(Ext.getCmp('grid_FILE')){
+     Ext.getCmp('grid_FILE').getStore().reload();
+   }
  }
  
 
@@ -256,7 +275,6 @@
  }
 
  Fb.getDetailBtn = function(combo_table) {
-     console.log(combo_table);
      var btn_detail = new Ext.Button({
          text: i18n.detail_with_dot,
          handler: function() {
@@ -269,7 +287,7 @@
                  table: combo_table,
                  filter_field: combox.valueField,
                  filter_value: combox.getValue(),
-                 nobtn: true,
+                 tbar_type:'hide',
                  win_size_height:150,
                  wintitle: i18n.detail + ':' + combox.getRawValue(),
                  showwhere: 'autowin',
@@ -299,7 +317,8 @@
      };
  }
 
- Fb.getHtmlEditor = function(id, label, value) {
+ 
+  Fb.getHtmlEditor = function(id, label, value) {
      var htmlEditor = {
          xtype: "StarHtmleditor",
          fieldLabel: label,
@@ -310,56 +329,38 @@
      return htmlEditor;
  }
 
- Fb.getDateEditor = function(oneFieldCfg, rowOriginalValue, readonly_flag) {
+ 
+
+
+
+ Fb.getDateTypeEditor = function(oneFieldCfg,readonly_flag,datetype) {
      var dateEditor = {
          fieldLabel: oneFieldCfg['display_cfg'].field_c,
          id: oneFieldCfg['field_e'],
          width: 200,
          height: 25,
-         value: rowOriginalValue,
-         xtype: 'datefield',
-         format: 'Y-m-d',
+         value:oneFieldCfg.editor_cfg.default_v,
          readOnly: readonly_flag,
          blankText: i18n.not_allow_blank
      }
+        if(datetype=='date'){var xtype='datefield';var dateformat='Y-m-d';}
+        if(datetype=='datetime'){var xtype='datetimefield';}
+        if(datetype=='time'){var xtype='timepickerfield';}
+        dateEditor.xtype=xtype;
+        if (typeof dateformat !== 'undefined') {
+         dateEditor.format=dateformat;
+       }
      return dateEditor;
  }
 
- Fb.getTimeEditor = function(oneFieldCfg, rowOriginalValue, readonly_flag) {
-     var timeEditor = {
-         fieldLabel: oneFieldCfg['display_cfg'].field_c,
-         id: oneFieldCfg['field_e'],
-         width: 200,
-         height: 25,
-         value: rowOriginalValue,
-         xtype: 'timepickerfield',
-         readOnly: readonly_flag,
-         blankText: i18n.not_allow_blank
-     }
-     return timeEditor;
- }
 
- Fb.getDatetimeEditor = function(oneFieldCfg, rowOriginalValue, readonly_flag) {
-     var dateTimeEditor = {
-         fieldLabel: oneFieldCfg['display_cfg'].field_c,
-         id: oneFieldCfg['field_e'],
-         width: 200,
-         height: 25,
-         value: rowOriginalValue,
-         xtype: 'datetimefield',
-         readOnly: readonly_flag,
-         blankText: i18n.not_allow_blank
-     }
-     return dateTimeEditor;
- }
-
- Fb.getTextAreaEditor = function(oneFieldCfg, rowOriginalValue, readonly_flag) {
+ Fb.getTextAreaEditor = function(oneFieldCfg, readonly_flag) {
      textAreaEditor = {
          fieldLabel: oneFieldCfg['display_cfg'].field_c,
          id: oneFieldCfg['field_e'],
          width: 660,
          height: 60,
-         value: rowOriginalValue,
+         value:oneFieldCfg.editor_cfg.default_v,
          xtype: 'textarea',
          readOnly: readonly_flag,
          blankText: i18n.not_allow_blank
@@ -513,7 +514,6 @@
  }
  
  Fb.triggerRow12345 = function(cfg,meta5){
-     console.log(cfg);
      var hostcfg = {
          item_type: 'combo_list',
          id: 'field_e_' + cfg.serial,
@@ -651,6 +651,7 @@
      var ds = new Ext.data.JsonStore(ds_cfg);
      ds.load();
 
+
      var singleCol = new Ext.grid.GridPanel({
          'title': grid_cfg.gridlabel,
          id: grid_cfg.grid_ext_id,
@@ -786,11 +787,12 @@
      return found;
  }
 
- Fb.getCurrentValue=function(id)
- {
- }
 
- Fb.getBasicCombo = function(cfg, store) {
+ Fb.getBasicCombo = function(cfg, store,_readOnly) {
+ 
+   if ( _readOnly== undefined) {  
+         _readOnly=false;  
+    }  
      var combox_cfg = {
          id: cfg.id,
          triggerAction: 'all',
@@ -800,6 +802,7 @@
          fieldLabel: cfg.label,
          forceSelection: true,
          editable: false,
+         readOnly:_readOnly,
          name: cfg.id,
          width:cfg.width?cfg.width:200,
          allowBlank: cfg.hasOwnProperty('allowBlank') ? cfg.allowBlank : true,
@@ -832,14 +835,19 @@
          var current_rec = combo.findRecord(combo.valueField || combo.displayField, tmp_v);
          if(!current_rec){return}
          var current_v = current_rec.json[cfg.value_key_for_slave] || combo.getValue();
+         
 
          var x_group_id = cfg.group_id;
          var level = cfg.level;
          var direct_slaves = Fb.findSlaves(tfm, x_group_id, level, true);
          for (var i = 0; i < direct_slaves.length; i++) {
              var ds = direct_slaves[i].getStore();
-             Fb.setStorePara(ds, 'value', current_v)
-             Fb.setStorePara(ds, 'filter_value', current_v)
+             // var path='value';
+             // Fb.setStorePara(ds, path,current_v);
+             // var path='filter_value';
+             // Fb.setStorePara(ds, path,current_v);
+             var path='query_cfg.lines.vset_'+i;
+             Fb.setStorePara(ds, path,current_v);
              direct_slaves[i].getStore().load();
          }
      });
@@ -848,6 +856,7 @@
          Fb.setFollowFieldValue.createDelegate(this, [c, record, cfg], true)();
          var fm = c.findParentByType('form');
          var tmp_v = c.getValue();
+
          if (Ext.isEmpty(tmp_v)) {
              return;
          }
@@ -856,11 +865,16 @@
          if (Ext.isEmpty(v)) {
              v = tmp_v;
          }
+
+
          
          var x_group_id = cfg.group_id;
          var level = cfg.level;
          var all_slaves = Fb.findSlaves(fm, x_group_id, level);
          var direct_slaves = Fb.findSlaves(fm, x_group_id, level, true);
+
+          
+
 
          for (var i = 0; i < all_slaves.length; i++) {
              all_slaves[i].getStore().clearData();
@@ -869,7 +883,8 @@
 
          for (var i = 0; i < direct_slaves.length; i++) {
              var ds = direct_slaves[i].getStore();
-             Fb.setStorePara(ds, 'filter_value', v)
+             var path='query_cfg.lines.vset_'+i;
+             Fb.setStorePara(ds, path, v);
              ds.reload();
          }
      });
@@ -881,7 +896,6 @@
      }) 
 
      if (cfg.detail_btn) {
-         console.log(cfg);
          var table = cfg.editor_cfg.trigger_cfg.combo_table;
          var btn_detail = Fb.getDetailBtn(table);
          var combowithdetail = new Ext.Container({
@@ -898,9 +912,27 @@
  };
 
 
+Fb.setJsonPath=function(obj,path, val) {
+  var fields = path.split('.');
+  var result = obj;
+  for (var i = 0, n = fields.length; i < n && result !== undefined; i++) {
+    var field = fields[i];
+    if (i === n - 1) {
+      result[field] = val;
+    } else {
+      if (typeof result[field] === 'undefined') {
+        result[field] = {};
+      }
+      result = result[field];
+
+    }
+  }
+}
+
+
  Fb.setStorePara = function(store, key, value) {
      if (store.proxy.conn.jsonData) {
-         store.proxy.conn.jsonData.filter_value = value;
+         this.setJsonPath(store.proxy.conn.jsonData,key,value);
      } else {
          store.baseParams.value = value;
      }
@@ -953,14 +985,14 @@
      return f_width * 1.0;
  }
 
- Fb.getDefaultEditor = function(oneFieldCfg, rowOriginalValue, readonly_flag) {
+ Fb.getDefaultEditor = function(oneFieldCfg,readonly_flag) {
      var f_width = Fb.getFieldWidth(oneFieldCfg);
      var defaultEditor = {
          fieldLabel: oneFieldCfg['display_cfg'].field_c,
          id: oneFieldCfg['field_e'],
          width: f_width,
          height: 25,
-         value: rowOriginalValue,
+         value:oneFieldCfg.editor_cfg.default_v,
          readOnly: readonly_flag,
          xtype: 'textfield',
          blankText: i18n.not_allow_blank
@@ -968,63 +1000,107 @@
      return defaultEditor;
  }
 
- Fb.getTriggerEditor = function(op_type, editCfg, row) {
-     ghost_field = 'ghost_' + editCfg['field_e'];
-     if (row) {
-         editCfg.ini = row.json[ghost_field];
-     };
-     var fields = [editCfg.editor_cfg.trigger_cfg.list_field, editCfg.editor_cfg.trigger_cfg.value_field];
-     var table = editCfg.editor_cfg.trigger_cfg.combo_table;
-     var filter_cfg = {
-         filter_field: editCfg.editor_cfg.trigger_cfg.filter_field
-     };
-     var combo_store = Act.prototype.getStoreByTableAndField(table, fields, filter_cfg);
-     editCfg.id = editCfg.field_e;
-     editCfg.valueField = editCfg.editor_cfg.trigger_cfg.value_field;
-     editCfg.displayField = editCfg.editor_cfg.trigger_cfg.list_field;
-     editCfg.level = editCfg.editor_cfg.trigger_cfg.level;
+ Fb.getTriggerWhoIsWho=function  (one_col_cfg,whoami_cfg)
+ {
 
-     if (editCfg.editor_cfg.trigger_cfg.level == 1) {
-         editCfg.nanx_type = 'root';
-     } else {
-         editCfg.nanx_type = 'slave';
-     }
-     editCfg.group_id = editCfg.editor_cfg.trigger_cfg.group_id;
-     editCfg.detail_btn = true;
-     return this.getBasicCombo(editCfg, combo_store);
+    var trigger_cfg=one_col_cfg.editor_cfg.trigger_cfg;
+    var trigger_table=trigger_cfg.combo_table;
+    var level=trigger_cfg.level;
+    var who_is_who=whoami_cfg.who_is_who;
+    var login_user=whoami_cfg.whoami;
+    var connected_value=null;   
+    for (var i = 0; i < who_is_who.length; i++) {
+        if(who_is_who[i].inner_table==trigger_table  &&  who_is_who[i].user==login_user )
+        {
+        connected_value=who_is_who[i].inner_table_value;
+        break;
+        }
+    };
+    return connected_value;
  }
 
 
- Fb.getFieldEditor = function(op_type, editCfg, row) {
-     var rowOriginalValue = null;
-     var whoami = document.getElementById('whoami');
+   Fb.getTriggerEditor = function(  one_col_cfg, row,readonly_flag,whoami_cfg) {
+     
+     
+     var connected_value=  this.getTriggerWhoIsWho(one_col_cfg,whoami_cfg);
+     if (connected_value){readonly_flag=true;} 
+     ghost_field = 'ghost_' + one_col_cfg['field_e'];
+     if (row) {   // edit mode
+         one_col_cfg.ini = row.json[ghost_field];
+     }
+     else
+     {
+        if(connected_value){
+            one_col_cfg.ini=connected_value;
+       }else
+       {
+            one_col_cfg.ini=one_col_cfg.editor_cfg.default_v;
+       }
+     }
+       
+     var fields = [one_col_cfg.editor_cfg.trigger_cfg.list_field, one_col_cfg.editor_cfg.trigger_cfg.value_field];
+     var table = one_col_cfg.editor_cfg.trigger_cfg.combo_table;
+     var filter_cfg = {
+         filter_field: one_col_cfg.editor_cfg.trigger_cfg.filter_field
+     };
+     var combo_store = Act.prototype.getStoreByTableAndField(table, fields, filter_cfg);
+     one_col_cfg.id = one_col_cfg.field_e;
+     one_col_cfg.valueField = one_col_cfg.editor_cfg.trigger_cfg.value_field;
+     one_col_cfg.displayField = one_col_cfg.editor_cfg.trigger_cfg.list_field;
+     one_col_cfg.level = one_col_cfg.editor_cfg.trigger_cfg.level;
+
+     if (one_col_cfg.editor_cfg.trigger_cfg.level == 1) {
+         one_col_cfg.nanx_type = 'root';
+     } else {
+         one_col_cfg.nanx_type = 'slave';
+     }
+     one_col_cfg.group_id = one_col_cfg.editor_cfg.trigger_cfg.group_id;
+     one_col_cfg.detail_btn = true;
+     return this.getBasicCombo(one_col_cfg, combo_store,readonly_flag);
+ }
+
+
+Fb.getWhoami=function()
+{
+      var whoami = document.getElementById('whoami');
      if (!whoami) {
          whoami = 'admin';
      } else {
          whoami = whoami.innerHTML;
      }
+  return whoami;
+}
 
+  Fb.determineOriginalValue = function(op_type, editCfg, row) {
+    
+     var rowOriginalValue = null;
      if (op_type == 'update') {
          rowOriginalValue = row.get(editCfg['field_e']);
      }
      if ((op_type == 'add') && (editCfg.editor_cfg.default_v)) {
          rowOriginalValue = editCfg.editor_cfg.default_v;
-         var d = new Date();
-         if ((editCfg.editor_cfg.default_v == 'date') || (editCfg.editor_cfg.default_v == 'datetime')) {
+
+         if (editCfg.editor_cfg.default_v == 'date') {
+             rowOriginalValue=Fb.getDate();
+         }
+
+         if (editCfg.editor_cfg.default_v == 'datetime'){
              rowOriginalValue = new Date();
          }
      }
-     var readonly_flag = false;
-     var skip_flag = false;
-     if (editCfg['field_e'] == 'pid') {
-         readonly_flag = true;
-     }
+      
+ 
 
-     if (editCfg['editor_cfg']['is_produce_col'] == 1) {
-         readonly_flag = true;
+
+     if (editCfg.editor_cfg.is_produce_col == 1) {
+         whoami=this.getWhoami();
          if (op_type == 'add') {
+//              alert('set to whoami'+whoami);
              rowOriginalValue = whoami;
+           
          }
+         
          if (op_type == 'update') {
              rowOriginalValue = row.get(editCfg['field_e']);
              if (!rowOriginalValue.length > 0) {
@@ -1034,54 +1110,61 @@
 
          if (op_type == 'batchUpdate') {
              rowOriginalValue = whoami;
-             readonly_flag = false;
+             
          }
      }
-      
+   editCfg.editor_cfg.default_v=rowOriginalValue;
+ }
 
-     if ((editCfg['field_e'] == 'pid') && (op_type == 'add')) {
-         skip_flag = true;
+
+  Fb.getFieldEditor = function(op_type, one_col_cfg, row,whoami_cfg) {
+   
+     this.determineOriginalValue(op_type, one_col_cfg, row);
+     var readonly_flag = false;
+     var skip_flag = false;
+     if (one_col_cfg['field_e']=='pid'){
+         readonly_flag = true;
      }
-     if (skip_flag) {
-         return null;
-     }
-     if ((editCfg['field_e'] == this.gridFilter) && (op_type == 'add')) {
-         return [this.getInheritEditor(editCfg, this.filterValue, true)];
+
+     if (one_col_cfg.editor_cfg.is_produce_col == 1){ readonly_flag = true;} 
+     if ((one_col_cfg['field_e'] == 'pid') && (op_type == 'add')) {skip_flag = true;}
+     if (skip_flag){return null;}
+     
+     if ((one_col_cfg['field_e'] == this.gridFilter) && (op_type == 'add')) {
+         
+         return [this.getInheritEditor(one_col_cfg, this.filterValue, true)];
      }
     
       
-     if (!Ext.isEmpty(editCfg.editor_cfg.trigger_cfg)) {
-         return [Fb.getTriggerEditor(op_type, editCfg, row)];
+     if (!Ext.isEmpty(one_col_cfg.editor_cfg.trigger_cfg)) {
+         return [Fb.getTriggerEditor(  one_col_cfg, row, readonly_flag,whoami_cfg )];
      } 
      
 
-     if (editCfg.editor_cfg.need_upload == 1) {
+     if (one_col_cfg.editor_cfg.need_upload == 1) {
          var cfg = {
-             label: editCfg.display_cfg.field_c,
-             name: editCfg['field_e'],
-             value: rowOriginalValue
+             label: one_col_cfg.display_cfg.field_c,
+             name: one_col_cfg['field_e'],
+             value: one_col_cfg.editor_cfg.default_v
          };
          return [this.getAttachmentEditor(cfg)];
      }
-     if (editCfg.editor_cfg.edit_as_html == 1) {
-         return [this.getHtmlEditor(editCfg['field_e'], editCfg['display_cfg'].field_c, rowOriginalValue)];
-     }
-     if (editCfg.editor_cfg.datetime == 'datetime') {
-         return [this.getDatetimeEditor(editCfg, rowOriginalValue, readonly_flag)];
-     }
-     if (editCfg.editor_cfg.datetime == 'date') {
-         return [this.getDateEditor(editCfg, rowOriginalValue, readonly_flag)];
+
+     if (one_col_cfg.editor_cfg.edit_as_html == 1) {
+         return [this.getHtmlEditor(one_col_cfg['field_e'], one_col_cfg['display_cfg'].field_c)];
      }
 
-     if (editCfg.editor_cfg.datetime == 'time') {
-         return [this.getTimeEditor(editCfg, rowOriginalValue, readonly_flag)];
+     if (one_col_cfg.editor_cfg.datetime == 'datetime' || one_col_cfg.editor_cfg.datetime == 'date' ||one_col_cfg.editor_cfg.datetime == 'time' ) {
+         return [this.getDateTypeEditor(one_col_cfg, readonly_flag,one_col_cfg.editor_cfg.datetime)];
      }
 
-     if (editCfg['edit_type'] == 'textarea') {
-         return [this.getTextAreaEditor(editCfg, rowOriginalValue, readonly_flag)];
+
+     if (one_col_cfg['edit_type'] == 'textarea') {
+         return [this.getTextAreaEditor(one_col_cfg,readonly_flag)];
      }
-     if ((editCfg['edit_type'] == null) || (editCfg['edit_type'] == '')) {
-         return [this.getDefaultEditor(editCfg, rowOriginalValue, readonly_flag)];
+
+     if ((one_col_cfg['edit_type'] == null) || (one_col_cfg['edit_type'] == '')) {
+         return [this.getDefaultEditor(one_col_cfg, readonly_flag)];
      }
 
  }
@@ -1123,10 +1206,12 @@
  }
 
  Fb.getFormData = function(form) {
-     if (!form.getForm().isValid()) {
+
+     if (!form.getForm().isValid()  &&  !Ext.getCmp('force_not_check')   ) {
          Ext.Msg.alert(i18n.error, i18n.check_input);
          return false;
      }
+
      var fmdata = {};
      var formel = form.getEl();
      var ipts = formel.query('input');
@@ -1167,7 +1252,15 @@
      }
     
      var extradata = getGridExtraData();
-     if (extradata) {
+     if (extradata){
+       if (extradata.mustHaveOneRow && 0==extradata.row_count)
+         {
+          alert(i18n.choose_only_one_record);
+          return; 
+         }
+       }
+
+     if (extradata){
          fmdata.extradata = extradata;
      }
      
@@ -1235,7 +1328,7 @@
      xwin.show();
  }
 
- Fb.ajaxPostData = function(url, para, succ) {
+ Fb.ajaxPostData = function(url, para, callback) {
      WaitMask.show();
      var json = Ext.encode(para);
      var that = this;
@@ -1255,12 +1348,15 @@
                      Fb.showDownload(ret.fname);
                      return;
                  }
-                 if (ret.msg.length > 0) {
+                 
+                 if ((ret.msg.length > 0) && (!ret.hasOwnProperty('show_msg_on_error'))) {
                      Ext.Msg.alert(i18n.msg, ret.msg);
                  }
-                 if (succ) {
-                     succ(ret);
+
+                 if (callback) {
+                     callback(ret);
                  }
+
              } else {
                  if(ret.errmsg){Ext.Msg.alert(i18n.error, ret.errmsg);}else{Ext.Msg.alert(i18n.error, ret.msg);}
              }
@@ -1341,6 +1437,8 @@
      });
  };
 
+ 
+
  Fb.RestoreField = function(grid, row, col, event) {
      var cellMenu = new Ext.menu.Menu({
          items: [{
@@ -1399,14 +1497,20 @@
              if (items[i].hasOwnProperty('layout_panel')) {
                  var layout = 'absolute';
              }
-             var f = Fb.getBackendFormItem(items, i, node);
-             if (f.isArray) {
+
+              var item = Fb.DeepClone(items[i]);
+              item = Fb.preProcessNodeAtt(item, node);
+              var f = Fb.getBackendFormItem(item, node);
+             if (f){
+                if (f.isArray){
                  for (var j = 0; j < f.length; j++) {
                      forms.push(f[j]);
                  }
              } else {
                  forms.push(f);
              }
+           }
+              
          }
      }
 
@@ -1482,7 +1586,6 @@
                       
                       case 'trigger_bar':
                       follow_key_used = item.path;
-                      console.log(ret_json[follow_key_used]); 
                       Fb.addTriggerRow12345_from_response(ret_json[follow_key_used]);
                       break;
                       
@@ -1498,20 +1601,6 @@
 
  Fb.preProcessNodeAtt = function(cfg, xnode) {
   
-    /*
-    if (item.hasOwnProperty('sqlparagroup')) {
-         var group = item.sqlparagroup;
-         var sqlpara = {};
-         for (var p_index = 0; p_index < group.length; p_index++) {
-             var key = group[p_index]['key'];
-             var value_ref = group[p_index]['init'];
-             var value = node.attributes[value_ref];
-             var new_key = '$' + key;
-             sqlpara[new_key] = value;
-         }
-         field_v = sqlpara;
-     }*/
-     
      var fixed = Fb.DeepClone(cfg);
      function fix_obj_tag(taged, node) {
          if (taged.substring(0, 2) == '##') {
@@ -1538,8 +1627,18 @@
             if(fixed.value===true){fixed.value='true';}
             else{ fixed.value = fix_obj_tag(fixed.value, xnode);}
           }
-     
      }
+
+    if (fixed.file_type) {
+             fixed.file_type = fix_obj_tag(fixed.file_type, xnode);
+     }
+
+
+    if (fixed.os_path) {
+             fixed.os_path = fix_obj_tag(fixed.os_path, xnode);
+     }
+
+
      if (fixed.json) {
          for (var subkey in fixed.json) {
              fixed.json[subkey] = fix_obj_tag(fixed.json[subkey], xnode);
@@ -1549,16 +1648,15 @@
  }
 
 
- Fb.getBackendFormItem = function(items, i, node) {
-     var item = Fb.DeepClone(items[i]);
-     var item = Fb.preProcessNodeAtt(item, node);
+ Fb.getBackendFormItem = function(item,node) {
+
      var readonly = item.readonly ? item.readonly : false;
      var hidden = item.hidden ? item.hidden : false;
      var checked = item.all_checked ? item.all_checked : false;
      var field_v=item.value;
+   
 
      switch (item.item_type) {
-      
          case 'field':
              var f = {
                  fieldLabel:item.label,
@@ -1578,6 +1676,34 @@
              };
              if(item.inputType){f.inputType=item.inputType;}
              break;
+
+         case 'raw_table':
+              var container_id = 'raw_table_' + Ext.id();
+              var f = new Ext.Container({
+                 layout: 'absolute',
+                 height: item.grid_h,
+                 autoScroll: true,
+                 border:true,
+                 width:400,
+                 id:container_id,
+                 x:105,
+                 y:0
+             });
+               
+            new Act({
+            edit_type:'noedit',
+            code:'NANX_TBL_DATA',
+            table:item.value,
+            transfer:false,
+            singleSelect:true,
+            grid_id:'raw_table_grid_id',
+            showwhere:'container',
+            tbar_type:'hide',
+            renderto: container_id
+                    });
+             break;
+
+
 
          case 'StarHtmleditor':
              var html = {
@@ -1687,19 +1813,22 @@
                      item.items[i].listeners = {
                          afterrender: function() {
                              var rd = Ext.get(this.id);
-                             var field = '&nbsp;&nbsp;<input name=' + this.id + '_input style="margin-top:6px;" class="x-form-text x-form-field">';
+                             var field = '&nbsp;&nbsp;<input name=' + this.id + '_input style="margin-top:6px;"   class="x-form-text x-form-field">';
                              rd.parent().createChild(field);
                          }
                      }
                  }
+
                  rg.push(item.items[i]);
              }
+
              var f = new Ext.form.RadioGroup({
+                 reference_group_id:111111222222,
                  fieldLabel: item.label,
                  labelStyle: 'white-space:nowrap;',
                  layout: 'form',
                  style: {
-                     'margin-left': '20px',
+                     'margin-left': '0px',
                      'margin-top': '10px'
                  },
                  columns: 1,
@@ -1717,12 +1846,13 @@
              });
              break;
 
-         case 'upload':
+         case 'uploadFile':
              var f = Fb.getAttachmentEditor(item);
              break;
 
-         case 'pic_selector':
+         case 'file_selector':
               var container_id = 'media_grid_' + Ext.id();
+             
               var f = new Ext.Container({
                  layout: 'absolute',
                  height: item.grid_h,
@@ -1732,23 +1862,13 @@
                  x: 0,
                  y: 0
              });
- 
-             var Act_f= new Act({
-                 code: 'NANX_FS_2_TABLE',
-                 pid_order:'desc',
-                 os_path:'imgs',
-                 file_anchor_id:item.file_anchor_id,
-                 file_trunk:5,
-                 checkbox:false,
-                 hideHeaders:true,
-                 nosm:true,
-                 grid_id: item.grid_ext_id,
-                 grid_h:item.grid_h,
-                 renderto: container_id,
-                 media_type:'img',
-                 showwhere: 'container' 
-                   });
-             
+
+                item.grid_id='grid_FILE';
+                var act_config = Fb.DeepClone(item);
+                act_config.renderto=f.id;
+                act_config.tbar_type='file_'+item.file_type;
+                act_config.showwhere='container';
+               var Act_f= new Act(act_config);
              break;
 
          case 'combo_list':
@@ -1757,8 +1877,6 @@
              var store = Fb.buildTreeStore(item);
              var f = Fb.getBasicCombo(item, store);
              break;
-         
-         
          
          case 'combo_group':
              var f = Fb.getComboGroup(item);
@@ -1774,7 +1892,6 @@
              break;
 
          case 'layout_panel':
-         
              var container_id = 'r_grid_' + Ext.id();
              var f = new Ext.Container({
                  layout: 'absolute',
@@ -1785,24 +1902,26 @@
                  y: 0
              });
  
+
              var Act_f = new Act({
                  code: "NANX_TB_LAYOUT",
                  activity_type: "sql",
                  edit_type: 'edit',
+                 tbar_type:'hide',
                  showwhere:"container",
                  grid_id: item.grid_ext_id,
                  renderto: container_id,
                  gridheader: true,
                  checkbox: false,
                  para_json: {
-                     '$table': field_v
+                     'table': field_v
                  },
-                 callback: [{
-                     event: 'cellcontextmenu',
-                     fn: Fb.RestoreField
-                 }, {
-                     event: 'render',
-                     fn: Fb.LayoutManager
+                 callback:[{
+                     event:'cellcontextmenu',
+                     fn:Fb.RestoreField
+                 },{
+                     event:'render',
+                     fn:Fb.LayoutManager
                  }]
              });
              
@@ -1814,25 +1933,42 @@
  }
 
 
-Fb.getCellStr = function(grid, rowIndex, cellIndex) {
+Fb.getCellStr = function(grid, rowIndex, colIndex) {
          var rec = grid.getStore().getAt(rowIndex);
-         var columnName = grid.getColumnModel().getDataIndex(cellIndex);
+         var columnName = grid.getColumnModel().getDataIndex(colIndex);
          var cellValue = rec.get(columnName);
          return cellValue;
      };
      
-Fb.getHtmlAttribute = function(str, tag) {
+Fb.getFileValue = function(grid,row,col) {
+         var str='';
+         str= Fb.getCellStr(grid, row, col);
+         
+         if(grid.file_type=='php'|| grid.file_type=='js' ){
+           col=1;  // point to Filename
+           return {os_path:grid.os_path,filename:str};
+         }
+
+         var tag='src';
          var reg_str = "<img[^>]+"+tag+'="http:\\\/\\\/([^">]+)';
          var reg_rule=new RegExp(reg_str,'g');
          var results = reg_rule.exec(str);
+
+         if(results){
          var found= results[1];
          if(tag=='src'){found="http://"+found}
-         return found;
+         return {os_path:grid.os_path,filename:found};
+         }
+            else
+            {
+              return {os_path:grid.os_path,filename:null};
+            }
      };    
      
      
      
  Fb.formBuilder = function(opform, opcode) {
+        
      var help_panel = new Ext.Panel({
          autoLoad: HELP_DIR + opcode,
          height: 400,
@@ -1898,8 +2034,6 @@ Fb.validate_password_input = function(v) {
       
       var pwd=Ext.getCmp('password').getValue();
       var pwd2=Ext.getCmp('password2').getValue();
-      console.log(pwd);
-      console.log(pwd2);
       if(pwd.length<1){return false;} 
       if(!(pwd===pwd2)){return false;}
       else
@@ -1909,7 +2043,7 @@ Fb.validate_password_input = function(v) {
  
 
  Fb.backendForm = function(category, opcode, xnode) {
-     var o_mcfg = Category.getSubMenuCfg(category, opcode);
+     var o_mcfg = AppCategory.getSubMenuCfg(category, opcode);
      var fixed_mcfg = Fb.preProcessNodeAtt(o_mcfg, xnode);
      var opform = Fb.getOperationForm(xnode, fixed_mcfg);
      return opform;
@@ -1918,7 +2052,7 @@ Fb.validate_password_input = function(v) {
 
 
  function helps_prod() {
-     var x = Category.getContextMenus();
+     var x = AppCategory.getContextMenus();
      for (var i = 0; i < x.length; i++) {
          menus = x[i].menus;
          for (var j = 0; j < menus.length; j++) {
@@ -1981,21 +2115,45 @@ Fb.validate_password_input = function(v) {
          gridid = 'x_grid_for_dnd';
      }
 
+
+    if (Ext.getCmp('raw_table_grid_id')) {
+         gridid = 'raw_table_grid_id';
+     }
+ 
+
+
      if (!Ext.getCmp(gridid)) {
          return null;
      }
 
      var ds = Ext.getCmp(gridid).getStore();
+     
+     var destGrid=Ext.getCmp(gridid);
+     
+     if(destGrid.selModel.singleSelect &&  ! gridid=='reorder_columns_grid' )
+     {
+      var singleSelectGrid=true;   
+      var items=destGrid.getSelectionModel().getSelections();
+     }
+     else
+     {
+     var singleSelectGrid=false;
      var items = ds.data.items;
+     }
+
+     
+
      var griddata = [];
      for (var i = 0; i < items.length; i++) {
          var c = items[i].data;
          griddata.push(c);
      }
 
-     var cm = Ext.getCmp(gridid).getColumnModel();
+     var cm =destGrid.getColumnModel();
+     
      var col_count = cm.getColumnCount();
      return {
+         mustHaveOneRow:singleSelectGrid,
          data: griddata,
          col_count: col_count,
          row_count: items.length

@@ -1,14 +1,17 @@
-APP_PREFIX='standard';URL_ROOT='http://127.0.0.1/cloud/standard/';TMP_DIR=URL_ROOT+'tmp/';
-AJAX_ROOT=URL_ROOT+'index.php/';
-HELP_DIR=AJAX_ROOT+'Dbdocu/gethelp/';
+APP_PREFIX='standx';
+BASE_URL='http://127.0.0.1/cloud/standx/';
+TMP_DIR=BASE_URL+'tmp/';
+AJAX_ROOT=BASE_URL+'index.php/';
+HELP_DIR=AJAX_ROOT+'dbdocu/gethelp/';
 TREE_URL=AJAX_ROOT+'tree/';
 CURD_URL=AJAX_ROOT+'curd/';
 UPLOAD_URL='file/upload';
 CURD_GETDATA_URL=CURD_URL+'listData';
-LOGIN_URL=URL_ROOT+'index.php/home/login';
-Ext.BLANK_IMAGE_URL=URL_ROOT+'jslib/ext/resources/images/default/s.gif';
+LOGIN_URL=BASE_URL+'index.php/home/login';
+Ext.BLANK_IMAGE_URL=BASE_URL+'jslib/ext/resources/images/default/s.gif';
 pageSize=25;
 
+if (Ext.MessageBox){Ext.MessageBox.minWidth=250;}
 MEM_COPY_PASTE={'source':null,'target':null};
 if(!window.console)
 {

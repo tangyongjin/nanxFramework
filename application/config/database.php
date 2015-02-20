@@ -67,20 +67,4 @@ $db['default']['autoinit'] = TRUE;
 $db['default']['stricton'] = FALSE;
 
  
- //another database  
  
-$db['nanx_template']['hostname'] = '127.0.0.1';
-$db['nanx_template']['username'] = 'root';
-$db['nanx_template']['password'] = '';
-$db['nanx_template']['database'] = 'nanx_template';
-$db['nanx_template']['dbdriver'] = 'mysql';
-$db['nanx_template']['dbprefix'] = '';
-$db['nanx_template']['pconnect'] = FALSE;
-$db['nanx_template']['db_debug'] = TRUE;
-$db['nanx_template']['cache_on'] = FALSE;
-$db['nanx_template']['cachedir'] = '';
-$db['nanx_template']['char_set'] = 'utf8';
-$db['nanx_template']['dbcollat'] = 'utf8_general_ci';
-$db['nanx_template']['swap_pre'] = '';
-$db['nanx_template']['autoinit'] = TRUE;
-$db['nanx_template']['stricton'] = FALSE;

@@ -5,6 +5,7 @@ class MExcel extends CI_Model
 	function  exportExcel($colscfg_and_rows,$fname)
 	{
 	  
+    
 		$this->load->library('PHPExcel_lib');
     $objPHPExcel = new PHPExcel();
     $objPHPExcel->getProperties()->setLastModifiedBy("NaNx");
@@ -27,23 +28,23 @@ class MExcel extends CI_Model
      $this->load->model('MFile');
      $fname=$this->MFile->getFilename4OS($fname);
      if($this->MFile->checkWriteAble('tmp'))
-    {
-         try
-         {
-              @$objWriter->save('tmp/'.$fname.'.xls');
-         }
+      {
+           try
+           {
+                @$objWriter->save('tmp/'.$fname.'.xls');
+           }
 
-      catch(Exception $e)
-        {
-    return array('success'=>false,'msg'=>$e->getMessage());
-        }      
-       return array('success'=>true,'msg'=>'successed');
-    }
-    else
-    {
-    return array('success'=>true,'msg'=>'done.');
-    }
-  
+           catch(Exception $e)
+           {
+              return array('success'=>false,'msg'=>$e->getMessage());
+           }      
+          return array('success'=>true,'msg'=>'successed');
+      }
+
+      else
+      {
+         return array('success'=>false,'msg'=>'tmp '.  $this->lang->line('write_file_failed'));
+      }
   }
   
   function  excel2table($tablename,$fname, $success_msg)

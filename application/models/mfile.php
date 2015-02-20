@@ -2,6 +2,75 @@
 
 class MFile extends CI_Model
 {
+
+  function getFSGridFields()
+  {
+    $header=array(
+    'filename'=>0
+    );
+    return array($header);
+  }
+
+ 
+
+function fs2array()
+  { 
+     $para = (array )json_decode(file_get_contents('php://input'));
+     $os_path=$para['os_path'];
+     $file_type=$para['file_type'];
+     $files=$this->getFileList($os_path,$file_type);
+     
+     if($file_type=='img')
+     {
+         $file_trunk=$para['file_trunk'];
+         $picArray=$this->picFile2Array($files,$file_trunk,$_GET);
+         echo $picArray;
+         return;
+     }
+
+     $result=array();
+     $result['rows']=$files;
+     $result['total']=count($files);
+     $result['table']='vstable';
+     $json = json_encode($result,JSON_UNESCAPED_UNICODE);
+     echo $json;
+  }
+
+
+  function picFile2Array($rawfiles,$file_trunk,$get)
+  {
+      $files=array();
+      $bs_url=$this->config->item('base_url');
+      foreach ($rawfiles as $one_file) {
+              $image_properties = array(
+                'src' => $bs_url.'/imgs/'.$one_file['Filename'],
+                'class' =>'img_max_48'
+                );
+                $img_html=img($image_properties);
+                $files[]=$img_html.'<br/>'.$one_file['Filename'];
+      }  
+ 
+      $result=array();
+      $tr=array_chunk($files,$file_trunk);
+
+      if(isset($get['start']))
+       {
+        $start = $get['start'];
+        $limit = $get['limit'];
+        $segment=array_slice($tr,$start,$limit);
+       }
+         else
+         {
+         $segment=$tr;
+        }
+
+     $result['rows']=$segment;
+     $result['total']=count($tr);
+     $result['table']='vstable';
+     $json = json_encode($result,JSON_UNESCAPED_UNICODE);
+     return $json;
+  }
+  
     function getFilenameInZip($fname)
     {
         $zip = zip_open($fname);
@@ -86,7 +155,8 @@ class MFile extends CI_Model
         {   
             return false;
         } else
-        {   unlink("$path/$fname");
+        {   
+            unlink("$path/$fname");
             return true;
         }
     }
@@ -118,9 +188,9 @@ class MFile extends CI_Model
 
 
     function writeThumb($fname)
-    {   
-        $this->load->model('MFile');
-        $fname = $this->MFile->getFilename4OS($fname);
+    {    
+        
+        $fname = $this->getFilename4OS($fname);
         $config['image_library'] = 'gd2';
         $config['source_image'] = 'imgs/' . $fname;
         $config['create_thumb'] = true;
@@ -128,20 +198,26 @@ class MFile extends CI_Model
         $config['width'] = 14;
         $config['height'] = 14;
         $this->load->library('image_lib', $config);
-        $this->image_lib->resize();
+        $write_file_result= $this->image_lib->resize();   //create file as XXXX_thumb.ext
         $f = spathinfo($fname);
+        if ( ! $this->image_lib->resize())
+        {
+         return false;
+        }
+
+
         $src = 'imgs/' . $f['filename'] . '_thumb.' . $f['extension'];
         $dest = 'imgs/thumbs/' . $fname;
         rename($src, $dest);
+        return true;
     }
-    
-    
+
    
      function getFileList($path,$ftype='all')
     { 
        $p='/'.$path.'/';
     	 $path= (dirname(dirname(dirname(__FILE__)))).$p;
-    	 if($ftype=='all')
+    	 if($ftype=='img')
     	 {
     	 $ext = '{*.jpg,*.JPG,*.bmp,*.BMP,*.gif,*.GIF,*.png,*.PNG}';
     	 }
@@ -151,92 +227,84 @@ class MFile extends CI_Model
     	}
     	   
        $files  = glob($path.$ext, GLOB_BRACE);
+      
+
+
+      usort($files, function($a, $b) {
+         return filemtime($a) < filemtime($b);
+      });
+
        
-       $this->load->model('MFile');
-       $bs_url=$this->config->item('base_url');
        $rows=array();
+       $pid=0;
        foreach($files  as $file)
              {
-              	$tmp=array();
-              	$realname=str_replace($path,'',$file);
-              	$realname=$this->MFile->getFilename4Client($realname);
-             		$image_properties = array(
-               'src' => $bs_url.'/imgs/'.$realname,
-               'class' =>'img_max_48'
-                );
-              	$img_html=img($image_properties);
-                $rows[]=$img_html.'<br/>'.$realname;
-             } 
-        return $rows;
+                $tmp=array();
+               	$shortname=str_replace($path,'',$file);
+              	$realname=$this->getFilename4Client($file);
+                $tmp['pid']= $pid;
+                $tmp['Filename']= $shortname; 
+                $tmp['Size']=  filesize($realname);   
+                $tmp['Date']= date ("Y-m-d H:i:s A", filemtime($realname));
+                $rows[]=$tmp;
+                $pid++;
+             }
+
+         $this->load->model('MFilter');
+         $filtered=$this->MFilter->filter($rows,'file'); 
+
+         return $filtered;
     }
     
-      function getFileList2($path,$ftype='all')
-     { 
-       $p='/'.$path.'/';
-    	 $path= (dirname(dirname(dirname(__FILE__)))).$p;
-    	 if($ftype=='all')
-    	 {
-    	 $ext = '{*.*}';
-    	 }
-    	else
-    	{
-    	  $ext='{*.'.$ftype.'}';
-    	}
-    	 
-       $files  = glob($path.$ext, GLOB_BRACE);
-       return $files;
-       
-    }  
+     
     
     
-    function backupsystem($fname)
-  {
-  $cfg=array(
-   array(
-   'dest'=>'js',
-   'path'=>'js/upload',
-   'name_prefix'=>'',
-   'ext'=>'js'
-   ),
-   array(
-   'dest'=>'imgs',
-   'path'=>'imgs',
-   'name_prefix'=>'',
-   'ext'=>'all'
-   ),
-   
-    array(
-   'dest'=>'controllers',
-   'path'=>'application/controllers',
-   'name_prefix'=>'nanxplug_',
-    'ext'=>'php'
-   ),
-  
-   array(
-   'dest'=>'models',
-   'path'=>'application/models',
-   'name_prefix'=>'mnanxplug_',
-    'ext'=>'php'
-   ),
-  
-   array
-  (
-  'dest'=>'uploads',
-  'path'=>'uploads',
-  'name_prefix'=>'',
-  'ext'=>'all'
-  )
+    function backupsystem($fname) {
+    $cfg=array(
+     array(
+     'dest'=>'js',
+     'path'=>'js/upload',
+     'name_prefix'=>'',
+     'ext'=>'js'
+     ),
+     array(
+     'dest'=>'imgs',
+     'path'=>'imgs',
+     'name_prefix'=>'',
+     'ext'=>'all'
+     ),
+     
+      array(
+     'dest'=>'controllers',
+     'path'=>'application/controllers',
+     'name_prefix'=>'nanxplug_',
+      'ext'=>'php'
+     ),
+      
+       array(
+     'dest'=>'models',
+     'path'=>'application/models',
+     'name_prefix'=>'mnanxplug_',
+      'ext'=>'php'
+     ),
+        
+       array
+      (
+      'dest'=>'uploads',
+      'path'=>'uploads',
+      'name_prefix'=>'',
+      'ext'=>'all'
+      )
   );
   
   $this->load->helper('file');
-  $this->load->model('MFile');
   foreach($cfg as $backup_item)
    {
     delete_files("tmp/4backup/".$backup_item['dest']);
-    $files=$this->MFile->getFileList2($backup_item['path'],$backup_item['ext']);
+    $files=$this->getFileList2($backup_item['path'],$backup_item['ext']);
     foreach($files as $src_file)
     { 
-       $fn_nopath=$this->MFile->getUnpathedName($src_file);
+       $fn_nopath=$this->getUnpathedName($src_file);
        $destfile="tmp/4backup/".$backup_item['dest']."/".$fn_nopath;
        if(strlen($backup_item['name_prefix'])>0)
        {

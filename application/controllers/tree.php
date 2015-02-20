@@ -1,115 +1,111 @@
 <?php
 
-if (!defined('BASEPATH'))
-    exit('No direct script access allowed');
+if (!defined('BASEPATH')) {
+	exit('No direct script access allowed');
+}
 
-class Tree extends CI_Controller
-{
-    function treeCfg()
-    {
-        $cfg = array( 
-            
-            'biz_tables' => array('sql' =>
-                    "select pid ,  table_name as value,  table_name as 'table', table_screen_name as  text ,'biz_table' as category from  nanx_biz_tables",
-                    'leaf' =>false),
+class Tree extends CI_Controller {
+	function treeCfg() {
+		$cfg = array(
 
-            'biz_tables_can_follow' => array('sql' =>
-                    "select  pid, table_name as value, table_name as 'table', table_screen_name as  text ,'biz_table' as category from  nanx_biz_tables",
-                    'leaf' =>false),
+			'biz_tables' => array('sql' =>
+				"select pid ,  table_name as value,  table_name as 'table', table_screen_name as  text ,'biz_table' as category from  nanx_biz_tables",
+				'leaf' => false),
 
-            'fks' => array('sql' =>
-                    'SELECT  ke.constraint_name as text,ke.constraint_name  as value,"fk" as category
+			'biz_tables_can_follow' => array('sql' =>
+				"select  pid, table_name as value, table_name as 'table', table_screen_name as  text ,'biz_table' as category from  nanx_biz_tables",
+				'leaf' => false),
+
+			'fks' => array('sql' =>
+				'SELECT  ke.constraint_name as text,ke.constraint_name  as value,"fk" as category
                     FROM information_schema.KEY_COLUMN_USAGE ke
                     WHERE ke.referenced_table_name IS NOT NULL and constraint_schema="SCHEMA_REPLACE"
                     ORDER BY ke.referenced_table_name', 'leaf' => true),
-             
-            'biz_table' => array('sql' =>
-                    "select  table_name as value,  table_name as  text ,'referenced_table' as category from  
-                      nanx_biz_tables      where table_name='#value'", 'leaf' =>
-                    array(true, false)),
-            
-            'table_by_name' => array('sql' =>
-                    "select  table_name as value,  table_name as  text ,'referenced_table' as category from  
-                      nanx_biz_tables      where table_name='#value'", 'leaf' =>
-                    array(true, false)),
 
-            'based_biz_table' => array('sql' =>
-                    "select  table_name as value,'".$this->lang->line('fields'). "'  as  text ,'biz_cols' as category, table_name as hostby
+			'biz_table' => array('sql' =>
+				"select  table_name as value,  table_name as  text ,'referenced_table' as category from
+                      nanx_biz_tables      where table_name='#value'", 'leaf' => array(true, false)),
+
+			'table_by_name' => array('sql' =>
+				"select  table_name as value,  table_name as  text ,'referenced_table' as category from
+                      nanx_biz_tables      where table_name='#value'", 'leaf' => array(true, false)),
+
+			'based_biz_table' => array('sql' =>
+				"select  table_name as value,'" . $this->lang->line('fields') . "'  as  text ,'biz_cols' as category, table_name as hostby
                     from  nanx_biz_tables      where pid='#value'
                     union
-                    select  table_name as value,'".$this->lang->line('trigger_groups'). "'  as  text ,'trigger_groups' as category, table_name as hostby
+                    select  table_name as value,'" . $this->lang->line('trigger_groups') . "'  as  text ,'trigger_groups' as category, table_name as hostby
                     from  nanx_biz_tables      where pid='#value'
                     union
-                    select  table_name as value,'".$this->lang->line('dropdown_groups'). "'  as  text ,'dropdown_groups' as category, table_name as hostby
+                    select  table_name as value,'" . $this->lang->line('dropdown_groups') . "'  as  text ,'dropdown_groups' as category, table_name as hostby
                     from  nanx_biz_tables      where pid='#value'
                     ",
-                    'leaf' => false),
-            
-             'trigger_groups' => array('sql' =>
-                    "select  distinct  group_id  as value, group_id as  text ,'trigger_group' as category, base_table as hostby
-                    from  nanx_biz_column_trigger_group   where base_table='#value' and group_type='isgroup' 
+				'leaf' => false),
+
+			'trigger_groups' => array('sql' =>
+				"select  distinct  group_id  as value, group_id as  text ,'trigger_group' as category, base_table as hostby
+                    from  nanx_biz_column_trigger_group   where base_table='#value' and group_type='isgroup'
                     ",
-                    'leaf' => true),
-            
-             'dropdown_groups' => array(
-                     'sql' =>
-                     "select pid, group_id , field_e  as value, field_e as text , 'dropdown_item' as category, base_table as hostby
-                     from  nanx_biz_column_trigger_group   where base_table='#value' and group_type='nogroup' 
+				'leaf' => true),
+
+			'dropdown_groups' => array(
+				'sql' =>
+				"select pid, group_id , field_e  as value, field_e as text , 'dropdown_item' as category, base_table as hostby
+                     from  nanx_biz_column_trigger_group   where base_table='#value' and group_type='nogroup'
                      ",
-                     'method' => "getBizCols",
-                     'post_method'=>'change_filed_display',
-                     'paratype' => 'table',
-                     'leaf' => true),
+				'method'      => "getBizCols",
+				'post_method' => 'change_filed_display',
+				'paratype'    => 'table',
+				'leaf'        => true),
 
-            'biz_table_by_base_table'=>array('sql'=>
-                    "select table_screen_name as text,table_name as value,'hidden_category' as category from nanx_biz_tables where table_name='#value' ",
-                    'leaf'=>true
-                    ),
+			'biz_table_by_base_table' => array('sql' =>
+				"select table_screen_name as text,table_name as value,'hidden_category' as category from nanx_biz_tables where table_name='#value' ",
+				'leaf' => true
+			),
 
-            'biz_cols_by_actcode' => array(
-                'method' => "getBizCols",
-                'paratype' => 'actcode',
-                'leaf' => true),
+			'biz_cols_by_actcode' => array(
+				'method'   => "getBizCols",
+				'paratype' => 'actcode',
+				'leaf'     => true),
 
-            'biz_cols' => array(
-                'method' => "getBizCols",
-                'paratype' => 'value',
-                'leaf' => true),
+			'biz_cols' => array(
+				'method'   => "getBizCols",
+				'paratype' => 'value',
+				'leaf'     => true),
 
+			'system_users' => array('sql' =>
+				"select user as value,  staff_name as text,'system_user' as category from nanx_user ",
+				'leaf' => true),
 
-            'public_cols_show' => array('sql' =>
-                    "select pid as value,concat('[',field_e,'->',field_c,']') as text,'single_col_display' as category from nanx_activity_field_public_display_cfg",
-                    'leaf' => true),
-                    
+			'public_cols_show' => array('sql' =>
+				"select pid as value,concat('[',field_e,'->',field_c,']') as text,'single_col_display' as category from nanx_activity_field_public_display_cfg",
+				'leaf' => true),
 
-            'public_cols_show_in_summary' => array('sql' =>
-                    "select  field_e as text,field_c  as value,'ce_sum' as category from nanx_activity_field_public_display_cfg",
-                    'leaf' => true),
+			'public_cols_show_in_summary' => array('sql' =>
+				"select  field_e as text,field_c  as value,'ce_sum' as category from nanx_activity_field_public_display_cfg",
+				'leaf' => true),
 
+			'special_cols_show_config_v2' => array('sql' =>
+				"select pid as value,base_table,field_e as value, field_c as text,'single_col_display' as category from nanx_activity_field_special_display_cfg",
+				'leaf' => true),
 
-            'special_cols_show_config_v2' => array('sql' =>
-                    "select pid as value,base_table,field_e as value, field_c as text,'single_col_display' as category from nanx_activity_field_special_display_cfg",
-                    'leaf' => true),
+			'forbidden_biz_cols_by_actcode' => array(
+				'method'   => "getForbiddenBizCols",
+				'paratype' => 'actcode',
+				'leaf'     => true),
 
-         
-            'forbidden_biz_cols_by_actcode' => array(
-                'method' => "getForbiddenBizCols",
-                'paratype' => 'actcode',
-                'leaf' => true),
-
-
-            'tables' => array('sql' =>
-                    "select  TABLE_NAME as value,  TABLE_NAME as  text ,'table' as category from information_schema.TABLES
+			'tables' => array('sql' =>
+				"select  TABLE_NAME as value,  TABLE_NAME as  text ,'table' as category from information_schema.TABLES
                         where table_schema='SCHEMA_REPLACE' and  TABLE_NAME    like  'SCHEMA_REPLACE%'",
-                    'leaf' => false),
+				'leaf' => false),
 
-            'buttons' => array('sql' =>
-             "select  nanx_activity_a2a_btns.pid,activity_for_btn  as value , btn_name as text , 'btn_a2a'  as category ,
-             '#value' as hostby,base_table  as subtable,'refer_to_parent' as maintable ,grid_title as button_refer_act,  
-             field_for_main_activity as op_field from  nanx_activity_a2a_btns,nanx_activity   
+			'buttons' => array('sql' =>
+				"select  nanx_activity_a2a_btns.pid,activity_for_btn  as value , btn_name as text , 'btn_a2a'  as category ,
+             '#value' as hostby,base_table  as subtable,'refer_to_parent' as maintable ,grid_title as button_refer_act,
+             field_for_main_activity as op_field from  nanx_activity_a2a_btns,nanx_activity
              where  nanx_activity_a2a_btns.activity_code='#value'
              and  nanx_activity_a2a_btns.activity_for_btn=nanx_activity.activity_code
-             union 
+             union
              select  pid,pid as value , btn_name as text ,'btn_js' as category ,'#value' as hostby,
              ''  as subtable,'refer_to_parent' as maintable  ,'' as button_refer_act,'' as op_field
              from  nanx_activity_js_btns
@@ -119,549 +115,480 @@ class Tree extends CI_Controller
              ''  as subtable,'refer_to_parent' as maintable  ,'' as button_refer_act ,  op_field
              from  nanx_activity_batch_btns
              where  activity_code='#value'
-             ", 
-             
-             'leaf' => true),
+             ",
 
+				'leaf' => true),
 
-            'button' => array('sql' =>
-                    "select   activity_for_btn as value,grid_title as text,'btn_referenced_activity' as category  from 
-                      nanx_activity_a2a_btns,nanx_activity  
+			'button' => array('sql' =>
+				"select   activity_for_btn as value,grid_title as text,'btn_referenced_activity' as category  from
+                      nanx_activity_a2a_btns,nanx_activity
                       where  nanx_activity_a2a_btns.pid='#value' and
                       nanx_activity.activity_code=activity_for_btn;", 'leaf' => true),
 
-            'table' => array('sql' =>
-                    "select COLUMN_NAME  as value, concat( COLUMN_NAME,'[', COLUMN_TYPE,']') as  text ,
+			'table' => array('sql' =>
+				"select COLUMN_NAME  as value, concat( COLUMN_NAME,'[', COLUMN_TYPE,']') as  text ,
                        COLUMN_TYPE as field_def,
                        '#value' as 'hostby',
-                       if(COLUMN_KEY='PRI','primary_column','column') as category  from 
+                       if(COLUMN_KEY='PRI','primary_column','column') as category  from
                       `information_schema`.`COLUMNS` where TABLE_SCHEMA ='SCHEMA_REPLACE' and
                        TABLE_NAME ='#value'", 'leaf' => true),
 
-            'raw_table' => array('sql' =>
-                    "select COLUMN_NAME  as value, COLUMN_TYPE as column_definition ,concat( COLUMN_NAME,'    ','(', COLUMN_TYPE,')') as  text ,
+			'raw_table' => array('sql' =>
+				"select COLUMN_NAME  as value, COLUMN_TYPE as column_definition ,concat( COLUMN_NAME,'    ','(', COLUMN_TYPE,')') as  text ,
                        '#value' as 'hostby',
-                       if(COLUMN_KEY='PRI','primary_column','column') as category  from 
+                       if(COLUMN_KEY='PRI','primary_column','column') as category  from
                       `information_schema`.`COLUMNS` where TABLE_SCHEMA ='SCHEMA_REPLACE' and
                        TABLE_NAME ='#value'", 'leaf' => true),
 
-
-            'table_columns' => array('sql' =>
-                    "select COLUMN_NAME  as value,COLUMN_NAME as  text ,
+			'table_columns' => array('sql' =>
+				"select COLUMN_NAME  as value,COLUMN_NAME as  text ,
                        '#value' as 'hostby',
-                       if(COLUMN_KEY='PRI','primary_column','column') as category  from 
+                       if(COLUMN_KEY='PRI','primary_column','column') as category  from
                       `information_schema`.`COLUMNS` where TABLE_SCHEMA ='SCHEMA_REPLACE' and
                        TABLE_NAME ='#value'", 'leaf' => true),
 
-            'activitys' => array('sql' =>
-                    "select  pid, activity_code  as  value, grid_title as text, pic_url as pic, 'activity' as category,base_table from  nanx_activity where level<>'system' and activity_type='table' 
-                 union 
-                 select  pid, activity_code  as  value, grid_title as text, pic_url as pic, 'activity_js' as category,base_table from  nanx_activity where level<>'system' and activity_type='js' 
-                 union 
-                 select  pid, activity_code  as  value, grid_title as text, pic_url as pic, 'activity_service' as category ,base_table from  nanx_activity where level<>'system' and activity_type='service' 
-                 union 
-                 select  pid, activity_code  as  value, grid_title as text, pic_url as pic, 'activity_html' as category ,base_table from  nanx_activity where level<>'system' and activity_type='html' 
-                 union 
-                 select  pid, activity_code  as  value, grid_title as text,pic_url as pic, 'activity_sql' as category ,base_table from  nanx_activity where level<>'system' and activity_type='sql' 
+			'activitys' => array('sql' =>
+				"select  pid, activity_code  as  value, grid_title as text, pic_url as pic, 'activity' as category,base_table from  nanx_activity where level<>'system' and activity_type='table'
+                 union
+                 select  pid, activity_code  as  value, grid_title as text, pic_url as pic, 'activity_js' as category,base_table from  nanx_activity where level<>'system' and activity_type='js'
+                 union
+                 select  pid, activity_code  as  value, grid_title as text, pic_url as pic, 'activity_service' as category ,base_table from  nanx_activity where level<>'system' and activity_type='service'
+                 union
+                 select  pid, activity_code  as  value, grid_title as text, pic_url as pic, 'activity_html' as category ,base_table from  nanx_activity where level<>'system' and activity_type='html'
+                 union
+                 select  pid, activity_code  as  value, grid_title as text,pic_url as pic, 'activity_sql' as category ,base_table from  nanx_activity where level<>'system' and activity_type='sql'
                 ", 'leaf' => false),
 
+			'activity' => array(
+				'method'   => "getActivityDetail",
+				'paratype' => 'activity_code',
+				''         => false),
 
-            'activity' => array(
-                'method' => "getActivityDetail",
-                'paratype' => 'activity_code',
-                '' => false),
-
-
-            'activity_js' => array('sql' =>
-                    "select extra_js as text, extra_js as value,'js_file' as category from 
+			'activity_js' => array('sql' =>
+				"select extra_js as text, extra_js as value,'js_file' as category ,'js/upload' as os_path from
              nanx_activity where activity_code='#value' ",
-                    'leaf' => true),
-                    
-             'activity_sql' => array('sql' =>
-                    "select pid,null as text, extra_js as value,'sql_statement' as category from 
+				'leaf' => true),
+
+			'activity_sql' => array('sql' =>
+				"select pid,null as text, extra_js as value,'sql_statement' as category from
              nanx_activity where activity_code='#value' ",
-                    'leaf' => true),
+				'leaf' => true),
 
-            'activity_service' => array('sql' =>
-                    "select service_url as text, service_url as value,'controler_fun' as category from 
+			'activity_service' => array('sql' =>
+				"select service_url as text, service_url as value,'controler_fun' as category from
              nanx_activity where activity_code='#value' ",
-                    'leaf' => true),
+				'leaf' => true),
 
-
-            'activity_html' => array('sql' =>
-                    "select data_url as text, data_url as value,'controler_fun' as category from 
+			'activity_html' => array('sql' =>
+				"select data_url as text, data_url as value,'controler_fun' as category from
              nanx_activity where activity_code='#value' ",
-                    'leaf' => true),
+				'leaf' => true),
 
-            'acls' => array('sql' =>
-                    "select pid,  role_code  as  value, role_name as text, 'user_role_under_acls' as category from  nanx_user_role  ",
-                    'leaf' => false),
+			'acls' => array('sql' =>
+				"select pid,  role_code  as  value, role_name as text, 'user_role_under_acls' as category from  nanx_user_role  ",
+				'leaf' => false),
 
+			'act_notifies' => array('sql' =>
+				"select    distinct rule_name as value,rule_name as text,'act_notify' as category from  nanx_activity_nofity",
+				'leaf' => true),
 
-             'act_notifies' => array('sql' =>
-                    "select    distinct rule_name as value,rule_name as text,'act_notify' as category from  nanx_activity_nofity",
-                    'leaf' => true),
-                    
-                    
-            'user_role_under_acls' => array('sql' =>
-                    "select nanx_user_role_privilege.pid, nanx_user_role_privilege.activity_code  as  value, grid_title as text, 
-               '#value' as  hostby ,  concat('acl_activity_', activity_type ) as category 
-                from nanx_user_role_privilege ,nanx_activity  
+			'user_role_under_acls' => array('sql' =>
+				"select nanx_user_role_privilege.pid, nanx_user_role_privilege.activity_code  as  value, grid_title as text,
+               '#value' as  hostby ,  concat('acl_activity_', activity_type ) as category
+                from nanx_user_role_privilege ,nanx_activity
                  where   nanx_user_role_privilege.activity_code=nanx_activity.activity_code and role_code='#value'  order by display_order ",
-                    'leaf' => true),
+				'leaf' => true),
 
-            'users' => array('sql' =>
-                    "select pid,  user  as  value, user  as text, staff_name,'user' as category from  nanx_user",
-                    'leaf' => true),
+			'users' => array('sql' =>
+				"select pid,  user  as  value, user  as text, staff_name,'user' as category from  nanx_user",
+				'leaf' => true),
 
-            'roles' => array('sql' =>
-                    "select  pid, role_code  as  value, role_name  as text, 'user_role' as category from  nanx_user_role",
-                    'leaf' => false),
+			'roles' => array('sql' =>
+				"select  pid, role_code  as  value, role_name  as text, 'user_role' as category from  nanx_user_role",
+				'leaf' => false),
 
-            'user_role' => array('sql' =>
-                    "select  pid,  user   as  value, user  as text, 'user_under_role' as category, '#value' as hostby from  
+			'user_role' => array('sql' =>
+				"select  pid,  user   as  value, user  as text, 'user_under_role' as category, '#value' as hostby from
               nanx_user_role_assign  where role_code='#value'", 'leaf' => true),
 
-            'user_role_refer' => array('sql' => "
+			'user_role_refer' => array('sql' => "
           SELECT 'user_role_refer_detail' as category, nanx_user_role.role_name,nanx_user.user as value  FROM nanx_user,nanx_user_role_assign,nanx_user_role
           WHERE ( nanx_user_role_assign.user = nanx_user.user )
           and (nanx_user_role.role_code=nanx_user_role_assign.role_code)",
-                    'leaf' => true));
+				'leaf' => true));
 
-        $this->load->model('MSystempara');
-        $APP_PREFIX = $this->MSystempara->getCfgItem('APP_PREFIX');
-        $schema_based_category = array(
-            'fks',
-            'tables',
-            'table',
-            'raw_table',
-            'table_columns');
-        for ($i = 0; $i < count($schema_based_category); $i++)
-        {
-            $category = $schema_based_category[$i];
-            $cfg[$category]['sql'] = str_replace('SCHEMA_REPLACE', $APP_PREFIX, $cfg[$category]['sql']);
-        }
-        return $cfg;
-    }
+		$this->load->model('MSystempara');
+		$APP_PREFIX            = $this->MSystempara->getCfgItem('APP_PREFIX');
+		$schema_based_category = array(
+			'fks',
+			'tables',
+			'table',
+			'raw_table',
+			'table_columns');
+		for ($i = 0; $i < count($schema_based_category); $i++) {
+			$category              = $schema_based_category[$i];
+			$cfg[$category]['sql'] = str_replace('SCHEMA_REPLACE', $APP_PREFIX, $cfg[$category]['sql']);
+		}
+		return $cfg;
+	}
 
-    function index()
-    {     
-        $tree_request=$_REQUEST;
-        if(array_key_exists('category_to_use',$tree_request)){
-              $res = $this->getCategoryResult($tree_request);
-              $res_left =null;
-              $res_right=null;
-          }
-        else
-        { 
-          $res=null;
-          $tree_request['category_to_use']= $tree_request['left_category'];
-          $res_left = $this->getCategoryResult($tree_request);
-         
-         if(strlen($tree_request['right_category'])>3) 
-           {
-           $tree_request['category_to_use']= $tree_request['right_category'];  
-           $res_right = $this->getCategoryResult($tree_request);
-           }
-           else
-           {
-            $res_right =null;
-           }
-        }
-        
-        $errno = $this->db->_error_number();
-        $errmsg = $this->db->_error_message();
-        $success = true;
-        if ($errno <> 0)
-        {
-            $success = false;
-        }
-        
-        
-        $ret = array(
-            'success' => $success,
-            'server_resp' => $res,
-            'server_resp_left' => $res_left,
-            'server_resp_right' => $res_right,
-            'errmsg' => $errmsg);
-        echo json_encode($ret);
-    }
+	function index() {
+		$tree_request = $_REQUEST;
+		if (array_key_exists('category_to_use', $tree_request)) {
+			$res       = $this->getCategoryResult($tree_request);
+			$res_left  = null;
+			$res_right = null;
+		} else {
+			$res                             = null;
+			$tree_request['category_to_use'] = $tree_request['left_category'];
+			$res_left                        = $this->getCategoryResult($tree_request);
 
+			if (strlen($tree_request['right_category']) > 3) {
+				$tree_request['category_to_use'] = $tree_request['right_category'];
+				$res_right                       = $this->getCategoryResult($tree_request);
+			} else {
+				$res_right = null;
+			}
+		}
 
-    function getCategoryResult($tree_request)
-    {   
-        
-        if (count($tree_request)==0)
-        {
-        	return null;
-        }
-            	  
-        $trees = $this->treeCfg();
-        $category = $tree_request['category_to_use'];
-        $subCategoryCfg = $trees[$category];
-        if (array_key_exists('sql', $subCategoryCfg))
-        {   
-            $res = $this->getCategoryResultBySqls($subCategoryCfg, $tree_request);
-        } else
-        {
-            $res = $this->getSubCategorybyMethod($subCategoryCfg, $tree_request);
-        }
-        
-        $res = $this->setNodeIDandCss($res, $tree_request);
-        if(array_key_exists('post_method',$subCategoryCfg))
-        {
-         $res=$this->change_filed_display($res); 
-        }
-        
-        return $res;
-    }
+		$errno   = $this->db->_error_number();
+		$errmsg  = $this->db->_error_message();
+		$success = true;
+		if ($errno <> 0) {
+			$success = false;
+		}
 
+		$ret = array(
+			'success'           => $success,
+			'server_resp'       => $res,
+			'server_resp_left'  => $res_left,
+			'server_resp_right' => $res_right,
+			'errmsg'            => $errmsg);
+		echo json_encode($ret);
+	}
 
-    function change_filed_display($res)
-    {
-      $this->load->model('MFieldcfg');
-      for($i=0;$i<count($res);$i++)
-      {
-       $table=$res[$i]['hostby'];  
-       $field=$res[$i]['value'];
-       $display=$this->MFieldcfg->getDisplayCfg($table,$field,true);
-       $res[$i]['text']=$display['field_c'];
-      }
-      return $res;
-    }
+	function getCategoryResult($tree_request) {
 
-    function getCategoryResultBySqls($subCategoryCfg, $treeRequest)
-    {
-        $sql = $subCategoryCfg['sql'];
-        $leaf = $subCategoryCfg['leaf'];
-        if (!is_array($sql))
-        {
-            $sql = array($sql);
-            $leaf = array($leaf);
-        }
-        $total_result = array();
-        for ($i = 0; $i < count($sql); $i++)
-        {
-            $result = $this->getCategoryResultBySql($sql[$i], $treeRequest, $leaf[$i]);
-            $total_result = array_merge($total_result, $result);
-        }
-        return $total_result;
-    }
+		if (count($tree_request) == 0) {
+			return null;
+		}
 
+		$trees          = $this->treeCfg();
+		$category       = $tree_request['category_to_use'];
+		$subCategoryCfg = $trees[$category];
+		if (array_key_exists('sql', $subCategoryCfg)) {
+			$res = $this->getCategoryResultBySqls($subCategoryCfg, $tree_request);
+		} else {
+			$res = $this->getSubCategorybyMethod($subCategoryCfg, $tree_request);
+		}
 
-    function getSubCategorybyMethod($subCategoryCfg, $params)
-    {
+		$res = $this->setNodeIDandCss($res, $tree_request);
+		if (array_key_exists('post_method', $subCategoryCfg)) {
+			$res = $this->change_filed_display($res);
+		}
 
-        $method = $subCategoryCfg['method'];
-        $paratype = $subCategoryCfg['paratype'];
+		return $res;
+	}
 
-        if ($method == 'getBizCols')
-        {
-            $pv = (isset($params["value"]) ? $params["value"] : '');
+	function change_filed_display($res) {
+		$this->load->model('MFieldcfg');
+		for ($i = 0; $i < count($res); $i++) {
+			$table           = $res[$i]['hostby'];
+			$field           = $res[$i]['value'];
+			$display         = $this->MFieldcfg->getDisplayCfg($table, $field, true);
+			$res[$i]['text'] = $display['field_c'];
+		}
+		return $res;
+	}
 
-            $raw_tbname=$pv;
-            
-            if ($paratype == 'actcode')
-            {
-                $raw_tbname = $this->getRawTbnameByActcode($pv);
-            }
+	function getCategoryResultBySqls($subCategoryCfg, $treeRequest) {
+		$sql  = $subCategoryCfg['sql'];
+		$leaf = $subCategoryCfg['leaf'];
+		if (!is_array($sql)) {
+			$sql  = array($sql);
+			$leaf = array($leaf);
+		}
+		$total_result = array();
+		for ($i = 0; $i < count($sql); $i++) {
+			$result       = $this->getCategoryResultBySql($sql[$i], $treeRequest, $leaf[$i]);
+			$total_result = array_merge($total_result, $result);
+		}
+		return $total_result;
+	}
 
+	function getSubCategorybyMethod($subCategoryCfg, $params) {
 
-            if ($paratype == 'biz_tables_pid')
-            {
-                $raw_tbname = $this->getRawTbnameByPid($pv);
-            }
+		$method   = $subCategoryCfg['method'];
+		$paratype = $subCategoryCfg['paratype'];
 
-            if ($paratype == 'raw_table_name')
-            {
-                $raw_tbname = $pv;
-            }
-            
-            $cols = $this->getBizCols($raw_tbname);
-            return $cols;
-        }
+		if ($method == 'getBizCols') {
+			$pv = (isset($params["value"]) ? $params["value"] : '');
 
-        if ($method == 'getForbiddenBizCols')
-        {
-            $actcode = (isset($params["value"]) ? $params["value"] : '');
-            $raw_tbname = $this->getRawTbnameByActcode($actcode);
-            $cols = $this->getBizCols($raw_tbname);
+			$raw_tbname = $pv;
 
-            $this->load->model('MFieldcfg');
-            $forbiddenfields = $this->MFieldcfg->getForbiddenFields($actcode);
-            $cols = arrayfilter($cols, 'value', $forbiddenfields);
-            return $cols;
-        }
+			if ($paratype == 'actcode') {
+				$raw_tbname = $this->getRawTbnameByActcode($pv);
+			}
 
-        if ($method == 'getActivityDetail')
-        {
-            $actcode = (isset($params["value"]) ? $params["value"] : '');
-            $ret = $this->getActivityDetail($actcode);
-            return $ret;
-        }
-    }
+			if ($paratype == 'biz_tables_pid') {
+				$raw_tbname = $this->getRawTbnameByPid($pv);
+			}
 
-    function getActivityDetail($actcode)
-    {
-        $sql1 = "select nanx_biz_tables.pid  as value , table_name as 'table', table_screen_name as text,'based_biz_table' as category,
+			if ($paratype == 'raw_table_name') {
+				$raw_tbname = $pv;
+			}
+
+			$cols = $this->getBizCols($raw_tbname);
+			return $cols;
+		}
+
+		if ($method == 'getForbiddenBizCols') {
+			$actcode    = (isset($params["value"]) ? $params["value"] : '');
+			$raw_tbname = $this->getRawTbnameByActcode($actcode);
+			$cols       = $this->getBizCols($raw_tbname);
+
+			$this->load->model('MFieldcfg');
+			$forbiddenfields = $this->MFieldcfg->getForbiddenFields($actcode);
+			$cols            = arrayfilter($cols, 'value', $forbiddenfields);
+			return $cols;
+		}
+
+		if ($method == 'getActivityDetail') {
+			$actcode = (isset($params["value"]) ? $params["value"] : '');
+			$ret     = $this->getActivityDetail($actcode);
+			return $ret;
+		}
+	}
+
+	function getActivityDetail($actcode) {
+		$sql1 = "select nanx_biz_tables.pid  as value , table_name as 'table', table_screen_name as text,'based_biz_table' as category,
                    '#value' as hostby
                    from  nanx_activity, nanx_biz_tables where
                    nanx_biz_tables.pid=base_table_pid
                    and activity_code='#value'";
-                   
-                   $sql1 = "select nanx_biz_tables.pid  as value , table_name as 'table', table_screen_name as text,'based_biz_table' as category,'#value' as hostby
+
+		$sql1 = "select nanx_biz_tables.pid  as value , table_name as 'table', table_screen_name as text,'based_biz_table' as category,'#value' as hostby
                    from  nanx_activity, nanx_biz_tables where
                    nanx_biz_tables.table_name=base_table
                    and activity_code='#value'";
-                   
-                   
-        $sql1 = str_replace('#value', $actcode, $sql1);
-        $ret1 = $this->db->query($sql1)->result_array();
-        $ret1 = arrayinsertkv($ret1, 'leaf', false);
 
+		$sql1 = str_replace('#value', $actcode, $sql1);
+		$ret1 = $this->db->query($sql1)->result_array();
+		$ret1 = arrayinsertkv($ret1, 'leaf', false);
 
-        $this->db->where('activity_code', $actcode);
-        $rows = $this->db->get('nanx_activity');
-        $cfg = $rows->first_row('array');
-        $maintable = $cfg['base_table'];
-        $btn_text=$this->lang->line('btn_text');
-        
-        $sql3="select  '#value'  as value ,nanx_biz_tables.pid as base_table_pid , 'BTN_TEXT' as text ,'buttons' as category ,'#value' as hostby 
-              from  nanx_activity ,  nanx_biz_tables where  
+		$this->db->where('activity_code', $actcode);
+		$rows      = $this->db->get('nanx_activity');
+		$cfg       = $rows->first_row('array');
+		$maintable = $cfg['base_table'];
+		$btn_text  = $this->lang->line('btn_text');
+
+		$sql3 = "select  '#value'  as value ,nanx_biz_tables.pid as base_table_pid , 'BTN_TEXT' as text ,'buttons' as category ,'#value' as hostby
+              from  nanx_activity ,  nanx_biz_tables where
               activity_code='#value'  and nanx_activity.base_table= nanx_biz_tables.table_name  limit 1";
-              
-        $sql3 = str_replace('#value', $actcode, $sql3);
-        $sql3 = str_replace('BTN_TEXT', $btn_text, $sql3);
-        
-        $ret3 = $this->db->query($sql3)->result_array();
-        $ret3 = arrayinsertkv($ret3, 'maintable', $maintable);
-        $ret3 = arrayinsertkv($ret3, 'leaf', false);
 
+		$sql3 = str_replace('#value', $actcode, $sql3);
+		$sql3 = str_replace('BTN_TEXT', $btn_text, $sql3);
 
-        $ret = array_merge($ret1, $ret3);
-        return $ret;
-    }
+		$ret3 = $this->db->query($sql3)->result_array();
+		$ret3 = arrayinsertkv($ret3, 'maintable', $maintable);
+		$ret3 = arrayinsertkv($ret3, 'leaf', false);
 
+		$ret = array_merge($ret1, $ret3);
+		return $ret;
+	}
 
-    function getCategoryResultBySql($sql, $para_array, $leaf)
-    {
-        foreach($para_array as $key=> $value){
-          if(!is_array($value)){
-          $sql = str_replace('#'.$key, $value, $sql);
-        }
-        }
-            
-        $rows = $this->db->query($sql)->result_array();
-        for ($i = 0; $i < count($rows); $i++)
-        {
-            $rows[$i]['leaf'] = $leaf;
-        }
-        
-        return $rows;
-    }
+	function getCategoryResultBySql($sql, $para_array, $leaf) {
+		foreach ($para_array as $key => $value) {
+			if (!is_array($value)) {
+				$sql = str_replace('#' . $key, $value, $sql);
+			}
+		}
 
-    function setNodeIDandCss($arr, $tree_request)
-    {   
-        for ($i = 0; $i < count($arr); $i++)
-        {
-            $parent_v = array_key_exists('value', $tree_request) ? $tree_request['value'] : '';
-            $current_v=    array_key_exists('value', $arr[$i]) ? $arr[$i]['value'] :$arr[$i]['field_e'] ;
-            $arr[$i]['id'] = 'nanx_' . $parent_v . '_' . $arr[$i]['category'] . '_'.$current_v;
-            $arr[$i]['iconCls'] = $arr[$i]['category'];
-        }
-        return $arr;
-    }
+		$rows = $this->db->query($sql)->result_array();
+		for ($i = 0; $i < count($rows); $i++) {
+			$rows[$i]['leaf'] = $leaf;
+		}
 
-    function getRawTbnameByActcode($actcode)
-    {
-        $sql = "select base_table from nanx_activity  where activity_code='#value'";
-        $sql = str_replace('#value', $actcode, $sql);
-        $rows = $this->db->query($sql)->result_array();
-        $raw_tbname = $rows[0]['base_table'];
-        return $raw_tbname;
-    }
+		return $rows;
+	}
 
-    function getRawTbnameByPid($pid)
-    {    
-        
-        $sql = "select table_name from nanx_biz_tables  where pid=#value";
-        $sql = str_replace('#value', $pid, $sql);
-        $rows = $this->db->query($sql)->result_array();
-        $raw_tbname = $rows[0]['table_name'];
-        return $raw_tbname;
-    }
+	function setNodeIDandCss($arr, $tree_request) {
+		for ($i = 0; $i < count($arr); $i++) {
+			$parent_v           = array_key_exists('value', $tree_request) ? $tree_request['value'] : '';
+			$current_v          = array_key_exists('value', $arr[$i]) ? $arr[$i]['value'] : $arr[$i]['field_e'];
+			$arr[$i]['id']      = 'nanx_' . $parent_v . '_' . $arr[$i]['category'] . '_' . $current_v;
+			$arr[$i]['iconCls'] = $arr[$i]['category'];
+		}
+		return $arr;
+	}
 
+	function getRawTbnameByActcode($actcode) {
+		$sql        = "select base_table from nanx_activity  where activity_code='#value'";
+		$sql        = str_replace('#value', $actcode, $sql);
+		$rows       = $this->db->query($sql)->result_array();
+		$raw_tbname = $rows[0]['base_table'];
+		return $raw_tbname;
+	}
 
-    function getBizCols($raw_tbname)
-    {   
-        $fields_e = $this->db->list_fields($raw_tbname);
-        
-     
-        $this->load->model('MFieldcfg');
-        $col_cfg = $this->MFieldcfg->getColsCfg($raw_tbname, $fields_e,true);
-        
-     
-        
-        $col_cfg = array_retrieve($col_cfg,array('field_e',array('segment'=>'display_cfg','index'=>'value'), array('segment'=>'display_cfg','index'=>'field_c')));
-        $col_cfg = arrayinsertkv($col_cfg,'category', 'biz_col');
-        $col_cfg = arrayinsertkv($col_cfg,'leaf', true);
-        $col_cfg = arrayinsertkv($col_cfg,'hostby',$raw_tbname);
-        $col_cfg = arraychangekey($col_cfg,'field_c','text');
-        return $col_cfg;
-    }
-    
-    function test3()
-    {   
-        $raw_tbname='newoss_book';
-        $fields_e = $this->db->list_fields($raw_tbname);
-        $this->load->model('MFieldcfg');
-        $col_cfg = $this->MFieldcfg->getColsCfg($raw_tbname, $fields_e, true);
-        $col_cfg = array_retrieve($col_cfg,array('field_e',array('segment'=>'display_cfg','index'=>'value'), array('segment'=>'display_cfg','index'=>'field_c')));
-        $col_cfg = arrayinsertkv($col_cfg,'category', 'biz_col');
-        $col_cfg = arrayinsertkv($col_cfg,'leaf', true);
-        $col_cfg = arrayinsertkv($col_cfg,'hostby',$raw_tbname);
-        $col_cfg = arraychangekey($col_cfg,'field_c','text');
-        return $col_cfg;
-    }
-    
-    
+	function getRawTbnameByPid($pid) {
 
-    function systemSummary()
-    { 
-        $this->load->library('table');
-        $div = "<div style='margin:20px;font-family:arial,​tahoma,​helvetica,​sans-serif'>";
-        $tb_refer = $this->categeoryTableReferHtml();
-        $div .= $tb_refer;
-        $cat = array(
-            "category_to_use" => "activitys",
-            "value"=>$this->lang->line('activitys'),
-            "icon" => 'activitys',
-            "used_keys" => array('iconCls', 'text'),
-            'header' => array($this->lang->line('activity_type'), $this->lang->line('activity_name'))
-            );
-             
-        $result = $this->categeoryHtml($cat);
-        $div .= $result;
+		$sql        = "select table_name from nanx_biz_tables  where pid=#value";
+		$sql        = str_replace('#value', $pid, $sql);
+		$rows       = $this->db->query($sql)->result_array();
+		$raw_tbname = $rows[0]['table_name'];
+		return $raw_tbname;
+	}
 
-        
-        $cat = array(
-            "category_to_use" => "user_role_refer",
-            "value" =>$this->lang->line('role_user_list'),
-            "icon" => 'roles',
-            'header' => array($this->lang->line('role'),$this->lang->line('account')),
-            "used_keys" => array('role_name', 'value'));
-        $result = $this->categeoryHtml($cat);
-        $div .= $result;
+	function getBizCols($raw_tbname) {
+		$fields_e = $this->db->list_fields($raw_tbname);
 
-        $cat = array(
-            "category_to_use" => "public_cols_show_in_summary",
-            "value" =>$this->lang->line('public_fields'),
-            'header' => array($this->lang->line('field_item'),$this->lang->line('field_display')),
-            
-            "icon" => 'special_cols_show_config',
-            "used_keys" => array('text', 'value'));
-        $result = $this->categeoryHtml($cat);
-        $div .= $result;
+		$this->load->model('MFieldcfg');
+		$col_cfg = $this->MFieldcfg->getColsCfg($raw_tbname, $fields_e, true);
 
-        $cat = array(
-            "category_to_use" => "special_cols_show_config_v2",
-            "value" =>$this->lang->line('customized_fields'), 
-            'header' => array(
-                 $this->lang->line('table'), 
-                 $this->lang->line('field'), 
-                 $this->lang->line('field_display')  
-                ),
-            "icon" => 'special_cols_show_config',
-            "used_keys" => array(
-                'base_table',
-                'value',
-                'text'));
-        $result = $this->categeoryHtml($cat);
-        $div .= $result;
+		$col_cfg = array_retrieve($col_cfg, array('field_e', array('segment' => 'display_cfg', 'index' => 'value'), array('segment' => 'display_cfg', 'index' => 'field_c')));
+		$col_cfg = arrayinsertkv($col_cfg, 'category', 'biz_col');
+		$col_cfg = arrayinsertkv($col_cfg, 'leaf', true);
+		$col_cfg = arrayinsertkv($col_cfg, 'hostby', $raw_tbname);
+		$col_cfg = arraychangekey($col_cfg, 'field_c', 'text');
+		return $col_cfg;
+	}
 
-        $div .= "</div>";
-        echo $div;
-    }
+	function test3() {
+		$raw_tbname = 'newoss_book';
+		$fields_e   = $this->db->list_fields($raw_tbname);
+		$this->load->model('MFieldcfg');
+		$col_cfg = $this->MFieldcfg->getColsCfg($raw_tbname, $fields_e, true);
+		$col_cfg = array_retrieve($col_cfg, array('field_e', array('segment' => 'display_cfg', 'index' => 'value'), array('segment' => 'display_cfg', 'index' => 'field_c')));
+		$col_cfg = arrayinsertkv($col_cfg, 'category', 'biz_col');
+		$col_cfg = arrayinsertkv($col_cfg, 'leaf', true);
+		$col_cfg = arrayinsertkv($col_cfg, 'hostby', $raw_tbname);
+		$col_cfg = arraychangekey($col_cfg, 'field_c', 'text');
+		return $col_cfg;
+	}
 
+	function systemSummary() {
+		$this->load->library('table');
+		$div = "<div style='margin:20px;font-family:arial,​tahoma,​helvetica,​sans-serif'>";
 
-    function categeoryHtml($cat)
-    {
-        $result = $this->getCategoryResult($cat);
-        $result = array_retrieve($result, $cat['used_keys']);
-        if ($cat['category_to_use'] == 'activitys')
-        {
-            for ($i = 0; $i < count($result); $i++)
-            {
-                $str = "<div style='width:16px;' class=" . $result[$i]['iconCls'] .
-                    ">&nbsp;</div>";
-                $result[$i]['cls'] = $str;
-            }
-            $result = array_retrieve($result, array('cls', 'text'));
-        }
+		$tb_refer = $this->categeoryTableReferHtml();
+		$div .= $tb_refer;
+		$cat = array(
+			"category_to_use" => "activitys",
+			"value"           => $this->lang->line('activitys'),
+			"icon"            => 'activitys',
+			"used_keys"       => array('iconCls', 'text'),
+			'header' => array($this->lang->line('activity_type'), $this->lang->line('activity_name'))
+		);
 
+		$result = $this->categeoryHtml($cat);
+		$div .= $result;
 
-        $total = count($result);
-        $cls = $cat['icon'];
-        $tmpl = array('table_open' => '<table class="thin-table">');
-        $this->table->set_template($tmpl);
-        $cap = "<div class=$cls style='padding-left:20px;font-size:16px;margin-top:10px;margin-bottom:2px;' >" .
-            $cat['value'] . "($total)</div>";
-        $this->table->set_caption($cap);
-        $this->table->set_heading($cat['header']);
-        $tbhtml = $this->table->generate($result);
-        return $tbhtml;
-    }
+		$cat = array(
+			"category_to_use" => "user_role_refer",
+			"value"           => $this->lang->line('role_user_list'),
+			"icon"            => 'roles',
+			'header'          => array($this->lang->line('role'), $this->lang->line('account')),
+			"used_keys" => array('role_name', 'value'));
+		$result = $this->categeoryHtml($cat);
+		$div .= $result;
 
-    function categeoryTableReferHtml()
-    {
+		$cat = array(
+			"category_to_use" => "public_cols_show_in_summary",
+			"value"           => $this->lang->line('public_fields'),
+			'header'          => array($this->lang->line('field_item'), $this->lang->line('field_display')),
 
-        $cat = array("category_to_use" => "biz_tables", "value" => "");
-        $biz_tables = $this->getCategoryResult($cat);
-        $biz_tables = array_retrieve($biz_tables, array('text', 'table'));
-        $biz_tables = arraychangekey($biz_tables, 'text', 'biz_table');
+			"icon"      => 'special_cols_show_config',
+			"used_keys" => array('text', 'value'));
+		$result = $this->categeoryHtml($cat);
+		$div .= $result;
 
-        $biz_list = array();
-        for ($i = 0; $i < count($biz_tables); $i++)
-        {
-            $biz_list[$biz_tables[$i]['table']] = $biz_tables[$i]['biz_table'];
-        }
-        
-        
+		$cat = array(
+			"category_to_use" => "special_cols_show_config_v2",
+			"value"           => $this->lang->line('customized_fields'),
+			'header'          => array(
+				$this->lang->line('table'),
+				$this->lang->line('field'),
+				$this->lang->line('field_display')
+			),
+			"icon"      => 'special_cols_show_config',
+			"used_keys" => array(
+				'base_table',
+				'value',
+				'text'));
+		$result = $this->categeoryHtml($cat);
+		$div .= $result;
 
-        $cat = array("category_to_use" => "tables", "value" => $this->lang->line('database_summary'));
-        $raw_tables = $this->getCategoryResult($cat);
-        $raw_tables = array_retrieve($raw_tables, array('value', 'text'));
-        $raw_tables = arraychangekey($raw_tables, 'value', 'raw_table');
-        $raw_tables = arraychangekey($raw_tables, 'text', 'biz_table');
+		$div .= "</div>";
+		echo $div;
+	}
 
-        $raw_list = array();
-        for ($i = 0; $i < count($raw_tables); $i++)
-        {
-            $raw_list[$raw_tables[$i]['raw_table']] = $raw_tables[$i]['biz_table'];
-        }
+	function categeoryHtml($cat) {
+		$result = $this->getCategoryResult($cat);
+		$result = array_retrieve($result, $cat['used_keys']);
+		if ($cat['category_to_use'] == 'activitys') {
+			for ($i = 0; $i < count($result); $i++) {
+				$str = "<div style='width:16px;' class=" . $result[$i]['iconCls'] .
+				">&nbsp;</div>";
 
+				$result[$i]['cls'] = $str;
+			}
+			$result = array_retrieve($result, array('cls', 'text'));
+		}
 
-        $table_refer = array_merge($raw_list, $biz_list);
-        $table_refer_final = array();
-        while (list($key, $value) = each($table_refer))
-        {
-            $tmp = array('raw_table' => $key, 'biz_table' => $value);
+		$total = count($result);
+		$cls   = $cat['icon'];
+		$tmpl  = array('table_open' => '<table class="thin-table">');
+		$this->table->set_template($tmpl);
+		$cap = "<div class=$cls style='padding-left:20px;font-size:16px;margin-top:10px;margin-bottom:2px;' >" .
+		$cat['value'] . "($total)</div>";
+		$this->table->set_caption($cap);
+		$this->table->set_heading($cat['header']);
+		$tbhtml = $this->table->generate($result);
+		return $tbhtml;
+	}
 
-            $table_refer_final[] = $tmp;
-        }
+	function categeoryTableReferHtml() {
 
-        $tmpl = array('table_open' => '<table class="thin-table">');
-        $this->table->set_template($tmpl);
-        $total = count($table_refer_final);
-        $cap = "<div class=raw_db style='padding-left:20px;font-size:16px;margin-top:10px;margin-bottom:4px;' >" .
-            $cat['value'] . "($total)</div>";
-        $this->table->set_caption($cap);
-        $this->table->set_heading(array( $this->lang->line('raw_table_name'),$this->lang->line('biz_table_name')));
-        
-        
-        $tbhtml = $this->table->generate($table_refer_final);
-        return $tbhtml;
-    }
+		$cat        = array("category_to_use" => "biz_tables", "value" => "");
+		$biz_tables = $this->getCategoryResult($cat);
+		$biz_tables = array_retrieve($biz_tables, array('text', 'table'));
+		$biz_tables = arraychangekey($biz_tables, 'text', 'biz_table');
+
+		$biz_list = array();
+		for ($i = 0; $i < count($biz_tables); $i++) {
+			$biz_list[$biz_tables[$i]['table']] = $biz_tables[$i]['biz_table'];
+		}
+
+		$cat        = array("category_to_use" => "tables", "value" => $this->lang->line('database_summary'));
+		$raw_tables = $this->getCategoryResult($cat);
+		$raw_tables = array_retrieve($raw_tables, array('value', 'text'));
+		$raw_tables = arraychangekey($raw_tables, 'value', 'raw_table');
+		$raw_tables = arraychangekey($raw_tables, 'text', 'biz_table');
+
+		$raw_list = array();
+		for ($i = 0; $i < count($raw_tables); $i++) {
+			$raw_list[$raw_tables[$i]['raw_table']] = $raw_tables[$i]['biz_table'];
+		}
+
+		$table_refer       = array_merge($raw_list, $biz_list);
+		$table_refer_final = array();
+		while (list($key, $value) = each($table_refer)) {
+			$tmp = array('raw_table' => $key, 'biz_table' => $value);
+
+			$table_refer_final[] = $tmp;
+		}
+
+		$tmpl = array('table_open' => '<table class="thin-table">');
+		$this->table->set_template($tmpl);
+		$total = count($table_refer_final);
+		$cap   = "<div class=raw_db style='padding-left:20px;font-size:16px;margin-top:10px;margin-bottom:4px;' >" .
+		$cat['value'] . "($total)</div>";
+		$this->table->set_caption($cap);
+		$this->table->set_heading(array($this->lang->line('raw_table_name'), $this->lang->line('biz_table_name')));
+
+		$tbhtml = $this->table->generate($table_refer_final);
+		return $tbhtml;
+	}
 }
 
 ?>

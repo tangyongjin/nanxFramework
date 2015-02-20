@@ -8,10 +8,21 @@
 # Structure for table "nanx_activity"
 #
 
+  
+
+ALTER TABLE nanx_user_role_assign DROP FOREIGN KEY nanx_user_role_assign_ibfk_1;
+ALTER TABLE nanx_user_role_assign DROP FOREIGN KEY nanx_user_role_assign_ibfk_2;
+
+ALTER TABLE nanx_user_role_privilege DROP FOREIGN KEY nanx_user_role_privilege_ibfk_1;
+ALTER TABLE nanx_user_role_privilege DROP FOREIGN KEY nanx_user_role_privilege_ibfk_2;
+ 
+ 
+
+
 DROP TABLE IF EXISTS `nanx_activity`;
 CREATE TABLE `nanx_activity` (
   `pid` int(11) NOT NULL AUTO_INCREMENT,
-  `activity_code` char(30) NOT NULL DEFAULT '' COMMENT '活动代码code',
+  `activity_code` char(255) NOT NULL DEFAULT '' COMMENT '活动代码code',
   `activity_type` char(20) DEFAULT NULL,
   `memo` char(255) DEFAULT NULL,
   `base_table` char(100) DEFAULT NULL,
@@ -86,7 +97,7 @@ CREATE TABLE `nanx_activity_batch_btns` (
 DROP TABLE IF EXISTS `nanx_activity_biz_layout`;
 CREATE TABLE `nanx_activity_biz_layout` (
   `pid` int(11) NOT NULL AUTO_INCREMENT,
-  `activity_code` char(30) DEFAULT NULL,
+  `activity_code` char(255) DEFAULT NULL,
   `raw_table` char(100) NOT NULL DEFAULT '',
   `row` int(11) NOT NULL DEFAULT '0',
   `field_list` char(100) DEFAULT NULL,
@@ -105,7 +116,7 @@ CREATE TABLE `nanx_activity_biz_layout` (
 DROP TABLE IF EXISTS `nanx_activity_curd_cfg`;
 CREATE TABLE `nanx_activity_curd_cfg` (
   `pid` int(11) NOT NULL AUTO_INCREMENT,
-  `activity_code` char(30) DEFAULT NULL,
+  `activity_code` char(255) DEFAULT NULL,
   `fn_add` char(1) DEFAULT NULL,
   `fn_update` char(1) NOT NULL DEFAULT '0',
   `fn_del` char(1) DEFAULT NULL,
@@ -168,7 +179,7 @@ CREATE TABLE `nanx_activity_field_special_display_cfg` (
 DROP TABLE IF EXISTS `nanx_activity_forbidden_field`;
 CREATE TABLE `nanx_activity_forbidden_field` (
   `pid` int(11) NOT NULL AUTO_INCREMENT,
-  `activity_code` char(30) DEFAULT NULL,
+  `activity_code` char(255) DEFAULT NULL,
   `field` char(30) DEFAULT NULL,
   PRIMARY KEY (`pid`),
   UNIQUE KEY `activity_code` (`activity_code`,`field`)
@@ -188,7 +199,7 @@ CREATE TABLE `nanx_activity_forbidden_field` (
 DROP TABLE IF EXISTS `nanx_activity_js_btns`;
 CREATE TABLE `nanx_activity_js_btns` (
   `pid` int(11) NOT NULL AUTO_INCREMENT,
-  `activity_code` char(30) NOT NULL DEFAULT '',
+  `activity_code` char(255) NOT NULL DEFAULT '',
   `jsfile` char(40) DEFAULT NULL,
   `btn_name` char(30) DEFAULT NULL,
   `function_name` char(40) DEFAULT NULL,
@@ -207,7 +218,7 @@ CREATE TABLE `nanx_activity_js_btns` (
 DROP TABLE IF EXISTS `nanx_activity_nofity`;
 CREATE TABLE `nanx_activity_nofity` (
   `pid` int(11) NOT NULL AUTO_INCREMENT,
-  `activity_code` char(30) NOT NULL DEFAULT '' COMMENT '活动代码code',
+  `activity_code` char(255) NOT NULL DEFAULT '' COMMENT '活动代码code',
   `action` char(11) NOT NULL DEFAULT '',
   `receiver_role_list` char(255) DEFAULT NULL,
   `tpl` char(255) DEFAULT NULL,
@@ -228,7 +239,7 @@ CREATE TABLE `nanx_activity_nofity` (
 DROP TABLE IF EXISTS `nanx_activity_pid_order`;
 CREATE TABLE `nanx_activity_pid_order` (
   `pid` int(11) NOT NULL AUTO_INCREMENT,
-  `activity_code` char(30) NOT NULL DEFAULT '' COMMENT '活动代码code',
+  `activity_code` char(255) NOT NULL DEFAULT '' COMMENT '活动代码code',
   `pid_order` char(4) DEFAULT NULL,
   PRIMARY KEY (`pid`),
   UNIQUE KEY `activity_code` (`activity_code`)
@@ -499,7 +510,7 @@ DROP TABLE IF EXISTS `nanx_user_role_privilege`;
 CREATE TABLE `nanx_user_role_privilege` (
   `pid` int(11) NOT NULL AUTO_INCREMENT,
   `role_code` char(30) DEFAULT NULL,
-  `activity_code` char(30) NOT NULL DEFAULT '',
+  `activity_code` char(255) NOT NULL DEFAULT '',
   `display_order` int(11) DEFAULT NULL,
   PRIMARY KEY (`pid`),
   UNIQUE KEY `role_code` (`role_code`,`activity_code`),
@@ -513,135 +524,4 @@ CREATE TABLE `nanx_user_role_privilege` (
 #
 
 
-#
-# Structure for table "pbcatcol"
-#
-
-DROP TABLE IF EXISTS `pbcatcol`;
-CREATE TABLE `pbcatcol` (
-  `pbc_tnam` char(193) NOT NULL,
-  `pbc_tid` int(11) DEFAULT NULL,
-  `pbc_ownr` char(193) NOT NULL,
-  `pbc_cnam` char(193) NOT NULL,
-  `pbc_cid` smallint(6) DEFAULT NULL,
-  `pbc_labl` varchar(254) DEFAULT NULL,
-  `pbc_lpos` smallint(6) DEFAULT NULL,
-  `pbc_hdr` varchar(254) DEFAULT NULL,
-  `pbc_hpos` smallint(6) DEFAULT NULL,
-  `pbc_jtfy` smallint(6) DEFAULT NULL,
-  `pbc_mask` varchar(31) DEFAULT NULL,
-  `pbc_case` smallint(6) DEFAULT NULL,
-  `pbc_hght` smallint(6) DEFAULT NULL,
-  `pbc_wdth` smallint(6) DEFAULT NULL,
-  `pbc_ptrn` varchar(31) DEFAULT NULL,
-  `pbc_bmap` char(1) DEFAULT NULL,
-  `pbc_init` varchar(254) DEFAULT NULL,
-  `pbc_cmnt` varchar(254) DEFAULT NULL,
-  `pbc_edit` varchar(31) DEFAULT NULL,
-  `pbc_tag` varchar(254) DEFAULT NULL,
-  UNIQUE KEY `pbcatc_x` (`pbc_tnam`,`pbc_ownr`,`pbc_cnam`)
-) ENGINE=InnoDB DEFAULT CHARSET=utf8;
-
-#
-# Data for table "pbcatcol"
-#
-
-
-#
-# Structure for table "pbcatedt"
-#
-
-DROP TABLE IF EXISTS `pbcatedt`;
-CREATE TABLE `pbcatedt` (
-  `pbe_name` varchar(30) NOT NULL,
-  `pbe_edit` varchar(254) DEFAULT NULL,
-  `pbe_type` smallint(6) DEFAULT NULL,
-  `pbe_cntr` int(11) DEFAULT NULL,
-  `pbe_seqn` smallint(6) NOT NULL,
-  `pbe_flag` int(11) DEFAULT NULL,
-  `pbe_work` char(32) DEFAULT NULL,
-  UNIQUE KEY `pbcate_x` (`pbe_name`,`pbe_seqn`)
-) ENGINE=InnoDB DEFAULT CHARSET=utf8;
-
-#
-# Data for table "pbcatedt"
-#
-
-INSERT INTO `pbcatedt` VALUES ('#####','#####',90,1,1,32,'10'),('###,###.00','###,###.00',90,1,1,32,'10'),('###-##-####','###-##-####',90,1,1,32,'00'),('DD/MM/YY','DD/MM/YY',90,1,1,32,'20'),('DD/MM/YY HH:MM:SS','DD/MM/YY HH:MM:SS',90,1,1,32,'40'),('DD/MM/YY HH:MM:SS:FFFFFF','DD/MM/YY HH:MM:SS:FFFFFF',90,1,1,32,'40'),('DD/MM/YYYY','DD/MM/YYYY',90,1,1,32,'20'),('DD/MM/YYYY HH:MM:SS','DD/MM/YYYY HH:MM:SS',90,1,1,32,'40'),('DD/MMM/YY','DD/MMM/YY',90,1,1,32,'20'),('DD/MMM/YY HH:MM:SS','DD/MMM/YY HH:MM:SS',90,1,1,32,'40'),('DDD/YY','DDD/YY',90,1,1,32,'20'),('DDD/YY HH:MM:SS','DDD/YY HH:MM:SS',90,1,1,32,'40'),('DDD/YYYY','DDD/YYYY',90,1,1,32,'20'),('DDD/YYYY HH:MM:SS','DDD/YYYY HH:MM:SS',90,1,1,32,'40'),('HH:MM:SS','HH:MM:SS',90,1,1,32,'30'),('HH:MM:SS:FFF','HH:MM:SS:FFF',90,1,1,32,'30'),('HH:MM:SS:FFFFFF','HH:MM:SS:FFFFFF',90,1,1,32,'30'),('MM/DD/YY','MM/DD/YY',90,1,1,32,'20'),('MM/DD/YY HH:MM:SS','MM/DD/YY HH:MM:SS',90,1,1,32,'40'),('MM/DD/YYYY','MM/DD/YYYY',90,1,1,32,'20'),('MM/DD/YYYY HH:MM:SS','MM/DD/YYYY HH:MM:SS',90,1,1,32,'40');
-
-#
-# Structure for table "pbcatfmt"
-#
-
-DROP TABLE IF EXISTS `pbcatfmt`;
-CREATE TABLE `pbcatfmt` (
-  `pbf_name` varchar(30) NOT NULL,
-  `pbf_frmt` varchar(254) DEFAULT NULL,
-  `pbf_type` smallint(6) DEFAULT NULL,
-  `pbf_cntr` int(11) DEFAULT NULL,
-  UNIQUE KEY `pbcatf_x` (`pbf_name`)
-) ENGINE=InnoDB DEFAULT CHARSET=utf8;
-
-#
-# Data for table "pbcatfmt"
-#
-
-INSERT INTO `pbcatfmt` VALUES ('#,##0','#,##0',81,0),('#,##0.00','#,##0.00',81,0),('$#,##0.00;($#,##0.00)','$#,##0.00;($#,##0.00)',81,0),('$#,##0.00;[RED]($#,##0.00)','$#,##0.00;[RED]($#,##0.00)',81,0),('$#,##0;($#,##0)','$#,##0;($#,##0)',81,0),('$#,##0;[RED]($#,##0)','$#,##0;[RED]($#,##0)',81,0),('0','0',81,0),('0%','0%',81,0),('0.00','0.00',81,0),('0.00%','0.00%',81,0),('0.00E+00','0.00E+00',81,0),('d-mmm','d-mmm',84,0),('d-mmm-yy','d-mmm-yy',84,0),('h:mm AM/PM','h:mm AM/PM',84,0),('h:mm:ss','h:mm:ss',84,0),('h:mm:ss AM/PM','h:mm:ss AM/PM',84,0),('m/d/yy','m/d/yy',84,0),('m/d/yy h:mm','m/d/yy h:mm',84,0),('mmm-yy','mmm-yy',84,0),('[General]','[General]',81,0);
-
-#
-# Structure for table "pbcattbl"
-#
-
-DROP TABLE IF EXISTS `pbcattbl`;
-CREATE TABLE `pbcattbl` (
-  `pbt_tnam` char(193) NOT NULL,
-  `pbt_tid` int(11) DEFAULT NULL,
-  `pbt_ownr` char(193) NOT NULL,
-  `pbd_fhgt` smallint(6) DEFAULT NULL,
-  `pbd_fwgt` smallint(6) DEFAULT NULL,
-  `pbd_fitl` char(1) DEFAULT NULL,
-  `pbd_funl` char(1) DEFAULT NULL,
-  `pbd_fchr` smallint(6) DEFAULT NULL,
-  `pbd_fptc` smallint(6) DEFAULT NULL,
-  `pbd_ffce` char(18) DEFAULT NULL,
-  `pbh_fhgt` smallint(6) DEFAULT NULL,
-  `pbh_fwgt` smallint(6) DEFAULT NULL,
-  `pbh_fitl` char(1) DEFAULT NULL,
-  `pbh_funl` char(1) DEFAULT NULL,
-  `pbh_fchr` smallint(6) DEFAULT NULL,
-  `pbh_fptc` smallint(6) DEFAULT NULL,
-  `pbh_ffce` char(18) DEFAULT NULL,
-  `pbl_fhgt` smallint(6) DEFAULT NULL,
-  `pbl_fwgt` smallint(6) DEFAULT NULL,
-  `pbl_fitl` char(1) DEFAULT NULL,
-  `pbl_funl` char(1) DEFAULT NULL,
-  `pbl_fchr` smallint(6) DEFAULT NULL,
-  `pbl_fptc` smallint(6) DEFAULT NULL,
-  `pbl_ffce` char(18) DEFAULT NULL,
-  `pbt_cmnt` varchar(254) DEFAULT NULL,
-  UNIQUE KEY `pbcatt_x` (`pbt_tnam`,`pbt_ownr`)
-) ENGINE=InnoDB DEFAULT CHARSET=utf8;
-
-#
-# Data for table "pbcattbl"
-#
-
-
-#
-# Structure for table "pbcatvld"
-#
-
-DROP TABLE IF EXISTS `pbcatvld`;
-CREATE TABLE `pbcatvld` (
-  `pbv_name` varchar(30) NOT NULL,
-  `pbv_vald` varchar(254) DEFAULT NULL,
-  `pbv_type` smallint(6) DEFAULT NULL,
-  `pbv_cntr` int(11) DEFAULT NULL,
-  `pbv_msg` varchar(254) DEFAULT NULL,
-  UNIQUE KEY `pbcatv_x` (`pbv_name`)
-) ENGINE=InnoDB DEFAULT CHARSET=utf8;
-
-#
-# Data for table "pbcatvld"
-#
-
+ 

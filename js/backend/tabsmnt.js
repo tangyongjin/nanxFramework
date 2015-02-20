@@ -130,6 +130,7 @@ Ext.extend(Dbl.MainTabPanel,Ext.TabPanel,{
                                 } else {
                                         this.table = current_table;
                                         var grid_id='grid_'+activity_code;
+                                   
                                         new Act({
                                                 edit_type:'edit',
                                                 code:activity_code,
