@@ -35,49 +35,7 @@ table td{
 
 	}
 
-   function t2(){
- 	$webroot = $this->config->item('webroot');
-   $c= "\$i18n=\"{a:'name',sex:'22'}\";" ;
-   
-   $this->load->helper('file');
-
-   $cjs = $webroot . '/js/language/zh-cn/i18n.js';
-
-
-   $string ='$'. read_file($cjs ) .';';
-   
-   
-
-
-   echo $string;
   
-    eval($string);
-    
-
-   echo $c;
-    
-   eval($c);
-   
-
-
-   $dd=  json_encode($i18n);
-   var_dump( $dd );
-   
-   var_dump( json_decode($dd) );
-
-   $xx=array( 'a'=>'name','sex'=>'22'  ) ;
-
-   $a=json_encode($xx);
-   var_dump($a);
-
-   $p=json_decode($a);
-
-   debug($p);
-
-
-
-   }
-
 	function test() {
 
 		$tables = $this->db->list_tables();
