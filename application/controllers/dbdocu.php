@@ -121,6 +121,20 @@ table td{
 		return;
 	}
 
+
+    function lang_help()
+    {
+
+    	$sql = "select  concat('cp  en/*.html   ',id,'/   ' ) as vv from  nanx_lang where id not in ('en','zh-cn');";
+		$bat = $this->db->query($sql)->result_array();
+		foreach ($bat as $cp) {
+			echo $cp['vv'] . "<br/>";
+		}
+
+
+
+    }
+
 	function lang_php() {
 
 		echo " /application/language/en/messages_lang.php  与 /application/language/zh-cn/messages_lang.php 比较: <br/>";
