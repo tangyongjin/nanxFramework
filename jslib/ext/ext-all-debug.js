@@ -18360,9 +18360,7 @@ Ext.DatePicker = Ext.extend(Ext.BoxComponent, {
 
     
     setValue : function(value){
-        //this.value = value.clearTime(true);
-        this.value = value.clearTime(false);
-        console.log(this.value);
+        this.value = value.clearTime(true);
         this.update(this.value);
     },
 
@@ -18741,7 +18739,6 @@ Ext.DatePicker = Ext.extend(Ext.BoxComponent, {
 
     
     update : function(date, forceRefresh){
-     
         if(this.rendered){
             var vd = this.activeDate, vis = this.isVisible();
             this.activeDate = date;
@@ -24352,7 +24349,6 @@ Ext.data.Store = Ext.extend(Ext.util.Observable, {
     setBaseParam : function (name, value){
         this.baseParams = this.baseParams || {};
         this.baseParams[name] = value;
-        
     }
 });
 
@@ -31577,7 +31573,6 @@ Ext.extend(T, Ext.Container, {
 
     
     applyDefaults : function(c){
-    	 // console.log(c);
         if(!Ext.isString(c)){
             c = Ext.Toolbar.superclass.applyDefaults.call(this, c);
             var d = this.internalDefaults;
@@ -45707,9 +45702,7 @@ Ext.grid.GridPanel = Ext.extend(Ext.Panel, {
 
     
     getSelectionModel : function(){
-    	 
         if(!this.selModel){
-        	
             this.selModel = new Ext.grid.RowSelectionModel(
                     this.disableSelection ? {selectRow: Ext.emptyFn} : null);
         }
@@ -49231,10 +49224,7 @@ Ext.grid.AbstractSelectionModel = Ext.extend(Ext.util.Observable,  {
 
     
     init : function(grid){
-    	 
         this.grid = grid;
-      
-        
         if(this.lockOnInit){
             delete this.lockOnInit;
             this.locked = false;

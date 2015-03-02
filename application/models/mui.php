@@ -32,18 +32,19 @@ class MUI extends CI_Model
         'js/language/'.$lang_folder.'/i18n.js',
         'jslib/ext/ext-base.js', 
         'jslib/ext/ext-all.js',
-        'jslib/Datetime/Spinner.js', 
-        'jslib/Datetime/SpinnerField.js', 
-        'jslib/Datetime/DateTimeField.js',
-        'jslib/ext/Power_htmleditor.js', 
-        'jslib/ext/ux/fileuploadfield/fileuploadfield.js', 
-        'js/globalvars.js', 
-        'js/activity_curd.js',
+         'jslib/Datetime/Spinner.js', 
+          'jslib/Datetime/SpinnerField.js', 
+         'jslib/Datetime/DateTimeField.js',
+         'jslib/ext/Power_htmleditor.js', 
+         'jslib/ext/ux/fileuploadfield/fileuploadfield.js', 
+         'js/globalvars.js', 
+         'js/activity_curd.js',
         'js/backend/backend_tree_tab_cfg.js',
-        'js/fb.js', 
-        'js/fixheight.js',
+         'js/fb.js', 
+         'js/fixheight.js',
         'js/event_list.js', 
-        'js/boot.js')
+         'js/boot.js'
+        )
   ),
   'backend'=>array(
   'css'=>array(

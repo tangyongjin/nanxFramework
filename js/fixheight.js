@@ -37,6 +37,7 @@ function resize()
        fit_img('img_logo_150',"lock");
     }
 }
+
         window.onload = function(){
              window.addEventListener("resize", function(){resize();}, true);
              resize();

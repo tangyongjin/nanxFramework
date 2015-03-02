@@ -1,4 +1,5 @@
 function getevent(){
+
         if (document.getElementById("work_event")) {
                 document.getElementById('loading_gif').style.display = "";
                  Ext.Ajax.request({
@@ -17,7 +18,7 @@ function getevent(){
 var event_task ={
         run:getevent,
         interval:1000000
-        //interval:10000
+        
 }  
 var event_runner = new Ext.util.TaskRunner();
 event_runner.start(event_task);
