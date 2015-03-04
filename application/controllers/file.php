@@ -108,7 +108,36 @@ class File extends CI_Controller {
    }
   }
   
-  
+ 
+ 
+ 
+
+function fs2array()
+  { 
+     $para = (array )json_decode(file_get_contents('php://input'));
+     $os_path=$para['os_path'];
+     $file_type=$para['file_type'];
+     $this->load->model('MFile');
+     $files=$this->MFile->getFileList($os_path,$file_type);
+     
+     if($file_type=='img')
+     {
+         $file_trunk=$para['file_trunk'];
+         $picArray=$this->MFile->picFile2Array($files,$file_trunk,$_GET);
+         echo $picArray;
+         return;
+     }
+
+     $result=array();
+     $result['rows']=$files;
+     $result['total']=count($files);
+     $result['table']='vstable';
+     $json = json_encode($result,JSON_UNESCAPED_UNICODE);
+     echo $json;
+  }
+
+
+
   function getContent()
   { 
     $post = file_get_contents('php://input');

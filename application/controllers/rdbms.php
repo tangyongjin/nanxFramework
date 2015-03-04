@@ -4,73 +4,40 @@ if (!defined('BASEPATH'))
     exit('No direct script access allowed');
 class Rdbms extends CI_Controller
 {
-  
-    function get_min_table_indexes($table)
+   
+
+
+
+   function get_table_creation_info_directshow()
     {
+    
 
-        $output = new stdClass();
-        $output->success = true;
-        $output->primary_keys = array();
-
-        $cols4index = array();
+        $post = file_get_contents('php://input');
+        $para_array = (array )json_decode($post);
         $this->load->model('MRdbms');
 
-        $table_columns = $this->MRdbms->getTableColumnNames($table);
-        foreach ($table_columns as $column)
-        {
-            $cols4index[] = $column;
-        }
-
-        $rows = $this->MRdbms->getTableKeys($table);
-        $indexes = array();
-        for ($i = 0; $i < count($rows); $i++)
-        {
-
-            if (strtolower($rows[$i]['Key_name']) == 'primary')
-            {
-                $output->primary_keys[] = $rows[$i]['Column_name'];
-            }
-
-            $index = $this->MRdbms->index_with_key($rows[$i]['Key_name'], $indexes);
-            if ($index)
-            {
-                $index->columns = $index->columns . ', ' . $rows[$i]['Column_name'];
-                continue;
-            }
-
-            $index = new stdClass();
-
-            $index->index = $rows[$i]['Key_name'];
-            $index->columns = $rows[$i]['Column_name'];
-            $index->add_column = '';
-            $index->option = (!$rows[$i]['Non_unique']) ? 'UNIQUE' : (($rows[$i]['Index_type'] ==
-                'FULLTEXT') ? 'FULLTEXT' : '');
-            $indexes[] = $index;
-        }
-        $response = array();
-        $response['id'] = 1989;
-        $response['table'] = $table;
-        $response['server_resp'] = $output;
-        $response['rows'] = $indexes;
-        for ($j = 0; $j < count($indexes); $j++)
-        {
-            $response['rows'][$j]->pid = $j;
-        }
+        $ret = $this->MRdbms->get_table_creation_info($para_array);
+        echo json_encode($ret, JSON_UNESCAPED_UNICODE);
+    
 
 
-        $response['cols4index'] = $cols4index;
-        $response['success'] = true;
-        $response[0] = array(
-            'pid' => 'pid',
-            'index' => 'index',
-            'columns' => 'columns',
-            'add_column' => 'add_column',
-            'option' => 'option');
-        return $response;
     }
 
-  
+ 
 
+ function get_min_table_indexes_directshow()
+    {
+        $post = file_get_contents('php://input');
+        $para_array = (array )json_decode($post);
+        $table = $para_array['table'];
+
+        $this->load->model('MRdbms');
+        $ret = $this->MRdbms->get_min_table_indexes($table);
+        echo json_encode($ret, JSON_UNESCAPED_UNICODE);
+    }
+
+ 
+  
 
     function prepare_data($rows)
     {
@@ -110,22 +77,7 @@ class Rdbms extends CI_Controller
         return array($data);
     }
 
-
-    function get_charset_collation($params)
-    {
-        $charset_and_collaction = array();
-        $charsets = $this->getCharsets();
-        foreach ($charsets as $c)
-        {
-            $charset_and_collaction['charset'][] = array($c);
-        }
-        $collations = $this->getCollations();
-        foreach ($collations as $c)
-        {
-            $charset_and_collaction['collation'][] = array($c);
-        }
-        return $charset_and_collaction;
-    }
+ 
 
     
 
@@ -461,91 +413,7 @@ class Rdbms extends CI_Controller
         $this->MExcel->exportExcel($rows);
 
     }
-    
-    
-     function tb_index_adu2($para)
-    {
-        $table = $para['table'];
-        $a = $para['a'];
-        $d = $para['d'];
-        $u = $para['u'];
-        $errs = array();
-        $indexs_info = $this->get_min_table_indexes($table);
-        $all_indexs = $indexs_info['rows'];
-
-        for ($i = 0; $i < count($u); $i++)
-        {
-            $update_info = (array )$u[$i];
-            $pids_of_index = $update_info['pid'];
-            
-            if(array_exists ('columns',$pids_of_index))
-            {
-            $columns = $pids_of_index['columns'];
-            }
-            else
-            {
-            $columns = $all_indexs[$d_row[0]]->columns;
-            }
- 
- 
-            if(array_exists ('option',$pids_of_index))
-            {
-            $option = $pids_of_index['option'];
-            }
-            
-            
-            $columns = $pids_of_index['columns'];
-            array_push($d, $pid);
-            array_push($a, $update_info);
-        }
-        
-        
-    
-         
-
-        for ($i = 0; $i < count($d); $i++)
-        {
-            $d_row = (array )$d[$i];
-            $indexname_to_del = $all_indexs[$d_row[0]]->index;
-            $sql = "alter table $table drop index $indexname_to_del";
-            
-            $this->db->query($sql);
-            $errno = $this->db->_error_number();
-            if ($errno > 0)
-            {   
-              	$errmsg = $this->db->_error_message();
-                array_push($errs, $errmsg);
-            }
-          
-        }
-
-        for ($i = 0; $i < count($a); $i++)
-        {
-            $a_row = (array )$a[$i];
-            $indexname = (array_key_exists('index', $a_row)) ? $a_row['index'] : '';
-            $option = (array_key_exists('option', $a_row)) ? $a_row['option'] : '';
-            $columns = $a_row['columns'];
-            $sql = "alter table $table add   $option index  $indexname ( $columns) ";
-            
-          //  echo $sql;
-            $this->db->query($sql);
-            $errno = $this->db->_error_number();
-            if ($errno > 0)
-            {   
-              	$errmsg = $this->db->_error_message();
-                array_push($errs, $errmsg);
-            }
-        }
-        
-         $msg=$this->lang->line('success_update_table_data');
-        if (count($errs) > 0)
-        {
-            $msg = $errs;
-        }
-
-        $resp = array('success' => true, 'msg' => $msg);
-        print json_encode($resp, JSON_UNESCAPED_UNICODE);
-    }
+     
     
      
  

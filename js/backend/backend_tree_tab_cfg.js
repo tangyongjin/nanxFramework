@@ -1978,7 +1978,6 @@ var getCategoryMenusByCategory=function(category){
 var AppCategory = {
     AppCategory_List: appCategory_List,
     RawDBCategory_List: rawDBCategory_List,
-    // FileManager_List:FileManager_List,
     CategoryDnD: {
         biz_table:['activity','activitys'],
         table:['biz_tables'],

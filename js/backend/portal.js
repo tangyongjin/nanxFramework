@@ -383,7 +383,7 @@ Ext.extend(Explorer.explorerTreePanel,Ext.tree.TreePanel,{
                         });
         },
         checkDnD: function(e){
-                var dndcfg=Category.getDnDcfg();
+                var dndcfg=AppCategory.getDnDcfg();
                 var c1=e.dropNode.attributes.category;
                 var c2=e.target.attributes.category;
                 var cfg=dndcfg[c1];

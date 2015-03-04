@@ -33,7 +33,9 @@ class MActivity extends CI_Model
          $c_and_m = explode("/", $url);
          $c=$c_and_m[0];
          $m=$c_and_m[1];
+         
          $this->load->model($c);
+         
          $result=$this->$c->$m($para);
          return $result;
     }
@@ -287,6 +289,9 @@ class MActivity extends CI_Model
         $query           = $this->db->get('nanx_activity');
         $activity_summary             = $query->first_row('array');
         $activity_type   = $activity_summary['activity_type'];
+
+      //  debug($activity_summary);
+
 
         if ($activity_type == 'table') {
             $base_table             = $activity_summary['base_table'];
