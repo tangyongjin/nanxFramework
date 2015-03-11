@@ -1,0 +1,20 @@
+<div class=back_help>
+<h1>操作:系统备份</h1>
+<div class=operation_desc>系统备份,备份用户上传的图片,附件,js文件,以及自行开发的php文件.</div>
+<div class=back_item_list><h1 class=back_items>字段说明:</h1><table class=thin-table><tr>
+<td>系统备份文件名</td>
+<td><div clsss=field_desc>文件名[不需要后缀,系统选择zip为文件格式]</div></td></tr></table></div>
+<div class=back_demo></div>
+<div class=back_notice>注意事项:</div>
+</div>
+<div class=operation_notice>
+  系统会备份如下数据:
+<ol>
+<li>/imgs目录的所有图片文件</li>
+<li>/js/upload目录的所有js文件</li>
+<li>/uploads目录中所有用户上传的附件</li>  
+<li>/application/controllers/目录中以nanxplug_开头的php文件</li>  
+<li>/application/models/目录中以mnanxplug_开头的php文件</li>  
+</ol>
+  备份后系统会将上述文件打包成一个zip文件提供下载.
+</div>

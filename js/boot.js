@@ -13,9 +13,12 @@ App.bind = function() {
                         var activity_type = target.getAttribute('activity_type');
                         var acode = target.getAttribute('id');
                         var fnname= target.getAttribute('fnname');
-                        var url_for_get_cfg= target.getAttribute('url_for_get_cfg');
+                        service_url
+
+
+                        var service_url= target.getAttribute('service_url');
                         var memo=target.getAttribute('memo');
-                        App.route(activity_type, acode,fnname,url_for_get_cfg,memo);
+                        App.route(activity_type, acode,fnname,service_url,memo);
                 }, this,{
                         delegate: 'a.nanx-4-ext'
                 })
@@ -78,6 +81,7 @@ App.bind = function() {
 }
 
 App.route = function(activity_type, code,fnname,service_url,memo){
+  
 	      if(activity_type=='js'){
 	       if(NANXplugin_window.prototype[fnname]) 
                     {

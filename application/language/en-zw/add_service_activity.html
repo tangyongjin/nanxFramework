@@ -1,7 +1,21 @@
 <div class=back_help>
-<h1>Operation:Add Activity[Service based]</h1>
-<div class=operation_desc>deschere</div>
-<div class=back_item_list><h1 class=back_items>Fields:</h1><ul><li>Activity Code<br/><div clsss=field_desc>xxxxxx</div></li><li>Display Text<br/><div clsss=field_desc>xxxxxx</div></li><li>Service_URL<br/><div clsss=field_desc>xxxxxx</div></li><li>memo<br/><div clsss=field_desc>xxxxxx</div></li></ul></div>
+<h1>操作:增加活动[基于Service]</h1>
+<div class=operation_desc>增加一个基于Service的活动</div>
+<div class=back_item_list><h1 class=back_items>字段说明:</h1><table class=thin-table><tr>
+<td>活动代码(英文)</td>
+<td><div clsss=field_desc>此活动的代码,必须使用英文</div></td></tr><tr>
+<td>活动说明</td>
+<td><div clsss=field_desc>此活动的名称,该名称也将作为主工作区的名称</div></td></tr><tr>
+<td>Service_URL</td>
+<td><div clsss=field_desc>Service的url,格式为controller/function</div></td></tr><tr>
+<td>备注</td>
+<td><div clsss=field_desc>此活动备注信息,可以显示给调用者</div></td></tr></table></div>
 <div class=back_demo></div>
-<div class=back_notice>Notice:</div>
-</div><div class=operation_notice>vvvv</div>
+<div class=back_notice>注意事项:</div>
+</div><div class=operation_notice>
+必须保证在controller目录里面存在service url指定的控制器和方法.
+该控制器一般由社区开发者提供.用户也可以自行编写,
+控制器名称必须以plug_开头,防止与系统控制器冲突<br/>
+此类活动一般用于复杂的后台计算,比如执行某些复杂的任务.
+
+</div>

@@ -1,4 +1,6 @@
 function getevent(){
+    
+
 
         if (document.getElementById("work_event")) {
                 document.getElementById('loading_gif').style.display = "";

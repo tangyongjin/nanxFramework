@@ -2147,6 +2147,20 @@ Act.prototype.FormAction=function(form){
          }
 }
 
+function isJson(str) {
+    try {
+        JSON.parse(str);
+    } catch (e) {
+        console.log(e);
+
+        return false;
+    }
+    return true;
+}
+
+
+
+
 function Act_service(acode,service_url,memo){
     button = {
         xtype:'button',
@@ -2158,21 +2172,30 @@ function Act_service(acode,service_url,memo){
         handler:function(){
             Ext.Msg.confirm(i18n.confirm,i18n.confirm_execute,function(btn){
                 if (btn=='yes'){
+                    console.log('service called');
                     WaitMask.show();
                     Ext.Ajax.request({
                         url: AJAX_ROOT + service_url,
-                        success: function(response, opts) {
+                        success: function(response, opts) 
+                        {
                             WaitMask.hide();
-                            if(response.responseText){
-                              var obj = Ext.decode(response.responseText);
-                              if(obj&& obj.msg){ Ext.Msg.alert(i18n.message,obj.msg);}
+                            if(  (response.responseText ).length >0  )
+                            {
+                                  if (isJson(response.responseText))
+                                     {
+                                         var obj = Ext.decode(response.responseText);
+                                         if(obj.msg){ Ext.Msg.alert(i18n.message,obj.msg);}else{Ext.Msg.alert(i18n.message, response.responseText);}
+                                     }
+                                     else
+                                     {
+                                        Ext.Msg.alert(i18n.message, response.responseText);
+                                     }
+                              
                             }
                             else
                             {
                               Ext.Msg.alert(i18n.message,i18n.service_exec_done);
                             }
-                            
-
                         },
                         failure: function(response, opts) {
                             WaitMask.hide();

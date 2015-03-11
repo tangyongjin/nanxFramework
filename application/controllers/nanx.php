@@ -220,8 +220,8 @@ class Nanx extends CI_Controller {
 					'memo'          => 'memo'),
 				'default'        => array(
 					'activity_type' => 'service',
-					'pic_url'       => 'act_service.png',
-					'data_url'      => 'curd/listData')),
+					'pic_url'       => 'act_service.png'
+					)),
 
 			'add_sql_activity' => array(
  				'pre_check_func'=>'filter',
