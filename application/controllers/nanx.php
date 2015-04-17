@@ -608,8 +608,8 @@ class Nanx extends CI_Controller {
 				'successmsg'        => 'success_set_activity_pic',
 				'tbused'            => 'nanx_activity',
 				'dbcmdtype'         => 'update',
-				'upload_file_field' => 'file_anchor_4_pic',
-				'paracfg'           => array('pic_url' => 'file_anchor_4_pic'),
+			//	'upload_file_field' => 'file_anchor_4_pic',
+				'paracfg'           => array('pic_url' => 'activity_pic'),
 				'wherecfg'                             => array('pid' => 'pid')),
 
 			'truncate_table' => array(
