@@ -1250,6 +1250,21 @@ Fb.getWhoami=function()
          var trigger_rows =form.find('nanx_type','trigger_row');
          fmdata['trigger_counts'] = trigger_rows.length;
      }
+
+
+     if (fmdata.opcode && fmdata.opcode.indexOf('set_activity_pic') >= 0){
+     
+         var fileGrid=Ext.getCmp('grid_FILE');        
+         console.log(fileGrid);
+         file_choosed=Act.prototype.getMediaGridValue(fileGrid);
+         console.log(file_choosed);
+         var picname = file_choosed[0].split('/').pop();
+         console.log(picname);
+         fmdata['activity_pic']=picname;
+     }
+
+
+
     
      var extradata = getGridExtraData();
      if (extradata){

@@ -1300,8 +1300,8 @@ var contextMenu = [
             place:'context',
             itemcfg:[{
                 item_type:'field',
-                label:i18n.set_activity_icon,
-                value:'#text'
+                value:'#text',
+                label:i18n.set_activity_icon
             },
             {
                 code: 'NANX_FS_2_TABLE',
