@@ -1,4 +1,6 @@
-APP_PREFIX='standx';BASE_URL='http://www.nan-x.com/cloud/standx/';TMP_DIR=BASE_URL+'tmp/';
+APP_PREFIX='standx';
+BASE_URL='http://www.nan-x.com/cloud/standx/';
+TMP_DIR=BASE_URL+'tmp/';
 AJAX_ROOT=BASE_URL+'index.php/';
 HELP_DIR=AJAX_ROOT+'dbdocu/gethelp/';
 TREE_URL=AJAX_ROOT+'tree/';
@@ -21,4 +23,3 @@ if(!window.console)
 }
 
 Array.prototype.isArray=true;
-
