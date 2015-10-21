@@ -1,10 +1,10 @@
-<?php  if ( ! defined('BASEPATH')) exit('No direct script access allowed');
+<?php 
 //EID_HERE
-$config['eidfolder']='standx';
+$config['eidfolder']   ='standx';
 $config['subfolder']='cloud';
 $config['webroot']= $_SERVER['DOCUMENT_ROOT'].'/'.$config['subfolder'].'/'.$config['eidfolder'].'/';
 
-$config['base_url'] = 'http://127.0.0.1/cloud/standx';
+$config['base_url']   ='http://www.nan-x.com/cloud/standx';
 $config['index_page'] = 'index.php';
 $config['uri_protocol']	= 'AUTO';
 $config['url_suffix'] = '';
@@ -25,7 +25,7 @@ $config['log_threshold'] =0;
 $config['log_path'] = '';
 $config['log_date_format'] = 'Y-m-d H:i:s';
 $config['cache_path'] = '';
-$config['encryption_key'] = $config['eidfolder'];
+$config['encryption_key'] = 'standx';
 
 
 
@@ -48,17 +48,17 @@ $config['encryption_key'] = $config['eidfolder'];
 | 'sess_time_to_update'		= how many seconds between CI refreshing Session Information
 |
 */
-$config['sess_cookie_name']		=$config['eidfolder']; 
+$config['sess_cookie_name']		='standx';
 $config['sess_expiration']		= 7200;
 $config['sess_expire_on_close']	= FALSE;
 $config['sess_encrypt_cookie']	= FALSE;
-$config['sess_use_database']	= FALSE;
+$config['sess_use_database']	= true;
 $config['sess_table_name']		= 'ci_sessions';
 $config['sess_match_ip']		= FALSE;
 $config['sess_match_useragent']	= TRUE;
 $config['sess_time_to_update']	= 300;
 $config['cookie_prefix']	= "";
-$config['cookie_domain']	= "";
+$config['cookie_domain']	= "www.nan-x.com";
 $config['cookie_path']		= "/";
 $config['cookie_secure']	= FALSE;
 
