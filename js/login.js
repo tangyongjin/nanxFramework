@@ -13,11 +13,19 @@ function login(){
         return false;
     }
 
-    var o='{"account":"'+account+'","password":"'+pwd+'"}';
+     
+     
+
+    var curr=$($( ".current" )[0]);
+    var lang=curr.attr('id')
+    var o='{"lang":"'+lang+'","account":"'+account+'","password":"'+pwd+'"}';
+    
     $.ajax({
         type:"POST",
         url:AJAX_ROOT+'home/dologin',
         data:o,
+        
+
         contentType:"application/json",
         dataType:"json",
         success:function(data){
@@ -25,34 +33,19 @@ function login(){
                 document.getElementById('log_res').innerHTML = data.msg;
                 $('#login_main_form').shake(2, 13, 250);
             } else{
-                $('#myModal').reveal();
-                window.location.href = AJAX_ROOT;
+                
+                 $('#myModal').reveal();
+                 window.location.href = AJAX_ROOT+'home/index?ts='+Math.floor(Date.now() / 1000)
+
+                //  alert('will href to '+AJAX_ROOT+'home/index/' );
+                // window.location.href = AJAX_ROOT+'home/index/' 
+                
+                 
             }
         }
     });
 }
-
  
-// function resize()
-// {
-//     var viewHigh=$(window).height();
-//     var viewWidth=$(window).width();
-//     if (viewHigh<580){
-//         viewHigh=580;
-//     }
-//     var height_header_footer=$("#border-top").height()+$("#footer").height();
-//     $("#content-box").height(viewHigh - height_header_footer);
-//     var margin_left=(viewWidth-550)/2 -15;
-//     if (margin_left<0){
-//         margin_left=2;
-//     }
-//     $("#login_main_form").css({
-//         'margin-left': margin_left
-//     });
-//     $("#login_main_form").show();
-//     fit_img('img_logo_150',"lock");
-// }
-
 function fit_img(imgid,divid){
     var divElem = $("#" + divid);
    

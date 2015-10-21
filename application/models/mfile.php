@@ -215,9 +215,22 @@ function fs2array()
    
      function getFileList($path,$ftype='all')
     { 
+
+
+       
+
+
+
        $p='/'.$path.'/';
+       
+ 
     	 $path= (dirname(dirname(dirname(__FILE__)))).$p;
-    	 if($ftype=='img')
+         
+
+       
+
+
+       if($ftype=='img')
     	 {
     	 $ext = '{*.jpg,*.JPG,*.bmp,*.BMP,*.gif,*.GIF,*.png,*.PNG}';
     	 }
@@ -225,7 +238,10 @@ function fs2array()
     	{
     	  $ext='{*.'.$ftype.'}';
     	}
-    	   
+
+
+    	 
+
        $files  = glob($path.$ext, GLOB_BRACE);
       
 
@@ -245,7 +261,7 @@ function fs2array()
                 $tmp['pid']= $pid;
                 $tmp['Filename']= $shortname; 
                 $tmp['Size']=  filesize($realname);   
-                $tmp['Date']= date ("Y-m-d H:i:s A", filemtime($realname));
+                $tmp['Date']= @date ("Y-m-d H:i:s A", filemtime($realname));
                 $rows[]=$tmp;
                 $pid++;
              }

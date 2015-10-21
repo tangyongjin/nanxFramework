@@ -26,15 +26,15 @@ class MFieldcfg  extends CI_Model{
   
   }
   
-  
-  function getColsCfg($base_table,$fields_e,$transfer)
+   
+  function getColsCfg($activity_code,  $base_table,$fields_e,$transfer)
 	{
 		$col_cfg = array();
 		$tmp_cfg = array();
 		foreach($fields_e as $field)
 		{
 	    $display_cfg=$this->getDisplayCfg($base_table,$field,$transfer);
-		 	$editor_cfg =$this->getEditorCfg($base_table,$field);	
+		 	$editor_cfg =$this->getEditorCfg($activity_code,$base_table,$field);	
       $tmp_cfg['field_e'] = $field;
 			$tmp_cfg['display_cfg'] = $display_cfg;
 			$tmp_cfg['editor_cfg'] = $editor_cfg;
@@ -91,7 +91,7 @@ class MFieldcfg  extends CI_Model{
 	}
 	
 	
-	  function colsTrnasfer($tb,$fields_e)
+	  function colsTrnasfer($activity_code,$tb,$fields_e)
 	{ 
 		$col_cfg = array();
 		$tmp_cfg = array();
@@ -102,7 +102,7 @@ class MFieldcfg  extends CI_Model{
 		   'value'=> $field,
 		   'width'=>200,'show_as_pic'=>0);
 	    $display_cfg=$disp;
-      $editor_cfg =$this->getEditorCfg($tb,$field);	
+      $editor_cfg =$this->getEditorCfg($activity_code,$tb,$field);	
       $tmp_cfg['field_e'] = $field;
 			$tmp_cfg['display_cfg'] = $display_cfg;
 			$tmp_cfg['editor_cfg'] = $editor_cfg;
@@ -128,15 +128,41 @@ class MFieldcfg  extends CI_Model{
   }	
   
   
-  function getCommonEditCfg($base_table,$field)
+  function getCommonEditCfg($activity_code, $base_table,$field)
   {
-     $w=array(
+
+     
+
+     $w1=array(
+      'activity_code'=>$activity_code,
       'base_table'=> $base_table,
       'field_e' => $field
       );
-    
-     $this->db->where($w);
-     $common=$this->db->get('nanx_biz_column_editor_cfg')->first_row('array');
+
+     $this->db->where($w1);
+     $common1=$this->db->get('nanx_biz_column_editor_cfg')->first_row('array');
+     
+
+
+     $w2=array(
+      'base_table'=> $base_table,
+      'field_e' => $field
+      );
+
+     $this->db->where($w2);
+     $common2=$this->db->get('nanx_biz_column_editor_cfg')->first_row('array');
+     
+     if(  count ($common1)==0){
+     $common=$common2; 
+     }
+     else
+     {
+     $common=$common1; 
+     }
+
+
+
+
      if(count($common)>0)
      {
         unset($common['pid']);
@@ -147,6 +173,8 @@ class MFieldcfg  extends CI_Model{
      {
       $common=array();
      }
+     $common['rowbasevalue']=null;
+
      return $common;
   }
  
@@ -162,7 +190,7 @@ class MFieldcfg  extends CI_Model{
     return $follow_cfg;
   }	
 
-  function getEditorCfg($base_table,$field)
+  function getEditorCfg($activity_code, $base_table,$field)
 	{
 	if ($base_table=='NULL')
 	  {
@@ -178,7 +206,7 @@ class MFieldcfg  extends CI_Model{
 		return null;
 		}
 		
-	$editor_cfg=$this->getCommonEditCfg($base_table,$field);
+	$editor_cfg=$this->getCommonEditCfg($activity_code, $base_table,$field);
 	$dt=$this->checkDatetimeField($base_table,$field);
 	if($dt){$editor_cfg['datetime']=$dt;}
 	$follow_cfg=$this->getFollowCfg($base_table,$field);

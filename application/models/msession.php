@@ -1,4 +1,4 @@
-<?php
+<?php 
 class MSession extends CI_Model
 {
 

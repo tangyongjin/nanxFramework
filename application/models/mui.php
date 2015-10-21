@@ -302,7 +302,7 @@ class MUI extends CI_Model
          
          
          $logout_info=  "<a class=tbar_a  href=$bs_url/index.php/home/logout>".$this->lang->line('logout')."</a>";
-         $backend_info= "<a class=tbar_a  href=$bs_url/index.php/backend/admin>".$this->lang->line('backend')."</a>";
+         $backend_info= "<a class=tbar_a  href=$bs_url/index.php/backend/admin?ts=".time().' >'.$this->lang->line('backend')."</a>";
          $roles   =$this->session->userdata('roles');
          $role_list=array_retrieve($roles ,'role_code');
          $isadmin=false;

@@ -20,7 +20,7 @@
 					 </form>
 				</div>
 		<?php
-	        $sql="select * from nanx_lang where  active='y' ";
+	        $sql="select * from nanx_country where  active='y' ";
 	        $rows=$this->db->query($sql)->result_array();
 	        $o='<div id="polyglotLanguageSwitcher"><form action="#">';
 		    $o.='<select id="polyglot-language-options">';

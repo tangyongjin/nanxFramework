@@ -339,7 +339,7 @@ Fb.toggle_combo=function(togglefalg)
          id: oneFieldCfg['field_e'],
          width: 200,
          height: 25,
-         value:oneFieldCfg.editor_cfg.default_v,
+         value:oneFieldCfg.editor_cfg.ini,
          readOnly: readonly_flag,
          blankText: i18n.not_allow_blank
      }
@@ -479,25 +479,8 @@ Fb.toggle_combo=function(togglefalg)
  } 
 
  
- Fb.getTriggerBar12345 = function(main_table) {
-     var dropdown_item_add = new Ext.Button({
-         text:i18n.add_trigger,
-         id:'trigger_bar_button',
-         handler: function() {
-             {
-                 var form = this.findParentByType('form');
-                 var trigger_rows =form.find('nanx_type','trigger_row');
-                 var newline = Fb.triggerRow12345({
-                     'serial': trigger_rows.length+1,
-                     'base_table': main_table
-                 });
-                 this.ownerCt.ownerCt.insert(12,newline);
-                 this.ownerCt.ownerCt.doLayout();
-             }
-         }
-     })
-    
-     var headers=['base_table_col','trigger_table','trigger_table_list','trigger_table_value','trigger_table_filter'];
+ Fb.create_group_table_header=function(headers){
+
      var head_tb="<table><tr>";
      for(var i=0;i<headers.length;i++)
      {
@@ -505,120 +488,156 @@ Fb.toggle_combo=function(togglefalg)
      }
      head_tb+="</tr></table>";
      var tb_c=new Ext.Container({html:head_tb});
+     return tb_c;
+
+ }
+
+
+ 
+
+
+ Fb.horizon_line=function(item,node){
+     var line_add_btn = new Ext.Button({
+         text:i18n.add_trigger,
+         id:'trigger_bar_button',
+         handler: function() {
+             {
+                 var form = this.findParentByType('form');
+                 var trigger_rows =form.find('nanx_type','trigger_row');
+                 item.serial=trigger_rows.length+1;
+                 var newline =   Fb.create_horizon_line(item,node);
+                 this.ownerCt.ownerCt.insert(12,newline);
+                 this.ownerCt.ownerCt.doLayout();
+             }
+         }
+     })
+    
+     tb_c=this.create_group_table_header(item.headers);
+
      var f = new Ext.Container({
          fieldLabel:i18n.group_item,
          layout:'table',
-      items:[dropdown_item_add,tb_c]
+      items:[line_add_btn,tb_c]
      });
      return f;
+
+
  }
- 
- Fb.triggerRow12345 = function(cfg,meta5){
-     var hostcfg = {
-         item_type: 'combo_list',
-         id: 'field_e_' + cfg.serial,
-         value: cfg.base_table,
-         width:140,
-         displayField: 'text',
-         valueField: 'value',
-         category_to_use: 'biz_cols'
-     }
-     if(meta5&&meta5.field_e)hostcfg.ini=meta5.field_e;
+
+
+ Fb.create_horizon_line=function(item,node,meta_data){
+
+       var backend_active_form=Ext.getCmp('back_opform');
      
-     var store = Fb.buildTreeStore(hostcfg);
-     var host_combo = Fb.getBasicCombo(hostcfg, store);
-     group_id = 'TR_' + cfg.serial;
-     var combo_cfg = {
-         item_type: 'combo_group',
-         root_combox: {
-             id: 'combo_table_' + cfg.serial,
-             ds_auto: true,
-             group_id: group_id,
-             level: 1,
-             width:140,
-             nanx_type: 'root',
-             value_key_for_slave: 'value',
-             category_to_use: 'biz_tables' 
-         },
-         slave_comboxes: [{
-             id: 'list_field_' + cfg.serial,
-             ds_auto: false,
-             level: 2,
-             width:140,
-             group_id: group_id,
-             nanx_type: 'slave',
-             category_to_use: 'biz_cols'
-         }, {
-             id: 'value_field_' + cfg.serial,
-             ds_auto: false,
-             group_id: group_id,
-             level: 2,
-             width:140,
-             nanx_type: 'slave',
-             category_to_use: 'biz_cols'
-         }
-         ]
-     };
-     
-     if(meta5&&meta5.combo_table)combo_cfg.root_combox.ini=meta5.combo_table;
-     if(meta5&&meta5.list_field)combo_cfg.slave_comboxes[0].ini=meta5.list_field;
-     if(meta5&&meta5.value_field)combo_cfg.slave_comboxes[1].ini=meta5.value_field;
-     
-     
-     if(cfg.serial>1){
-     combo_cfg.slave_comboxes.push(
-     {
-             id: 'filter_field_' + cfg.serial,
-             ds_auto: false,
-             group_id: group_id,
-             level: 2,
-             width:140,
-             nanx_type: 'slave',
-             category_to_use: 'biz_cols'
-         });
-     }
-     if(meta5&&meta5.filter_field)combo_cfg.slave_comboxes[2].ini=meta5.filter_field;
-         
-         
-     var root_slave = Fb.getComboGroup(combo_cfg);
-     var btn_del = new Ext.Button({
+       trigger_rows =backend_active_form.find('nanx_type','trigger_row');
+       trigger_rows_count=trigger_rows.length+1;
+       item.serial=trigger_rows_count;
+
+
+
+       var btn_del = new Ext.Button({
          text: i18n.remove,
          id:Ext.id(),
-         serial:cfg.serial,
+         serial:item.serial,
          handler: function(){
+
              var form = this.findParentByType('form');
              var tr =form.find('nanx_type','trigger_row');
-             if(this.serial==tr.length)
+             var current_counter=tr.length;
+             if(this.serial==current_counter)
                  {
                    this.ownerCt.ownerCt.remove(this.ownerCt);
                  }
          }
-     });
+       });
 
-     var field_link = new Ext.Container({
+
+       var subitems=[];
+       subitems.push(btn_del);
+      
+
+
+     for(var i=0;i<item.horizon_items.length;i++)
+     {
+
+        var sub_item_cfg=item.horizon_items[i];
+        sub_item_cfg.serial=item.serial;
+
+        fixed_sub_item_cfg = Fb.preProcessNodeAtt(sub_item_cfg, node);
+        fixed_sub_item_cfg.using_serial=true;
+        
+        if (meta_data){
+          fixed_sub_item_cfg=Fb.set_cfg_callback_value(fixed_sub_item_cfg,meta_data);
+        }
+
+        var sub_item=Fb.getBackendFormItem(fixed_sub_item_cfg,node);
+        subitems.push(sub_item);
+     
+      }     
+
+      var field_link = new Ext.Container({
          'id': 'followRow_'+Ext.id(),
          'layout':'table',
          'nanx_type':'trigger_row',
          'style':'{margin-left:105px;}',
-         items:[btn_del,host_combo,root_slave]
+         items: subitems
      });
      return field_link;
+
+  
  }
- 
- Fb.addTriggerRow12345_from_response=function(triggers)
+
+ Fb.set_cfg_callback_value=function(itemcfg,backdata)
  {
+   itemcfg_setted=Fb.DeepClone(itemcfg);
+   if (  itemcfg_setted.item_type=='combo_group')
+   {
+     var idname=itemcfg_setted.root_combox.id;
+     itemcfg_setted.root_combox.ini=backdata[idname];
+     for (var i =0;i< itemcfg_setted.slave_comboxes.length;i++) 
+       {
+           idname=     itemcfg_setted.slave_comboxes[i].id;
+         
+           itemcfg_setted.slave_comboxes[i].ini=backdata[idname]
+       };  
+    }
+
+   else
+   {  
+      var idname=itemcfg_setted.id
+      itemcfg_setted.ini=backdata[idname]   
+   }
+   return  itemcfg_setted ; 
+
+ }
+
+    
+
+
+
+ 
+ Fb.show_trigger_lines=function(triggers,node,item)
+ {
+     
+
     for(var i=0;i<triggers.length;i++)
     {
      var meta=triggers[i];
-     var cfg={base_table:meta.base_table,serial:meta.level};
-     var trigger_row=Fb.triggerRow12345(cfg,meta);
+     item.serial=i+1; 
+    
+
+     var trigger_row=Fb.create_horizon_line(item, node,meta);
      var btn=Ext.getCmp('trigger_bar_button');
      var tfm = btn.findParentByType('form');
+     
+     console.log('0000000000')
+
      tfm.insert(12,trigger_row);
      tfm.doLayout();
     }
  }
   
+ 
  
  Fb.dndgrid = function(grid_cfg) {
      var col_need = [];
@@ -630,6 +649,15 @@ Fb.toggle_combo=function(togglefalg)
          single_col.dataIndex = grid_cfg.fields[i].column;
          single_col.header = grid_cfg.fields[i].column_title;
          single_col.width = 150;
+
+        if( grid_cfg.fields[i].hasOwnProperty('width')){
+              single_col.width=grid_cfg.fields[i].width;
+         } 
+         if( grid_cfg.fields[i].hasOwnProperty('hidden')){
+              single_col.hidden=grid_cfg.fields[i].hidden;
+         } 
+
+
          col_need.push(single_col);
          fields.push(grid_cfg.fields[i].column);
      }
@@ -770,15 +798,26 @@ Fb.toggle_combo=function(togglefalg)
  };
 
  Fb.findSlaves = function(form, gpid, level, direct) {
+
+
+     
+
+
      if(!form){return []}
      var found = [];
      var slaves = form.find('group_id', gpid);
+     console.log('---->');
+     console.log(slaves);
+     
+
      for (i = 0; i < slaves.length; i++) {
-         if (arguments.length == 4) {
+         if (arguments.length == 4) 
+            {
              if (slaves[i].level - 1 == level) {
                  found.push(slaves[i]);
              }
-         } else {
+         } else 
+            {
              if (slaves[i].level > level) {
                  found.push(slaves[i]);
              }
@@ -788,13 +827,27 @@ Fb.toggle_combo=function(togglefalg)
  }
 
 
- Fb.getBasicCombo = function(cfg, store,_readOnly) {
- 
+ Fb.getBasicCombo = function(xcfg, store,_readOnly) {
+  var cfg=Fb.DeepClone(xcfg);
    if ( _readOnly== undefined) {  
          _readOnly=false;  
     }  
+
+     if(   cfg.hasOwnProperty('using_serial')  )
+     {
+         com_id=cfg.id+'_'+cfg.serial;
+     }
+     else
+     {
+        com_id=cfg.id;
+        cfg.serial=0;
+     }
+
+     
+     console.log(cfg)
      var combox_cfg = {
-         id: cfg.id,
+         id: com_id,
+         serial:cfg.serial,
          triggerAction: 'all',
          displayField: cfg.displayField,
          valueField: cfg.valueField,
@@ -803,7 +856,7 @@ Fb.toggle_combo=function(togglefalg)
          forceSelection: true,
          editable: false,
          readOnly:_readOnly,
-         name: cfg.id,
+         name: com_id,
          width:cfg.width?cfg.width:200,
          allowBlank: cfg.hasOwnProperty('allowBlank') ? cfg.allowBlank : true,
          style: cfg.style ? cfg.style : null,
@@ -816,32 +869,59 @@ Fb.toggle_combo=function(togglefalg)
          store: store
      };
 
+
+ 
+
+
      var combo = new Ext.form.ComboBox(combox_cfg);
 
      store.on('load', function() {
-         var p = Ext.getCmp(cfg.id);
-         if (cfg.ini) {
+
+         var p = Ext.getCmp(combox_cfg.id);
+
+ 
+          if (cfg.ini) {
              p.setValue(cfg.ini);
              cfg.ini = null;
          } else {
              p.setValue(p.getValue());
          }
 
-         var tfm = Ext.getCmp(cfg.id).findParentByType('form');
+
+
+
+         var tfm = Ext.getCmp(combox_cfg.id).findParentByType('form');
          var tmp_v = combo.getValue();
+ 
+         
+
          if (Ext.isEmpty(tmp_v)) {
+             console.log('return 1111!!!!');
              return;
          }
          var current_rec = combo.findRecord(combo.valueField || combo.displayField, tmp_v);
-         if(!current_rec){return}
-         var current_v = current_rec.json[cfg.value_key_for_slave] || combo.getValue();
-         
+         if(!current_rec){
 
-         var x_group_id = cfg.group_id;
-         var level = cfg.level;
+             console.log(combo);
+             console.log( tmp_v );
+
+              console.log('return 2222!!!!');
+        
+            return
+        }
+         var current_v = current_rec.json[cfg.value_key_for_slave] || combo.getValue();
+        
+
+         var x_group_id = combox_cfg.group_id;
+         var level = combox_cfg.level;
+         
          var direct_slaves = Fb.findSlaves(tfm, x_group_id, level, true);
+         console.log(direct_slaves)
          for (var i = 0; i < direct_slaves.length; i++) {
              var ds = direct_slaves[i].getStore();
+
+            console.log('value_key_for_slave');
+
              // var path='value';
              // Fb.setStorePara(ds, path,current_v);
              // var path='filter_value';
@@ -853,6 +933,8 @@ Fb.toggle_combo=function(togglefalg)
      });
 
      combo.on("select", function(c, record) {
+         
+
          Fb.setFollowFieldValue.createDelegate(this, [c, record, cfg], true)();
          var fm = c.findParentByType('form');
          var tmp_v = c.getValue();
@@ -939,10 +1021,23 @@ Fb.setJsonPath=function(obj,path, val) {
  }
 
  Fb.buildTreeStore = function(treecfg) {
+    
+    
+
      baseParaObj = {};
      baseParaObj.category_to_use = treecfg.category_to_use;
      baseParaObj.value = treecfg.value;
+     
      var id = treecfg.id ? treecfg.id : Ext.id();
+
+
+     if(  treecfg.hasOwnProperty('serial') )
+     {
+        id=id+'_'+treecfg.serial;
+     }
+      
+     
+
      var ds_auto = treecfg.hasOwnProperty('ds_auto') ? treecfg['ds_auto'] : true;
      var store = new Ext.data.JsonStore({
          proxy: new Ext.data.HttpProxy({
@@ -961,16 +1056,17 @@ Fb.setJsonPath=function(obj,path, val) {
  }
 
  
- Fb.getInheritEditor = function(oneFieldCfg, rowOriginalValue, readonly_flag) {
-     readonly_flag = true;
+ Fb.getInheritEditor = function(oneFieldCfg, rowOriginalValue) {
+
      inheritEditor = {
+         xtype: 'textfield',
          fieldLabel: oneFieldCfg['display_cfg'].field_c,
          id: oneFieldCfg['field_e'],
          width: 200,
          height: 25,
          value: rowOriginalValue,
-         readOnly: true,
-         blankText: not_allow_blank
+         readOnly:true,
+         blankText: i18n.not_allow_blank
      }
      return inheritEditor;
  }
@@ -985,20 +1081,66 @@ Fb.setJsonPath=function(obj,path, val) {
      return f_width * 1.0;
  }
 
- Fb.getDefaultEditor = function(oneFieldCfg,readonly_flag) {
+
+ Fb.leaving_field=function(master_act,form){
+    
+    for (var i = 0; i < master_act.colsCfg.length; i++) {
+         var cal_string=master_act.colsCfg[i].editor_cfg.cal_string;
+         if ( cal_string )
+         {
+
+              var  field_value_list=this.getFormData(form)
+           
+              for(var obj_key  in field_value_list){ 
+
+                  var strx='var '+obj_key+'=field_value_list.'+obj_key;
+                  eval(strx);
+              }
+
+              var field_to_set= master_act.colsCfg[i].field_e ;
+              eval_string='field_value_list.'+master_act.colsCfg[i].field_e+'='+cal_string;
+              eval(eval_string);
+              Ext.getCmp(field_to_set).setValue(field_value_list[field_to_set] );
+         }
+
+    }
+ }
+
+ Fb.getDefaultEditor = function( master_act, oneFieldCfg,readonly_flag) {
+
+    var that=this;
      var f_width = Fb.getFieldWidth(oneFieldCfg);
      var defaultEditor = {
          fieldLabel: oneFieldCfg['display_cfg'].field_c,
          id: oneFieldCfg['field_e'],
          width: f_width,
          height: 25,
-         value:oneFieldCfg.editor_cfg.default_v,
+         value:oneFieldCfg.editor_cfg.ini,
          readOnly: readonly_flag,
          xtype: 'textfield',
-         blankText: i18n.not_allow_blank
+         blankText: i18n.not_allow_blank,
+         onBlur :function(e,f,g,h)
+         {
+            that.leaving_field(master_act,this.findParentByType('form'));
+         },
+         onChange:function(e,f,g,h){
+            
+             that.leaving_field(master_act,this.findParentByType('form'));
+         },
+          onFocus:function(e,f,g,h){
+            
+            that.leaving_field(master_act,this.findParentByType('form'));
+          }
+         }
+          return defaultEditor;
      }
-     return defaultEditor;
- }
+
+
+     
+
+
+     
+ 
 
  Fb.getTriggerWhoIsWho=function  (one_col_cfg,whoami_cfg)
  {
@@ -1079,7 +1221,7 @@ Fb.getWhoami=function()
          rowOriginalValue = row.get(editCfg['field_e']);
      }
      if ((op_type == 'add') && (editCfg.editor_cfg.default_v)) {
-         rowOriginalValue = editCfg.editor_cfg.default_v;
+          rowOriginalValue = editCfg.editor_cfg.default_v;
 
          if (editCfg.editor_cfg.default_v == 'date') {
              rowOriginalValue=Fb.getDate();
@@ -1089,14 +1231,12 @@ Fb.getWhoami=function()
              rowOriginalValue = new Date();
          }
      }
-      
- 
 
 
      if (editCfg.editor_cfg.is_produce_col == 1) {
          whoami=this.getWhoami();
          if (op_type == 'add') {
-//              alert('set to whoami'+whoami);
+ 
              rowOriginalValue = whoami;
            
          }
@@ -1113,12 +1253,19 @@ Fb.getWhoami=function()
              
          }
      }
-   editCfg.editor_cfg.default_v=rowOriginalValue;
+
+      
+   //editCfg.editor_cfg.rowbasevalue=rowOriginalValue;   
+   editCfg.editor_cfg.ini=rowOriginalValue;   
+   //editCfg.editor_cfg.default_v=rowOriginalValue;
  }
 
 
-  Fb.getFieldEditor = function(op_type, one_col_cfg, row,whoami_cfg) {
-   
+  Fb.getFieldEditor = function(master_act,op_type, one_col_cfg, row,whoami_cfg) {
+     
+       
+         
+     
      this.determineOriginalValue(op_type, one_col_cfg, row);
      var readonly_flag = false;
      var skip_flag = false;
@@ -1126,14 +1273,26 @@ Fb.getWhoami=function()
          readonly_flag = true;
      }
 
+     
+     if(  one_col_cfg.editor_cfg.hasOwnProperty('readonly')){ 
+        if(one_col_cfg.editor_cfg.readonly=='1')
+
+        readonly_flag=true;
+     
+
+     }
+
      if (one_col_cfg.editor_cfg.is_produce_col == 1){ readonly_flag = true;} 
      if ((one_col_cfg['field_e'] == 'pid') && (op_type == 'add')) {skip_flag = true;}
      if (skip_flag){return null;}
      
-     if ((one_col_cfg['field_e'] == this.gridFilter) && (op_type == 'add')) {
-         
-         return [this.getInheritEditor(one_col_cfg, this.filterValue, true)];
+     
+    
+
+    if ((one_col_cfg['field_e'] == master_act.cfg.filter_field) && (op_type == 'add')) {
+         return [this.getInheritEditor(one_col_cfg, master_act.cfg.filter_value)];
      }
+
     
       
      if (!Ext.isEmpty(one_col_cfg.editor_cfg.trigger_cfg)) {
@@ -1164,7 +1323,12 @@ Fb.getWhoami=function()
      }
 
      if ((one_col_cfg['edit_type'] == null) || (one_col_cfg['edit_type'] == '')) {
-         return [this.getDefaultEditor(one_col_cfg, readonly_flag)];
+
+
+        
+
+
+         return [this.getDefaultEditor(master_act,one_col_cfg, readonly_flag)];
      }
 
  }
@@ -1230,6 +1394,7 @@ Fb.getWhoami=function()
              fmdata[field_id] = field_value;
          }
      }
+     
      var xtypes = form.findByType("timepickerfield");
      for (var i = 0; i < xtypes.length; i++) {
          fmdata[xtypes[i].id] = xtypes[i].getValue();
@@ -1246,10 +1411,11 @@ Fb.getWhoami=function()
          fmdata['nanx_follow_cfg'] = Fb.getFollowCfg(form);
      }
   
-     if (fmdata.opcode && fmdata.opcode.indexOf('add_trigger_group') >= 0){
-         var trigger_rows =form.find('nanx_type','trigger_row');
-         fmdata['trigger_counts'] = trigger_rows.length;
-     }
+        var trigger_rows =form.find('nanx_type','trigger_row');
+        if(trigger_rows.length>0){
+            fmdata['trigger_counts'] = trigger_rows.length;
+        }
+         
 
 
      if (fmdata.opcode && fmdata.opcode.indexOf('set_activity_pic') >= 0){
@@ -1292,23 +1458,54 @@ Fb.getWhoami=function()
 
   
 
- Fb.getComboGroup = function(item) {
+ Fb.getComboGroup = function(xitem) {
+
+     var item=Fb.DeepClone(xitem);
+
      var f = [];
      var root_cfg = item.root_combox;
+     
+     console.log(item);
+
+    
+    if(   item.hasOwnProperty('using_serial')){
+     root_cfg.using_serial=true;
+     root_cfg.serial=item.serial;
+    }
+
+     
      root_cfg.nanx_type = 'root';
+     
      if (!root_cfg.group_id) {
          var x_group_id = Ext.id();
          root_cfg.group_id = x_group_id;
      }
+     else
+     {
+         root_cfg.group_id = root_cfg.group_id+'_'+root_cfg.serial;
+     }
+
+     
      root_cfg.displayField = 'text';
      root_cfg.valueField = 'value';
+     
+
+      
+
      var ds_root = Fb.buildTreeStore(root_cfg);
      var f_root = Fb.getBasicCombo(root_cfg, ds_root);
      f.push(f_root);
 
      for (var k = 0; k < item.slave_comboxes.length; k++) {
+
          var slave_cfg = item.slave_comboxes[k];
-         slave_cfg.group_id = slave_cfg.group_id ? slave_cfg.group_id : x_group_id;
+
+         if(   item.hasOwnProperty('using_serial')){
+            slave_cfg.using_serial=true;
+            slave_cfg.serial=item.serial;
+         }
+
+         slave_cfg.group_id = root_cfg.group_id  ;
          slave_cfg.nanx_type = 'slave';
          slave_cfg.displayField = 'text';
          slave_cfg.valueField = 'value';
@@ -1483,7 +1680,13 @@ Fb.getWhoami=function()
      cellMenu.showAt(event.xy);
  };
 
- Fb.getOperationForm = function(node, mcfg) {
+ Fb.getOperationForm = function(node, orginal_mcfg) {
+
+
+    var  mcfg = Fb.preProcessNodeAtt(orginal_mcfg, node);
+
+
+
      var layout = 'form';
      var forms = [];
      var needsend = ['pid','group_id', 'table', 'hostby', 'column_definition', 'DDL'];
@@ -1555,20 +1758,27 @@ Fb.getWhoami=function()
      
      if( mcfg.callback_set_url)
      {
-     opform.on('render',function(){  Fb.CallbackSetFieldValue.createDelegate(this, [mcfg], true)() });
+     opform.on('render',function(){  Fb.CallbackSetFieldValue.createDelegate(this, [mcfg,node], true)() });
      }
      return opform;
  };
 
- Fb.CallbackSetFieldValue = function(mcfg) {
-     function setSingleField(jsondata, item) {
+
+
+
+Fb.setSingleField=function(jsondata, item) {
          if (item.path) {
              var v = jsondata[item.path];
              var compent = Ext.getCmp(item.id);
              if (compent) { compent.Callback_setValue(v) };
             }
-         }
-         
+}
+ 
+
+
+
+ Fb.CallbackSetFieldValue = function(mcfg,node) {
+ 
          Ext.Ajax.request({
              url: AJAX_ROOT + mcfg.callback_set_url,
              jsonData: Ext.encode(mcfg.json),
@@ -1580,32 +1790,37 @@ Fb.getWhoami=function()
                  } else {
                      var data_from_json = ret_json[key_used];
                  }
-                 
+               
+
                  Ext.each(mcfg.itemcfg, function(item) {
 
                      switch (item.item_type){
                       case 'combo_group':
-                      {
-                         setSingleField(data_from_json, item.root_combox);
+                       
+                         Fb.setSingleField(data_from_json, item.root_combox);
                          for (var i = 0; i < item.slave_comboxes.length; i++) {
-                             setSingleField(data_from_json, item.slave_comboxes[i]);
+                             Fb.setSingleField(data_from_json, item.slave_comboxes[i]);
                          }
                          Ext.getCmp(item.root_combox.id).getStore().reload();
-                      }
-                      break;
+                      
+                         break;
                       
                       case 'follow_tbar':
                              follow_key_used = item.path;
                              Fb.addTriggerRow12_from_response(ret_json[follow_key_used]);
-                      break;
+                             break;
                       
                       case 'trigger_bar':
+                             break;
+
+                       
+                      case 'horizon_line':
                       follow_key_used = item.path;
-                      Fb.addTriggerRow12345_from_response(ret_json[follow_key_used]);
+                       Fb.show_trigger_lines(ret_json[follow_key_used], node,item);
                       break;
                       
                       default:
-                         setSingleField(data_from_json, item);
+                         Fb.setSingleField(data_from_json, item);
                      }
                  });
              }
@@ -1615,7 +1830,7 @@ Fb.getWhoami=function()
 
 
  Fb.preProcessNodeAtt = function(cfg, xnode) {
-  
+
      var fixed = Fb.DeepClone(cfg);
      function fix_obj_tag(taged, node) {
          if (taged.substring(0, 2) == '##') {
@@ -1649,6 +1864,12 @@ Fb.getWhoami=function()
      }
 
 
+    if (fixed.main_table) {
+             fixed.main_table = fix_obj_tag(fixed.main_table, xnode);
+     }
+
+
+
     if (fixed.os_path) {
              fixed.os_path = fix_obj_tag(fixed.os_path, xnode);
      }
@@ -1673,10 +1894,21 @@ Fb.getWhoami=function()
 
      switch (item.item_type) {
          case 'field':
+
+            if(  item.hasOwnProperty('using_serial') )
+             {
+                  serial='_'+item.serial
+             }
+             else
+             {
+                 serial=''
+             }
+
+
              var f = {
                  fieldLabel:item.label,
-                 id: item.id ? item.id : "input_" + i,
-                 name: item.id ? item.id : "input_" + i,
+                 id:   item.id ? item.id+serial : "input_" + i,
+                 name: item.id ? item.id+serial : "input_" + i,
                  xtype: 'textfield',
                  allowBlank:false,
                  width: item.width ? item.width : 200,
@@ -1688,7 +1920,17 @@ Fb.getWhoami=function()
                      if(Ext.isEmpty(v)){return false;}else{return true;}
                    },
                  value:item.postfix ? field_v + item.postfix : field_v
-             };
+             }; 
+             console.log(item)
+
+             if ( item.hasOwnProperty('ini')){
+                f.value=item.ini
+             }
+
+
+             console.log(f);
+
+
              if(item.inputType){f.inputType=item.inputType;}
              break;
 
@@ -1887,6 +2129,7 @@ Fb.getWhoami=function()
              break;
 
          case 'combo_list':
+
              item.displayField = 'text';
              item.valueField = 'value';
              var store = Fb.buildTreeStore(item);
@@ -1897,13 +2140,20 @@ Fb.getWhoami=function()
              var f = Fb.getComboGroup(item);
              break;
 
+
+
+
+         case 'horizon_line':
+              var f=Fb.horizon_line(item,node);
+              return f;
+
          case 'follow_tbar':
                var f=Fb.getTriggerBar12(node.attributes.hostby);
              break;
 
          case 'trigger_bar':
-             var main_table=node.attributes.hostby;
-             var f = Fb.getTriggerBar12345(main_table);
+          
+             var f = Fb.getTriggerBar12345(item);
              break;
 
          case 'layout_panel':
@@ -2059,8 +2309,13 @@ Fb.validate_password_input = function(v) {
 
  Fb.backendForm = function(category, opcode, xnode) {
      var o_mcfg = AppCategory.getSubMenuCfg(category, opcode);
-     var fixed_mcfg = Fb.preProcessNodeAtt(o_mcfg, xnode);
-     var opform = Fb.getOperationForm(xnode, fixed_mcfg);
+    // var fixed_mcfg = Fb.preProcessNodeAtt(o_mcfg, xnode);
+     //var opform = Fb.getOperationForm(xnode, fixed_mcfg);
+
+
+    var opform = Fb.getOperationForm(xnode, o_mcfg);
+
+
      return opform;
  }
 
@@ -2129,6 +2384,13 @@ Fb.validate_password_input = function(v) {
      if (Ext.getCmp('x_grid_for_dnd')) {
          gridid = 'x_grid_for_dnd';
      }
+
+  
+
+    if (Ext.getCmp('reorder_activity_order_grid')) {
+         gridid = 'reorder_activity_order_grid';
+     }
+ 
 
 
     if (Ext.getCmp('raw_table_grid_id')) {

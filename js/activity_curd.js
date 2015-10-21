@@ -1,3 +1,17 @@
+Ext.Ajax.addListener("requestcomplete",function(conn, response, options, eOpts){  
+    var kickout = response.getResponseHeader('kickoutlogin');  
+    //console.log(kickout)
+
+
+    if (kickout =='kickoutlogin'){
+         window.location.href=AJAX_ROOT+'home/logout'
+    }
+
+   
+
+},this);  
+
+
 Ext.override(Ext.Window, {
     beforeShow: function(){
         delete this.el.lastXY;
@@ -105,6 +119,7 @@ Act.prototype.init_all = function(cfg) {
 
 Act.prototype.setcfg = function(ret) {
 
+
     this.actcode = ret.activity_code;
     this.activity_type = ret.activity_type;
     this.table = ret.base_table;
@@ -133,7 +148,7 @@ Act.prototype.setcfg = function(ret) {
     this.win_size_width_operation = ret.win_size_width_operation;
     this.storeField = this.get_Fields();
     this.mainStore = this.getMainStore();
-    this.getBtns();
+    this.getBtns(ret.layoutCfg);
     this.tBar = this.getTbar();
     this.bBar = this.getBbar();
 };
@@ -579,6 +594,7 @@ Act.prototype.filter2QueryCfg=function(cfg)
 
 Act.prototype.getStoreByTableAndField=function(basetable,fields,cfg){
     var whoami=this.whoami;
+    console.log(fields)
     
     if (this.pid_order) {
         var pid_order = this.pid_order.pid_order;
@@ -597,6 +613,9 @@ Act.prototype.getStoreByTableAndField=function(basetable,fields,cfg){
     };
 
     var table_query_json=Ext.encode(table_query_obj);
+    console.log(table_query_json)
+    console.log(CURD_GETDATA_URL)
+    
     var ds=new Ext.data.JsonStore({
         proxy:new Ext.data.HttpProxy({
             url:CURD_GETDATA_URL,
@@ -1108,7 +1127,18 @@ Act.prototype.buildTopToolbar_backend=function(){
 }
 
 
-Act.prototype.getLayoutedForms=function(total_cfg,optype,row){
+Act.prototype.getLayoutedForms=function(total_cfg,optype,row,orgin_act){
+     
+    var number_of_params = arguments.length;
+    if(number_of_params==4){
+        var master_act=orgin_act;
+    }
+    else
+    {
+       var master_act=this;
+    }
+
+
     
     var layoutCfg=total_cfg.layoutCfg;
     var whoami_cfg={whoami:total_cfg.whoami,who_is_who:total_cfg.who_is_who,owner_data_only:total_cfg.owner_data_only };
@@ -1124,13 +1154,18 @@ Act.prototype.getLayoutedForms=function(total_cfg,optype,row){
         for (var j=0;j< fields.length;j++){
             var single_field = fields[j];
             if (!(single_field=='NULL')){
-                for (var x=0;x<this.colsCfg.length;x++){
-                    if (this.colsCfg[x].field_e==single_field){
-                        var colsCfg_found=this.colsCfg[x];
+                for (var x=0;x<master_act.colsCfg.length;x++){
+                    if (master_act.colsCfg[x].field_e==single_field){
+                        var colsCfg_found=master_act.colsCfg[x];
                     }
                 }
  
-                var item_one=Fb.getFieldEditor(optype,colsCfg_found,row,whoami_cfg);
+                 
+
+                 var item_one=Fb.getFieldEditor(master_act,optype,colsCfg_found,row,whoami_cfg);
+         
+              
+                
                 if (item_one){
                     var tmp={};
                     tmp.layout='form';
@@ -1153,12 +1188,42 @@ Act.prototype.getLayoutedForms=function(total_cfg,optype,row){
         }
         all_lines.push(single_line);
     }
+
     return  all_lines;
 }
 
-Act.prototype.fixLayout=function(type){
+// Act.prototype.fixLayout=function(type){
+//     var pid_found=false;
+//     if (this.layoutCfg.length==0){
+//         for (var i=0;i<this.colsCfg.length;i++){
+//             if (this.colsCfg[i].field_e=='pid'){
+//                 pid_found=true;
+//             }
+//             this.layoutCfg.push({
+//                 row:i,
+//                 field_list:this.colsCfg[i].field_e
+//             });
+//         }
+//     } else{
+//         for(i=0;i<this.layoutCfg.length;i++){
+//             var fields=this.layoutCfg[i].field_list.split(",")
+//             if (fields.indexOf('pid')!==-1){
+//                 pid_found=true;
+//             }
+//         }
+//     }
+//     if((type=='update')&&(!pid_found)){
+//         this.layoutCfg.push({
+//             row:this.layoutCfg.length+1,
+//             field_list:'pid'
+//         });
+//     }
+// }
+
+
+Act.prototype.fixLayout=function(type,orgin_act){
     var pid_found=false;
-    if (this.layoutCfg.length==0){
+    if (orgin_act.layoutCfg.length==0){
         for (var i=0;i<this.colsCfg.length;i++){
             if (this.colsCfg[i].field_e=='pid'){
                 pid_found=true;
@@ -1184,6 +1249,7 @@ Act.prototype.fixLayout=function(type){
     }
 }
 
+
  
 Act.prototype.getLayoutWidth=function(x)
 { 
@@ -1201,14 +1267,19 @@ Act.prototype.getLayoutWidth=function(x)
   return w;
 }
 
-Act.prototype.addData=function( ){
+Act.prototype.addData=function(){
+    
+    console.log(this) ;
+
     var that=this;
     if (Ext.getCmp('add_win')){
         Ext.getCmp('add_win').close();
     }
-    this.fixLayout('add');
+    this.fixLayout('add',this);
 
     var x=this.getLayoutedForms(this,'add',null);
+    console.log(x);
+
     var width=this.getLayoutWidth(x);
     var add_form = new Ext.form.FormPanel({
         xtype:'form',
@@ -1240,7 +1311,7 @@ Act.prototype.editData=function(btn){
         Ext.Msg.alert(i18n.tips, i18n.choose_only_one_record);
         return false;
     }
-    this.fixLayout('update');
+    this.fixLayout('update',this);
     var x=this.getLayoutedForms(this, 'update', userRecord[0]);
     var w=this.getLayoutWidth(x)*1.0;
     var updateForm =new Ext.form.FormPanel({
@@ -1541,8 +1612,9 @@ Act.prototype.getModifiedFieldsValue=function(changedrows){
     return modified_kv;
 }
  
-Act.prototype.getBtns=function(){
-     console.log(this.cfg);
+Act.prototype.getBtns=function( ){
+   
+     
     if (this.cfg.tbar_type=='stand'){
         this.btns=this.getStandBtns();
     }
@@ -1747,13 +1819,15 @@ Act.prototype.getRowBasedActBtns=function(){
 Act.prototype.getJsBtns=function(){
     var specialBtns=[];
     var btns=this.js_btns;
+    var orgin_act=this;
+    console.log(orgin_act);
     for (var i=0;i<btns.length;i++){
         var obj={ctCls:'x-btn-over'};
         obj.text=btns[i].btn_name;
         obj.fnname=btns[i].function_name;
-        obj.handler=function(btn){
+        obj.handler=function(btn,event){
             if (NANXplugin.prototype[this.fnname]){
-                NANXplugin.prototype[this.fnname](btn);
+                NANXplugin.prototype[this.fnname](btn,orgin_act);
             }else{
                 Ext.MessageBox.alert(i18n.alert,i18n.entry_function+':<span class=red>['+this.fnname+']</span>'+i18n.not_exists+","
                    		  +i18n.pls_check_js_upload+".<br/><br/>"+i18n.code_sample+" <br/><br/>______________________________________________<br/><br/>"
@@ -2062,6 +2136,7 @@ Act.prototype.actionWin = function(type,form,wincfg){
           var roots = form.find('nanx_type','root');
           for(var i=0;i<roots.length;i++)
           {
+
             roots[i].getStore().load();
           }
       });

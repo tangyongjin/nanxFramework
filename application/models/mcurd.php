@@ -42,8 +42,10 @@ class MCurd extends CI_Model{
             $this->db->where('activity_code', $code);
             $query         = $this->db->get('nanx_activity');
             $cfg           = $query->first_row('array');
+            $view_filter=$cfg['view_filter'];
             $activity_type = $cfg['activity_type'];
         } else {
+             $view_filter='';
             $activity_type = 'table';
         }
         
@@ -103,7 +105,7 @@ class MCurd extends CI_Model{
                 
                 $table     = $p['table'];
                 $pid_order = (isset($p['pid_order'])) ? $p['pid_order'] : 'asc';
-                $result    = $this->MDatafactory->getDatabyBasetable($table, $pid_order, $query_cfg,$who_is_who_found);
+                $result    = $this->MDatafactory->getDatabyBasetable($table, $pid_order, $query_cfg,$who_is_who_found,$view_filter);
             }
         }
         

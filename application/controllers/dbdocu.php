@@ -1,27 +1,37 @@
-<?php if (!defined('BASEPATH')) {exit('No direct script access allowed');
-}
+<?php 
 
 class Dbdocu extends CI_Controller {
 
-	function print_table($tab) {
-		echo '
-  	<style type="text/css">
-table{
-	width:700px;
-	margin:0px auto;
-	font:Georgia 11px;
-	color:#333333;
-	text-align:left;
-	border-collapse:collapse;
-}
-table td{
-	border:1px solid blue;
-//	width:100px;
-	height:30px;
-}
-</style>
 
-';
+
+
+    function index()
+    {
+   
+      echo   " lang_js  ,lnag_php   " ;
+
+
+    }
+
+	function print_table($tab) {
+				echo '
+		  	<style type="text/css">
+		table{
+			width:700px;
+			margin:0px auto;
+			font:Georgia 11px;
+			color:#333333;
+			text-align:left;
+			border-collapse:collapse;
+		}
+		table td{
+			border:1px solid blue;
+		//	width:100px;
+			height:30px;
+		}
+		</style>
+
+		';
 
 		echo '<table  border="1" cellspacing="0" cellpadding="0">';
 		echo "<tr><td colspan=2 style='font-size:18px; font-weight:bold;'>" . $tab['name'] . '&nbsp;&nbsp;(' . $tab['comm'] . ")</td></tr>";

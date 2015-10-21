@@ -25,7 +25,35 @@ class Curd extends CI_Controller
     {
         $post    = file_get_contents('php://input');
         $p       = (array) json_decode($post);
+     
         $actcode = $p['actcode'];
+
+        $this->load->model('MHooks');
+        $hooks=$this->MHooks->getHooksbyActcode($actcode,'update');
+        
+
+        $before=$hooks['before'];
+        $after=$hooks['after'];
+        $checks=$hooks['checks'];
+
+        $check_result=$this->hookhandler($checks,$p,'update',true);
+        
+        if($check_result==false){
+
+              $resp = array(
+                'success' => false,
+                'msg'=>'单据号不存在'
+                
+             );
+            echo json_encode($resp);
+            return;
+        }
+        
+
+        $this->hookhandler($before,$p,'update');
+ 
+
+
         $this->write_notify($actcode, 'update');
         $base_table = $p['table'];
         $rawData    = (array) $p['rawdata'];
@@ -63,9 +91,11 @@ class Curd extends CI_Controller
             );
         }
         
+        $this->hookhandler($after,$p,'update');
         $this->write_session_log('update', $p, $row_to_update);
         echo json_encode($resp);
     }
+
     
     function batchData()
     {
@@ -103,12 +133,72 @@ class Curd extends CI_Controller
         $this->write_session_log('batchUpdateData', $p, '');
         echo json_encode($resp);
     }
+
+
+    function hookhandler($hooks,$para,$curd_type,$checking=false){
+
+        if( count($hooks)==0){return true;}
+
+        $check_result=true; 
+
+        foreach ($hooks  as $one_hook) {
+
+            $model=$one_hook['extra_ci_model'];
+            $method=$one_hook['model_method'];
+            $this->load->model($model);
+            $sub_check=$this->$model->$method($para);
+            
+            if((  $checking==true )&&($sub_check==false))
+            {  
+               
+               
+               $check_result=false;
+               return false;
+               countine;
+            }
+
+        }
+        return $check_result ;
+    
+
+    }
+
+
     
     function addData()
-    {
+    {  
+
+         
         $post    = file_get_contents('php://input');
         $p       = (array) json_decode($post);
         $actcode = $p['actcode'];
+
+        $this->load->model('MHooks');
+        $hooks=$this->MHooks->getHooksbyActcode($actcode,'add');
+        
+
+        $before=$hooks['before'];
+        $after=$hooks['after'];
+        $checks=$hooks['checks'];
+
+        $check_result=$this->hookhandler($checks,$p,'add',true);
+        
+        if($check_result==false){
+
+              $resp = array(
+                'success' => false,
+                'msg'=>'单据号不存在'
+                
+             );
+            echo json_encode($resp);
+            return;
+        }
+        
+
+        $this->hookhandler($before,$p,'add');
+
+
+
         $this->write_notify($actcode, 'add');
         $base_table = $p['table'];
         $rawData    = (array) $p['rawdata'];
@@ -125,6 +215,11 @@ class Curd extends CI_Controller
                 'msg' => $this->lang->line('error_code') . ':' . $errno
             );
         }
+
+        $this->hookhandler($after,$p,'add');
+
+
+
         $this->write_session_log('add', $p, '');
         echo json_encode($resp);
     }
@@ -134,11 +229,24 @@ class Curd extends CI_Controller
         
         $post    = file_get_contents('php://input');
         $p       = (array) json_decode($post);
+
+        $para_for_hooks=array();
+        $para_for_hooks['table']= $p['table'];
+
+
         $actcode = $p['actcode'];
         $this->write_notify($actcode, 'delete');
         $base_table   = $p['table'];
         $pids         = $p['pid_to_del']; // pid like '1,23,4,9'
         $total_error  = 0;
+
+        $this->load->model('MHooks');
+        $hooks=$this->MHooks->getHooksbyActcode($actcode,'delete');
+        $before=$hooks['before'];
+        $after=$hooks['after'];
+
+        
+
         $rows_deleted = array();
         
         foreach ($pids as $pid) {
@@ -148,12 +256,26 @@ class Curd extends CI_Controller
             
             $this->db->where($where);
             
-            $row_to_del = $this->db->get($base_table)->result_array();
+           
+            
+            $row_to_del_query = $this->db->get($base_table);
+            $row_to_del= $row_to_del_query->result_array();
+            
             if (count($row_to_del) == 1) {
                 array_push($rows_deleted, $row_to_del[0]);
             }
             
             $this->db->delete($base_table, $where);
+
+            $para_for_hooks['pid_to_del']=$pid;
+            
+            $para_for_hooks['row']= $row_to_del[0];
+
+
+
+            $this->hookhandler($after,$para_for_hooks,'delete');
+
+
             $errno       = $this->db->_error_number();
             $total_error = $total_error + $errno;
         }

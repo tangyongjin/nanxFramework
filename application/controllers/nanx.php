@@ -36,6 +36,16 @@ class Nanx extends CI_Controller {
 				'dbcmdtype'  => 'insert',
 				'paracfg'    => array('table_name' => 'table_name', 'backup_name' => 'backup_name')),
 
+			 
+           'set_activity_hook' => array(
+				'successmsg' => 'success_set',
+				'tbused'     => 'nanx_activity_hooks',
+				'dbcmdtype'  => 'insert',
+				'paracfg'    => array('table_name' => 'table_name', 'backup_name' => 'backup_name')),
+
+
+
+
 			'create_biz_table' => array(
 				'successmsg' => 'success_create_biz_table',
 				'tbused'     => 'nanx_biz_tables',
@@ -341,6 +351,17 @@ class Nanx extends CI_Controller {
 				'dbcmdtype'  => 'delete',
 				'paracfg'    => array('pid' => 'pid')),
 
+
+			'delete_hook' => array(
+				'successmsg' => 'success_delete_hook',
+				'tbused'     => 'nanx_activity_hooks',
+				'dbcmdtype'  => 'delete',
+				'paracfg'    => array('pid' => 'nodevalue')),
+
+ 
+
+
+
 			'set_biz_table_ref' => array(
 				'successmsg' => 'success_set_biz_table_ref',
 				'tbused'     => 'nanx_biz_tables',
@@ -546,9 +567,19 @@ class Nanx extends CI_Controller {
 				'successmsg' => 'success_set',
 				'tbused'     => 'nanx_biz_column_editor_cfg',
 				'dbcmdtype'  => 'update_or_insert',
-				'paracfg'    => array('is_produce_col' => 'is_produce_col', 'combo_table' => 'combo_table', 'list_field' => 'list_field',
-					'value_field'                         => 'value_field'),
-				'wherecfg'                             => array('base_table' => 'hostby', 'field_e' => 'nodevalue')),
+				'paracfg'    => array('is_produce_col' => 'is_produce_col'
+					),
+				'wherecfg'                             => array('base_table' => 'hostby', 'field_e' => 'nodevalue') ),
+
+			'set_readonly' => array(
+				'successmsg' => 'success_set',
+				'tbused'     => 'nanx_biz_column_editor_cfg',
+				'dbcmdtype'  => 'update_or_insert',
+				'paracfg'    => array('readonly' => 'set_readonly'
+					),
+				'wherecfg'                             => array('base_table' => 'hostby', 'field_e' => 'nodevalue') ),
+
+
 
 			'set_use_html_editor' => array(
 				'successmsg' => 'success_set',
@@ -639,6 +670,21 @@ class Nanx extends CI_Controller {
 				'tbused'     => 'dependnextarray',
 				'paracfg'    => array('nodevalue' => 'nodevalue', 'extradata' => 'extradata'),
 			),
+
+
+			//set_activity_order
+
+             'set_activity_order' => array(
+				'successmsg' => 'success_set',
+				'dbcmdtype'  => 'set_activity_order',
+				'tbused'     => 'dependnextarray',
+				'paracfg'    => array('nodevalue' => 'nodevalue', 'extradata' => 'extradata'),
+			),
+
+
+
+
+
 
 			'create_table_from_excel' => array(
 				'successmsg' => 'success_create_table_from_excel',
@@ -841,17 +887,26 @@ class Nanx extends CI_Controller {
 			$data_fixed = $this->getTriggerGroupData($data_received);
 		}
 
+		 
+		if ($opcode == 'set_activity_hook') {
+			$data_fixed = $this->getHookGroupData($data_received);
+		}
+
+
+
 		if ($opcode == 'set_field_default_value') {
 			$data_fixed = $this->getDefalultValue($data_received);
 		}
 
-		if ($opcode == 'set_to_me') {
-			if (strlen($data_fixed[0]['combo_table']) == 0) {
-				$data_fixed[0]['combo_table'] = 'nanx_user';
-				$data_fixed[0]['list_field']  = 'staff_name';
-				$data_fixed[0]['value_field'] = 'pid';
-			}
-		}
+		// if ($opcode == 'set_to_me') {
+
+		// 	if(  !array_key_exists('combo_table',$data_fixed[0])    ){$data_fixed[0]['combo_table']='';}
+		// 	if (strlen($data_fixed[0]['combo_table']) == 0) {
+		// 		$data_fixed[0]['combo_table'] = 'nanx_user';
+		// 		$data_fixed[0]['list_field']  = 'staff_name';
+		// 		$data_fixed[0]['value_field'] = 'pid';
+		// 	}
+		// }
 
 		return $data_fixed;
 	}
@@ -1035,6 +1090,19 @@ class Nanx extends CI_Controller {
 					'create_table'))) {
 			$this->rdbms_action($dbcmdtype, $data_fixed);
 		}
+
+		//set_activity_order
+
+
+      if  ($dbcmdtype=='set_activity_order')
+       {
+      		$this->set_activity_order($data_fixed);
+       } 
+	 
+
+
+
+
 
 		if ($dbcmdtype == 'update_file_content') {
 			$fname = $data_fixed[0]['file'];
@@ -1311,6 +1379,29 @@ class Nanx extends CI_Controller {
 		}
 		return $records;
 	}
+ 
+ 
+	function getHookGroupData($para) {
+		 
+		$records                = array();
+		for ($i = 1; $i <= $para['trigger_counts']; $i++) {
+			$records[] = array(
+				'activity_code'   => $para['hostby'],
+				'hook_type'      => $para['hook_type_' . $i],
+				'hook_when'      => $para['hook_when_' . $i],
+				'hook_event'      => $para['hook_event_' . $i],
+				'extra_ci_model'      => $para['extra_ci_model_' . $i],
+				'model_method'      => $para['model_method_' . $i],
+				'memo'      => $para['memo_' . $i]
+				);
+		}
+		return $records;
+	}
+
+
+
+
+
 
 	function getDefalultValue($para) {
 		$res = array();
@@ -1702,6 +1793,25 @@ class Nanx extends CI_Controller {
 		echo json_encode($ret);
 	}
 
+
+	function getHook() {
+		$post = file_get_contents('php://input');
+		$para = (array ) json_decode($post);
+		$w    = array('pid' => $para['value']);
+		$this->db->where($w);
+		$this->db->order_by('execute_order');
+		$rows = $this->db->get('nanx_activity_hooks')->result_array();
+		$ret  = array(
+			'success'     => true,
+			'server_resp' => $rows,
+			'errmsg'      => null);
+
+		echo json_encode($ret);
+	}
+
+
+
+
 	function resize_image($file, $w, $h, $crop = false) {
 		list($width, $height) = getimagesize($file);
 		$r                    = $width / $height;
@@ -1727,6 +1837,36 @@ class Nanx extends CI_Controller {
 		imagecopyresampled($dst, $src, 0, 0, 0, 0, $newwidth, $newheight, $width, $height);
 		return $dst;
 	}
+
+
+	function set_activity_order($act_para){
+		 
+        if(  count($act_para)==0  ){
+            return true;
+        }
+        $act_list_cfg=$act_para[0];
+
+		 
+		$role_code=$act_list_cfg['nodevalue'];
+		$act_list=$act_list_cfg['extradata']->data;
+
+      
+        foreach ($act_list as $key => $one) {
+
+
+        	$object = array('display_order'=>$key);
+            $this->db->where('role_code', $role_code);
+            $this->db->where('activity_code', $one->value);
+            $this->db->update('nanx_user_role_privilege', $object); 
+
+
+
+ 
+        }
+
+
+	}
+
 
 }
 

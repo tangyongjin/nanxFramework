@@ -1,4 +1,5 @@
 <?php
+
 class MDatafactory extends CI_Model
 {
     function setSqlbyBasetable($basetable,$pid_order)
@@ -56,7 +57,31 @@ class MDatafactory extends CI_Model
         return $sql_select;
     }
     
-    
+
+     
+
+    function join_view_filter($sql,$view_filter)
+    {
+      $view_filter=trim($view_filter);
+      if (strlen($view_filter)==0){
+        return $sql;
+      } 
+
+      
+      if (strpos($sql,'where') !== false)
+      {
+         $new_where=" and $view_filter ";
+      }else{
+        $new_where=" where $view_filter ";
+      }
+
+      $orderbystring_pos=strrpos($sql,'order');
+
+      $sql_add_filter = substr_replace($sql, $new_where, $orderbystring_pos, 0);
+      return $sql_add_filter;
+
+
+    }
 
 
     function join_who_is_who($sql,$who_is_who_found)
@@ -66,7 +91,7 @@ class MDatafactory extends CI_Model
         return $sql;
       } 
 
-      $sql_has_where='';
+      
       if (strpos($sql,'where') !== false)
       {
          $new_where=" and $who_is_who_found ";
@@ -82,7 +107,7 @@ class MDatafactory extends CI_Model
 
     }
     
-    function getDatabyBasetable($table, $pid_order, $query_cfg,$who_is_who_found)
+    function getDatabyBasetable($table, $pid_order, $query_cfg,$who_is_who_found,$view_filter)
     {
         $transfer = true;
         $sql      = $this->setSqlbyBasetable($table,$pid_order);
@@ -102,6 +127,7 @@ class MDatafactory extends CI_Model
         }
 
         $sql=$this->join_who_is_who($sql,$who_is_who_found);
+        $sql=$this->join_view_filter($sql,$view_filter);
         
         $db_q = $this->db->query($sql);
         if ($db_q) {

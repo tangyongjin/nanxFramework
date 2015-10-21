@@ -1,5 +1,6 @@
 <?php
 
+
 class MFilter extends CI_Model
 {
 
@@ -10,6 +11,7 @@ class MFilter extends CI_Model
           'activity.php',
           'backend.php',
           'category.php',
+          'mhooks.php',
           'cfg.php',
           'copynode.php',
           'cpdf.php',

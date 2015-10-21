@@ -1,9 +1,16 @@
  <!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN">
 <html xmlns="http://www.w3.org/1999/xhtml">
 	<head>
-	  <meta http-equiv="content-type" content="text/html; charset=utf-8" />
-      <?php
-         echo '<title>' . $page_title . '</title>';
+
+       <?php
+          if (isset($loginview)){
+         	 header('content-type:text/html;charset=utf-8;');
+             header('kickoutlogin:kickoutlogin') ;
+          }else
+          {
+            header('content-type:text/html;charset=utf-8;');
+          }
+         echo '<title>' . $page_title .'</title>';
          echo $css_and_js;
       ?>
 	</head>

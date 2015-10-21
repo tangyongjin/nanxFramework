@@ -1,4 +1,5 @@
 <?php 
+
 if ( ! defined('BASEPATH')) exit('No direct script access allowed');
 
 class grid2excel extends CI_Controller {

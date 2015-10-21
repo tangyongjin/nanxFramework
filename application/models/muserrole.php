@@ -16,7 +16,7 @@ class MuserRole extends CI_Model{
    	
    	$this->db->select('activity_code');	
    	$this->db->where_in('role_code', $role_list);
-   	$this->db->order_by('pid,display_order','asc');
+   	$this->db->order_by('display_order','asc');
    	$this->db->distinct();
     $acts=$this->db->get('nanx_user_role_privilege')->result_array();
     return $acts;

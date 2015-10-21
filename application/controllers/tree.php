@@ -1,10 +1,23 @@
-<?php
+<?php 
 
 if (!defined('BASEPATH')) {
 	exit('No direct script access allowed');
 }
 
 class Tree extends CI_Controller {
+
+
+   function abc(){
+
+ 			$salt                    = 'admin';
+			$pwd                     = 'admin';
+			$pwd_with_salt           = md5(md5($pwd) . $salt);
+		    echo $pwd_with_salt ;
+ 
+
+   }
+
+
 	function treeCfg() {
 		$cfg = array(
 
@@ -77,6 +90,16 @@ class Tree extends CI_Controller {
 				"select user as value,  staff_name as text,'system_user' as category from nanx_user ",
 				'leaf' => true),
 
+
+
+             'hooks'=> array(
+                'sql'=>" select pid as value, memo as text, 'hook' as  category from nanx_activity_hooks  where activity_code='#value' order by hook_event ",
+                'leaf'=>true
+             	),
+
+
+
+
 			'public_cols_show' => array('sql' =>
 				"select pid as value,concat('[',field_e,'->',field_c,']') as text,'single_col_display' as category from nanx_activity_field_public_display_cfg",
 				'leaf' => true),
@@ -124,6 +147,13 @@ class Tree extends CI_Controller {
                       nanx_activity_a2a_btns,nanx_activity
                       where  nanx_activity_a2a_btns.pid='#value' and
                       nanx_activity.activity_code=activity_for_btn;", 'leaf' => true),
+
+
+			'activity_under_role' => array('sql' =>
+              "select  grid_title as text, nanx_user_role_privilege.activity_code  as value,  'activity' as category from
+               nanx_user_role_privilege, nanx_activity      where  role_code='#value'
+               and  nanx_user_role_privilege.activity_code=nanx_activity.activity_code order by  display_order ",
+              'leaf' => true),
 
 			'table' => array('sql' =>
 				"select COLUMN_NAME  as value, concat( COLUMN_NAME,'[', COLUMN_TYPE,']') as  text ,
@@ -203,6 +233,42 @@ class Tree extends CI_Controller {
 				"select pid,  user  as  value, user  as text, staff_name,'user' as category from  nanx_user",
 				'leaf' => true),
 
+			 
+            'hook_type' => array(
+            	'method'=>'stacic_hook_type',
+            	'paratype'=>null,
+            	'leaf' => true),
+
+            'hook_when' => array(
+            	'method'=>'stacic_hook_when',
+            	'paratype'=>null,
+            	'leaf' => true),
+
+              'hook_event' => array(
+            	'method'=>'stacic_hook_event',
+            	'paratype'=>null,
+            	'leaf' => true),
+ 
+			 'extra_ci_model' => array(
+            	'method'=>'get_extra_ci_model',
+            	'paratype'=>null,
+            	'leaf' => true
+            	),
+
+
+			 'model_method'=>array(
+				'method'=>'get_model_methods',
+            	'paratype'=>null,
+            	'leaf' => true
+            	
+
+
+			 	),
+
+    
+
+
+
 			'roles' => array('sql' =>
 				"select  pid, role_code  as  value, role_name  as text, 'user_role' as category from  nanx_user_role",
 				'leaf' => false),
@@ -233,7 +299,12 @@ class Tree extends CI_Controller {
 	}
 
 	function index() {
+
 		$tree_request = $_REQUEST;
+
+
+ 
+
 		if (array_key_exists('category_to_use', $tree_request)) {
 			$res       = $this->getCategoryResult($tree_request);
 			$res_left  = null;
@@ -357,15 +428,86 @@ class Tree extends CI_Controller {
 			$actcode = (isset($params["value"]) ? $params["value"] : '');
 			$ret     = $this->getActivityDetail($actcode);
 			return $ret;
+		
 		}
+
+
+		if ($method == 'stacic_hook_type') {
+		   $ret=array(  
+                 array('value'=>'data','text'=>'data','category'=>'hooks'),
+				 array('value'=>'check','text'=>'check','category'=>'hooks')
+		    );
+		   return $ret;
+		}
+
+
+		if ($method == 'stacic_hook_when') {
+		   $ret=array(  
+                 array('value'=>'before','text'=>'before','category'=>'hooks'),
+				 array('value'=>'after','text'=>'after','category'=>'hooks')
+		    );
+		   return $ret;
+		}
+
+
+
+		if ($method == 'stacic_hook_event') {
+		   $ret=array(  
+                 array('value'=>'add','text'=>'add','category'=>'hooks'),
+				 array('value'=>'delete','text'=>'delete','category'=>'hooks'),
+				 array('value'=>'update','text'=>'update','category'=>'hooks')
+		    );
+		   return $ret;
+		}
+
+
+      if ($method == 'get_extra_ci_model') {
+		 $this->load->model('MFile');
+         $ret=array();
+         $files=$this->MFile->getFileList('application/models' ,'php');
+		 foreach ($files as $one_file) {
+		 	$fname=str_replace('.php','',$one_file['Filename']);
+		    $ret[]=array('value'=>$fname ,'text'=>$fname ,'category'=>'model') ;
+		  } 
+         return $ret;
+		}
+
+
+		if ($method == 'get_model_methods') {
+
+		  $model_root=$this->config->item('webroot').'application/models/';
+          $model=$params['value'];
+          $this->load->model($model);
+         
+
+          include_once( $model_root.$model.".php" ) ;
+          $class_methods=get_class_methods($model);
+
+         if(($key = array_search('__construct', $class_methods)) !== false) {
+          unset($class_methods[$key]);
+         }
+
+         if(($key = array_search('__get', $class_methods)) !== false) {
+          unset($class_methods[$key]);
+         }
+          
+           foreach ($class_methods as $one_method) {
+		    $ret[]=array('value'=>$one_method ,'text'=>$one_method ,'category'=>'method') ;
+
+		  } 
+         return $ret;
+
+		}
+
 	}
 
 	function getActivityDetail($actcode) {
-		$sql1 = "select nanx_biz_tables.pid  as value , table_name as 'table', table_screen_name as text,'based_biz_table' as category,
-                   '#value' as hostby
-                   from  nanx_activity, nanx_biz_tables where
-                   nanx_biz_tables.pid=base_table_pid
-                   and activity_code='#value'";
+
+		// $sql1 = "select nanx_biz_tables.pid  as value , table_name as 'table', table_screen_name as text,'based_biz_table' as category,
+  //                  '#value' as hostby
+  //                  from  nanx_activity, nanx_biz_tables where
+  //                  nanx_biz_tables.pid=base_table_pid
+  //                  and activity_code='#value'";
 
 		$sql1 = "select nanx_biz_tables.pid  as value , table_name as 'table', table_screen_name as text,'based_biz_table' as category,'#value' as hostby
                    from  nanx_activity, nanx_biz_tables where
@@ -381,6 +523,9 @@ class Tree extends CI_Controller {
 		$cfg       = $rows->first_row('array');
 		$maintable = $cfg['base_table'];
 		$btn_text  = $this->lang->line('btn_text');
+		$hook_text='Hook' ;
+
+
 
 		$sql3 = "select  '#value'  as value ,nanx_biz_tables.pid as base_table_pid , 'BTN_TEXT' as text ,'buttons' as category ,'#value' as hostby
               from  nanx_activity ,  nanx_biz_tables where
@@ -389,11 +534,37 @@ class Tree extends CI_Controller {
 		$sql3 = str_replace('#value', $actcode, $sql3);
 		$sql3 = str_replace('BTN_TEXT', $btn_text, $sql3);
 
+
+        //echo $sql3;
+
 		$ret3 = $this->db->query($sql3)->result_array();
 		$ret3 = arrayinsertkv($ret3, 'maintable', $maintable);
 		$ret3 = arrayinsertkv($ret3, 'leaf', false);
 
-		$ret = array_merge($ret1, $ret3);
+
+
+
+
+		$sql4 = "select  '#value'  as value ,nanx_biz_tables.pid as base_table_pid , 'HOOK_TEXT' as text ,'hooks' as category ,'#value' as hostby
+              from  nanx_activity ,  nanx_biz_tables where
+              activity_code='#value'  and nanx_activity.base_table= nanx_biz_tables.table_name  limit 1";
+
+		$sql4 = str_replace('#value', $actcode, $sql4);
+		$sql4 = str_replace('HOOK_TEXT', $hook_text, $sql4);
+
+
+        //echo $sql3;
+
+		$ret4 = $this->db->query($sql4)->result_array();
+		$ret4 = arrayinsertkv($ret4, 'maintable', $maintable);
+		$ret4 = arrayinsertkv($ret4, 'leaf', false);
+
+
+
+		$ret = array_merge($ret1, $ret3,$ret4);
+		//debug($ret) ;
+
+
 		return $ret;
 	}
 
@@ -441,9 +612,9 @@ class Tree extends CI_Controller {
 
 	function getBizCols($raw_tbname) {
 		$fields_e = $this->db->list_fields($raw_tbname);
-
+        $activity_code='';
 		$this->load->model('MFieldcfg');
-		$col_cfg = $this->MFieldcfg->getColsCfg($raw_tbname, $fields_e, true);
+		$col_cfg = $this->MFieldcfg->getColsCfg($activity_code, $raw_tbname, $fields_e, true);
 
 		$col_cfg = array_retrieve($col_cfg, array('field_e', array('segment' => 'display_cfg', 'index' => 'value'), array('segment' => 'display_cfg', 'index' => 'field_c')));
 		$col_cfg = arrayinsertkv($col_cfg, 'category', 'biz_col');

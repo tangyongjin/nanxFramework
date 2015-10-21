@@ -625,11 +625,23 @@ background-image: url(backimgs/icons/biz_table.png) !important;
 	background-image: url(backimgs/icons/acls.png) !important;
 	  background-repeat: no-repeat;
 }
+
 .roles {
 	background-image: url(backimgs/icons/roles.png) !important;
  background-repeat: no-repeat;
 }
 
+
+.hooks {
+	background-image: url(backimgs/icons/hooks.png) !important;
+ background-repeat: no-repeat;
+}
+
+
+.hook {
+	background-image: url(backimgs/icons/hook.png) !important;
+ background-repeat: no-repeat;
+}
 
 .user_role{
 	background-image: url(backimgs/icons/user_role_under_acls.png) !important;
