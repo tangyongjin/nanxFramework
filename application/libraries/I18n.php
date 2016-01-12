@@ -61,7 +61,7 @@ class I18n  extends CI_Controller {
      
     public function load_language() {
 
-        $lang=$this->get_session_lang();
+        $lang=$this->get_current_locale();
         $this->CI->lang->load('messages',$lang);
     }
     
@@ -76,7 +76,7 @@ class I18n  extends CI_Controller {
     
       
     
-    public function get_session_lang()
+    public function get_current_locale()
     {   
         $lang=$this->CI->session->userdata('lang');
         if(!strlen($lang)>0) 

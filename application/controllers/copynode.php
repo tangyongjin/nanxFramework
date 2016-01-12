@@ -18,7 +18,7 @@ class Copynode extends CI_Controller
     }
     
 
-
+ l
     function src_dest_cfg()
     {
      $cfg=array(
@@ -54,7 +54,7 @@ class Copynode extends CI_Controller
      $hook=$seed[$hook_field];
      $new_values=array();
      foreach( $cfg['new_field_value_to_set']  as $field_to_set )
-      {
+      { 
         $old_value=$seed[$field_to_set];
         $new_value=$old_value.'_copy';  
         $new_values[$field_to_set]= $new_value;

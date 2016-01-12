@@ -1,37 +1,15 @@
-<?php 
+<?php
 if (!defined('BASEPATH'))
     exit('No direct script access allowed');
 class Home extends CI_Controller
 {
-  
-    
-
+ 
 
     function index()
     {
         
-        $session_id = $this->session->userdata('session_id');
-        
-        //echo "sessid is  $session_id  </br>"  ;
-
-
-        $logged_user= $this->session->userdata('user');
-         
-        
-
-        if( is_null($logged_user)){
-         
-          $this->login();
-        
-
-        }
-        
- 
-        $lang = $this->i18n->get_session_lang();
-        
-
-        
-        
+        $this->setsession();
+        $lang = $lang = $this->i18n->get_current_locale();
         $this->load->model('MUi');
         $page          = $this->MUi->getCommPage('front', $lang);
         $activities    = $this->session->userdata('user_activity');
@@ -46,7 +24,7 @@ class Home extends CI_Controller
     function checkDatabaseConnection()
     {
         if ($this->load->database() === FALSE) {
-            exit('THE END IS NIGH!');
+            exit('Database not setted.');
         } else {
             return true;
         }
@@ -54,50 +32,29 @@ class Home extends CI_Controller
     
     function login()
     {
-      
-
-        
-     
-
-     
         if ($this->uri->segment(3) === FALSE) {
-            $lang_select = $this->i18n->get_user_default_lang();
-
+            $lang = $this->i18n->get_current_locale();
+            $this->i18n->load_language();
         } else {
-            $lang_select = $this->uri->segment(3);
-           
+            $lang = $this->uri->segment(3);
+            $this->i18n->set_current_locale($lang);
         }
-
-
-      
-
-        $this->session->unset_userdata('lang');
-        $this->session->set_userdata('lang', $lang_select);
-
-        
         
         $this->load->model('MUi');
-        $page              = $this->MUi->getCommPage("login", $lang_select);
-        $page['lang']      = $lang_select;
+        $page              = $this->MUi->getCommPage("login", $lang);
+        $page['lang']      = $lang;
         $page['loginview'] = 'loginview';
-        $page['showlogin']=true;
         $this->load->view('framework', $page);
     }
     
     
     function dologin()
-    {   
-
-       //  $this->clear_sess();
-
-
+    {
         $post = file_get_contents('php://input');
         $p    = (array) json_decode($post);
         $u    = array(
             'user' => $p['account']
         );
-
-        $lang=$p['lang'] ;
         
         $result = array();
         
@@ -133,10 +90,11 @@ class Home extends CI_Controller
                 $result['msg']  = '';
                 $result['user'] = $p['account'];
                 
-                $eid = $this->config->item('base_url');
-              
+                $eid = $this->config->item('eidfolder');
 
-                $this->setsession($p['account'],$eid,$lang);
+                $this->session->set_userdata('eid', $eid);
+                $this->session->set_userdata('user', $p['account']);
+                 
                 echo json_encode($result);
                 return;
             } else {
@@ -151,65 +109,67 @@ class Home extends CI_Controller
     
     
     
- function setsession($user,$eid,$lang)
-    {
- 
+ function setsession()
+    {   
+
+        $session_data=array();
+
+        $user=$this->session->userdata('user');
         $this->load->model('MUserRole');
         $this->load->model('MSystempara');
-        $eid = $this->config->item('base_url');
-        $this->session->set_userdata('eid', $eid);
-        $this->session->set_userdata('user', $user);
+        $eid = $this->config->item('eidfolder');
+ 
+        $session_data['eid']=$eid;
+        $session_data['user']=$user;
+           
 
-        $this->session->set_userdata('ABCDEF', $user);
 
-        $this->session->set_userdata('lang', $lang);
-        
         $sql   = "select role_code from nanx_user_role_assign where user='" . $user . "' ";
         $roles = $this->db->query($sql)->result_array();
-        $this->session->set_userdata('roles', $roles);
+        $session_data['roles']=$roles;
+        
         
         $activity_list = $this->MUserRole->getActivitybyRoleCode($roles);
         $activity      = array_retrieve($activity_list, 'activity_code');
-        $this->session->set_userdata('user_activity', $activity);
-        
+        $session_data['user_activity']=$activity;
         
         $sql      = "select  *  from nanx_user where user='" . $user . "'";
         $user_get = $this->db->query($sql)->row_array();
-        
-        $this->session->set_userdata('staff_name', $user_get['staff_name']);
+        $session_data['staff_name']=$user_get['staff_name'];
         
         
         $sql        = "select  *  from nanx_who_is_who where user='" . $user . "'";
         $who_is_who = $this->db->query($sql)->result_array();
-        $this->session->set_userdata('who_is_who', $who_is_who);
-        
+        $session_data['who_is_who']=$who_is_who;
         
         $page_title   = $this->MSystempara->getCfgItem('PAGE_TITLE');
         $banner_title = $this->MSystempara->getCfgItem('BANNER_TITLE');
-        $this->session->set_userdata('page_title', $page_title);
-        $this->session->set_userdata('banner_title', $banner_title);
+      
+        $session_data['page_title']=$page_title;
+        $session_data['banner_title']=$banner_title;
+        $this->session->set_userdata($session_data);
+
+
+
     }
     
     function ie6issue()
     {
         if ($this->uri->segment(3) === FALSE) {
-            $lang = $this->i18n->get_session_lang();
+            $lang = $this->i18n->get_current_locale();
             $this->i18n->load_language();
         } else {
-            // $lang = $this->uri->segment(3);
-            $lang='zh-cn' ;
+            $lang = $this->uri->segment(3);
             $this->i18n->set_current_locale($lang);
         }
         $this->load->view('ie6issue');
         
         
     }
-
-
     function logout()
     {
-       $this->clear_sess();
-       redirect('home/login?ts='.time(),'refresh');
+       $this->session->sess_destroy();
+       redirect('home/index');
     }
     
     function test()
@@ -222,15 +182,5 @@ class Home extends CI_Controller
         $this->email->send();
         echo $this->email->print_debugger();
     }
-
-    
-    function clear_sess(){
-
-         $this->session->unset_userdata('user_data');
-         $this->session->sess_destroy();
-
-    }
-
-    
 }
 ?>

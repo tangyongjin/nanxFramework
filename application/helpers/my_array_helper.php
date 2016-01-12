@@ -22,7 +22,7 @@ or  array('name','sex')
 or  array('name',array('segment'=>'book_info',index=>'sale_price'))
 */
 
-define("VAR_PREFIX",     "#");
+define("VAR_PREFIX",     "$");
 
 function array_retrieve($arr,$keys_config)
 {

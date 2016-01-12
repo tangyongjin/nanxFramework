@@ -1,26 +1,21 @@
-<?php 
+<?php
 
 if (!defined('BASEPATH')) {
 	exit('No direct script access allowed');
 }
 
 class Tree extends CI_Controller {
-
-
    function abc(){
 
  			$salt                    = 'admin';
 			$pwd                     = 'admin';
 			$pwd_with_salt           = md5(md5($pwd) . $salt);
 		    echo $pwd_with_salt ;
- 
-
    }
 
 
 	function treeCfg() {
 		$cfg = array(
-
 			'biz_tables' => array('sql' =>
 				"select pid ,  table_name as value,  table_name as 'table', table_screen_name as  text ,'biz_table' as category from  nanx_biz_tables",
 				'leaf' => false),
@@ -43,6 +38,12 @@ class Tree extends CI_Controller {
 				"select  table_name as value,  table_name as  text ,'referenced_table' as category from
                       nanx_biz_tables      where table_name='#value'", 'leaf' => array(true, false)),
 
+			'view_filter' => array('sql' =>
+				"select  view_filter as value,  view_filter_memo  as  text ,'view_filter_item' as category, 
+				      pid as hostby from
+                      nanx_activity   where  LENGTH(view_filter)>3   and pid=#hostby ",
+                       'leaf' => array(true, false)),
+ 
 			'based_biz_table' => array('sql' =>
 				"select  table_name as value,'" . $this->lang->line('fields') . "'  as  text ,'biz_cols' as category, table_name as hostby
                     from  nanx_biz_tables      where pid='#value'
@@ -52,6 +53,10 @@ class Tree extends CI_Controller {
                     union
                     select  table_name as value,'" . $this->lang->line('dropdown_groups') . "'  as  text ,'dropdown_groups' as category, table_name as hostby
                     from  nanx_biz_tables      where pid='#value'
+                    union 
+                    select  '#hostby' as value,'" . $this->lang->line('view_filter') . "'  as  text ,'view_filter' as category, pid as hostby
+                    from  nanx_activity      where activity_code='#hostby' 
+                    
                     ",
 				'leaf' => false),
 
@@ -191,7 +196,7 @@ class Tree extends CI_Controller {
 
 			'activity' => array(
 				'method'   => "getActivityDetail",
-				'paratype' => 'activity_code',
+		        'paratype' => 'activity_code',
 				''         => false),
 
 			'activity_js' => array('sql' =>
@@ -254,21 +259,11 @@ class Tree extends CI_Controller {
             	'paratype'=>null,
             	'leaf' => true
             	),
-
-
 			 'model_method'=>array(
 				'method'=>'get_model_methods',
             	'paratype'=>null,
             	'leaf' => true
-            	
-
-
 			 	),
-
-    
-
-
-
 			'roles' => array('sql' =>
 				"select  pid, role_code  as  value, role_name  as text, 'user_role' as category from  nanx_user_role",
 				'leaf' => false),
@@ -503,12 +498,6 @@ class Tree extends CI_Controller {
 
 	function getActivityDetail($actcode) {
 
-		// $sql1 = "select nanx_biz_tables.pid  as value , table_name as 'table', table_screen_name as text,'based_biz_table' as category,
-  //                  '#value' as hostby
-  //                  from  nanx_activity, nanx_biz_tables where
-  //                  nanx_biz_tables.pid=base_table_pid
-  //                  and activity_code='#value'";
-
 		$sql1 = "select nanx_biz_tables.pid  as value , table_name as 'table', table_screen_name as text,'based_biz_table' as category,'#value' as hostby
                    from  nanx_activity, nanx_biz_tables where
                    nanx_biz_tables.table_name=base_table
@@ -535,15 +524,10 @@ class Tree extends CI_Controller {
 		$sql3 = str_replace('BTN_TEXT', $btn_text, $sql3);
 
 
-        //echo $sql3;
-
+ 
 		$ret3 = $this->db->query($sql3)->result_array();
 		$ret3 = arrayinsertkv($ret3, 'maintable', $maintable);
 		$ret3 = arrayinsertkv($ret3, 'leaf', false);
-
-
-
-
 
 		$sql4 = "select  '#value'  as value ,nanx_biz_tables.pid as base_table_pid , 'HOOK_TEXT' as text ,'hooks' as category ,'#value' as hostby
               from  nanx_activity ,  nanx_biz_tables where
@@ -552,19 +536,10 @@ class Tree extends CI_Controller {
 		$sql4 = str_replace('#value', $actcode, $sql4);
 		$sql4 = str_replace('HOOK_TEXT', $hook_text, $sql4);
 
-
-        //echo $sql3;
-
 		$ret4 = $this->db->query($sql4)->result_array();
 		$ret4 = arrayinsertkv($ret4, 'maintable', $maintable);
 		$ret4 = arrayinsertkv($ret4, 'leaf', false);
-
-
-
 		$ret = array_merge($ret1, $ret3,$ret4);
-		//debug($ret) ;
-
-
 		return $ret;
 	}
 
@@ -574,12 +549,11 @@ class Tree extends CI_Controller {
 				$sql = str_replace('#' . $key, $value, $sql);
 			}
 		}
-
+ 
 		$rows = $this->db->query($sql)->result_array();
 		for ($i = 0; $i < count($rows); $i++) {
 			$rows[$i]['leaf'] = $leaf;
 		}
-
 		return $rows;
 	}
 
@@ -704,7 +678,7 @@ class Tree extends CI_Controller {
 				$result[$i]['cls'] = $str;
 			}
 			$result = array_retrieve($result, array('cls', 'text'));
-		}
+		} 
 
 		$total = count($result);
 		$cls   = $cat['icon'];
@@ -761,5 +735,5 @@ class Tree extends CI_Controller {
 		return $tbhtml;
 	}
 }
-
+ 
 ?>

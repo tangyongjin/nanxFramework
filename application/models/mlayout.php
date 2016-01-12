@@ -1,4 +1,4 @@
-<?php
+<?php 
 
 class MLayout extends CI_Model{
 	function getLayoutCfg($act_code,$table){

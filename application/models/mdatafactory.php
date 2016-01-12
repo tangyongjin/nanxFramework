@@ -1,5 +1,4 @@
 <?php
-
 class MDatafactory extends CI_Model
 {
     function setSqlbyBasetable($basetable,$pid_order)
@@ -129,6 +128,8 @@ class MDatafactory extends CI_Model
         $sql=$this->join_who_is_who($sql,$who_is_who_found);
         $sql=$this->join_view_filter($sql,$view_filter);
         
+       // echo $sql;
+
         $db_q = $this->db->query($sql);
         if ($db_q) {
             $rows  = $db_q->result_array();

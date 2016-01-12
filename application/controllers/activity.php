@@ -1,10 +1,9 @@
-<?php 
+<?php
 
 if (!defined('BASEPATH')) exit('No direct script access allowed');
 class Activity extends CI_Controller
 
 {
- 
   
   function service1()
   {
@@ -25,7 +24,6 @@ class Activity extends CI_Controller
 		$post = file_get_contents('php://input');
 		$para = (array)json_decode($post);
     $this->load->model('MActivity');
-     
     $actcfg=$this->MActivity->getActivityCfg($para);
 		echo json_encode($actcfg, JSON_UNESCAPED_UNICODE);
 	}

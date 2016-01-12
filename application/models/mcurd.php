@@ -89,6 +89,9 @@ class MCurd extends CI_Model{
              if (($activity_type == 'table') || ($p['code'] == 'NANX_TBL_DATA')) {
                
                 $who_is_who_found=$this->MDatafactory->getWhoIsWho_where($p);
+ 
+
+
                 if ( strlen( trim($who_is_who_found))==0  &&  array_key_exists('owner_data_only', $p)  )
                 {
                    if($p['owner_data_only']==1){

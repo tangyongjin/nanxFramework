@@ -1,14 +1,52 @@
-<?php 
+<?php if (!defined('BASEPATH')) {exit('No direct script access allowed');
+}
 
 class Dbdocu extends CI_Controller {
 
 
-
-
     function index()
     {
-   
-      echo   " lang_js  ,lnag_php   " ;
+       //debug($_SERVER) ;
+
+      echo '<a href=http://'.$_SERVER['SERVER_NAME'].$_SERVER['REQUEST_URI'].'/lang_js'.">lang_js </a>"  ;
+      
+      echo "<br/>";
+      
+      echo '<a href=http://'.$_SERVER['SERVER_NAME'].$_SERVER['REQUEST_URI'].'/lang_php'.">lang_php </a>"  ;
+
+      echo "<br/>";
+
+      echo '<a href=http://'.$_SERVER['SERVER_NAME'].$_SERVER['REQUEST_URI'].'/help_html'.">help_html </a>"  ;
+      
+      
+      
+    }
+
+    function help_html(){
+ 
+    include "nanx.php" ;
+    
+    $nanx=new Nanx;
+    $cfg=$nanx->actionCfg();
+   // debug($cfg) ;
+
+    $keys=array_keys($cfg);
+ 
+
+    $root=$_SERVER['DOCUMENT_ROOT'];
+    $help_dir=$root.'//cloud/standx/application/language/zh-cn/';
+        
+
+    foreach ($keys as $key => $one_code) {
+    	$one_html=$help_dir.$one_code.".html";
+
+    	if (!file_exists($one_html)){
+	echo $one_html."<br/>";
+    	}
+
+     
+     	# code...
+     } 
 
 
     }
@@ -46,6 +84,16 @@ class Dbdocu extends CI_Controller {
 	}
 
   
+
+   function  check_function(){
+   	if (function_exists('mysql_real_escape_string'))
+   	{
+   		echo "found mysql_real_escape_string" ;
+
+   	}
+
+   }
+
 	function test() {
 
 		$tables = $this->db->list_tables();
@@ -114,15 +162,24 @@ class Dbdocu extends CI_Controller {
 		debug($c_arr);
 		$diff = array_diff($e_arr, $c_arr);
 
-		echo "中文缺少:";
-		debug($diff);
+		echo "中文缺少:<br/>";
+        foreach ($diff as $one ) {
+        	echo "'$one':'',<br/>";
+        }
 
-        echo "英文缺少:";
+		
+        echo "英文缺少:<br/>";
 
 		$diff = array_diff($c_arr, $e_arr);
-		debug($diff);
+		//debug($diff);
 
-		$sql = "select  concat('cp  en/i18n.js   ',id,'/i18n.js   ' ) as vv from  nanx_lang where id not in ('en','zh-cn');";
+        foreach ($diff as $one ) {
+        	echo "$one:'',<br/>";
+        }
+
+		$sql = "select  concat('cp  en/i18n.js   ',id,'/i18n.js   ' ) as vv from  nanx_country where id not in ('en','zh-cn');";
+		echo $sql;
+
 		$bat = $this->db->query($sql)->result_array();
 		//debug($bat);
 		foreach ($bat as $cp) {
@@ -135,14 +192,11 @@ class Dbdocu extends CI_Controller {
     function lang_help()
     {
 
-    	$sql = "select  concat('cp  en/*.html   ',id,'/   ' ) as vv from  nanx_lang where id not in ('en','zh-cn');";
+    	$sql = "select  concat('cp  en/*.html   ',id,'/   ' ) as vv from  nanx_country where id not in ('en','zh-cn');";
 		$bat = $this->db->query($sql)->result_array();
 		foreach ($bat as $cp) {
 			echo $cp['vv'] . "<br/>";
 		}
-
-
-
     }
 
 	function lang_php() {
@@ -159,16 +213,21 @@ class Dbdocu extends CI_Controller {
         $c_arr=array_keys($c_config);
         debug($c_arr);
 
-		$diff = array_diff($c_arr, $e_arr);
-        echo "中文缺少:";
-        debug($diff);
+		$diff = array_diff($e_arr, $c_arr);
+        echo "中文缺少:<br/>";
+        foreach ($diff as $one ) {
+         echo "\$lang['$one']='';  "."<br/>"  ;
+        }
         
-        $diff = array_diff($e_arr, $c_arr);
-        echo "英文缺少:";
-        debug($diff);
-        
+        $diff = array_diff($c_arr, $e_arr);
+        echo "英文缺少:<br/>";
+       
+        foreach ($diff as $one ) {
+         echo "\$lang['$one']='';  "."<br/>"  ;
+        }
+
 		
-		$sql = "select  concat('cp  en/messages_lang.php   ',id,'/messages_lang.php   ' ) as vv from  nanx_lang where id not in ('en','zh-cn');";
+		$sql = "select  concat('cp  en/messages_lang.php   ',id,'/messages_lang.php   ' ) as vv from  nanx_country where id not in ('en','zh-cn');";
 		$bat = $this->db->query($sql)->result_array();
 		foreach ($bat as $cp) {
 			echo $cp['vv'] . "<br/>";
@@ -199,6 +258,13 @@ class Dbdocu extends CI_Controller {
 		$content .= "<div class=operation_notice></div>";
 		write_file($fname, $content, 'w+');
 	}
+
+
+    
+    function  check_operation_code_help(){
+
+    }
+
 
 	function gethelp() {
 		$code = $this->uri->segment(3);

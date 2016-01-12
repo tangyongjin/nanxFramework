@@ -29,9 +29,7 @@ class MActivity extends CI_Model
 
     
     function  callerIncaller($url,$para)
-    {    
-
-       
+    { 
          $c_and_m = explode("/", $url);
          $c=$c_and_m[0];
          $m=$c_and_m[1];
@@ -108,8 +106,7 @@ class MActivity extends CI_Model
 
     function getFieldesByType_sql($activity_code,$sql_fixed)
     {
-
-            $sqltype=$this->judeSqlType($sql_fixed);
+           $sqltype=$this->judeSqlType($sql_fixed);
            $ret=array(); 
            if($sqltype=='select'){
                $dbres=$this->db->query($sql_fixed);
@@ -159,13 +156,11 @@ class MActivity extends CI_Model
 
 
     function getFieldesByType_service($activity_summary ,$para_array){
-
-
             $activity_code   = $activity_summary['activity_code'];
             $service_url     = $activity_summary['service_url'];
             
             $ret = $this->callerIncaller($service_url, $para_array);
-             
+            
             if ($ret) {
                 $ret2arr = $ret;
                 $fields_e = array_keys($ret2arr[0]);
@@ -185,7 +180,7 @@ class MActivity extends CI_Model
                             $transfer = $para_array['transfer'];
                         }
                         $this->load->model('MFieldcfg');
-                        $col_cfg = $this->MFieldcfg->getColsCfg('NULL', $fields_e, $transfer);
+                        $col_cfg = $this->MFieldcfg->getColsCfg($activity_code,'NULL', $fields_e, $transfer);
                     }
                 }
                 
@@ -255,15 +250,12 @@ class MActivity extends CI_Model
        if ($activity_type == 'html') {
             $col_cfg = array();
         }
-
-
+      
        if ($activity_type == 'table') {
             $para_array['transfer'] = true;
             $fields_e               = $this->skip_field($activity_code, $this->db->list_fields($base_table));
             $col_cfg = $this->MFieldcfg->getColsCfg($activity_code,$base_table, $fields_e, $para_array['transfer']);
         }
-
-
 
         if ($activity_type == 'sql') {
             $this->load->model('MFieldcfg');
@@ -279,8 +271,6 @@ class MActivity extends CI_Model
             }
            $col_cfg=$this->getFieldesByType_sql($activity_code,$sql_fixed);
         }
-
-
            if ($activity_type == 'service') {
                 $col_cfg=$this->getFieldesByType_service($activity_summary ,$para_array);
             }
@@ -302,22 +292,22 @@ class MActivity extends CI_Model
         $query           = $this->db->get('nanx_activity');
         $activity_summary             = $query->first_row('array');
         $activity_type   = $activity_summary['activity_type'];
-         
 
-        
+      //  debug($activity_summary);
 
 
         if ($activity_type == 'table') {
             $base_table             = $activity_summary['base_table'];
             $layout_cfg = $this->MLayout->getLayoutCfg($activity_code, $base_table);
-        }    
+        }
 
         if (array_key_exists('table', $para_array) && (strlen($para_array['table']) > 0)) {
             $activity_summary['base_table'] = $para_array['table'];
-        }  
+        }
         
         $col_cfg=$this->getFieldesByType($activity_summary,$para_array);
-         if(array_key_exists('sql_syntax_error', $col_cfg))
+        
+        if(array_key_exists('sql_syntax_error', $col_cfg))
         {
             $activity_summary['sql_syntax_error']   = $col_cfg['sql_syntax_error'];
             $col_cfg=array();     

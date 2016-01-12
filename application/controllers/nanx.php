@@ -30,6 +30,36 @@ class Nanx extends CI_Controller {
 				'dbcmdtype'  => 'backup_system',
 				'paracfg'    => array('backup_name' => 'backup_name')),
 
+            'add_filter_item'=>array(
+				'successmsg' => 'success_update_filter',
+				'tbused'     => 'nanx_activity',
+				'dbcmdtype'  => 'update',
+				'pre_check_func'=>'sql_syntax',
+				'wherecfg'   =>array('activity_code'=>'nodevalue'),
+				'paracfg'    => array('view_filter' => 'view_filter','view_filter_memo'=>'view_filter_memo')
+				),
+
+            'edit_filter_item'=>array(
+				'successmsg' => 'success_update_filter',
+				'tbused'     => 'nanx_activity',
+				'dbcmdtype'  => 'update',
+				'pre_check_func'=>'sql_syntax',
+				'wherecfg'   =>array('pid'=>'hostby'),
+				'paracfg'    => array('view_filter' => 'view_filter','view_filter_memo'=>'view_filter_memo')
+				),
+
+             
+           'delete_filter_item'=>array(
+				'successmsg' => 'success_update_filter',
+				'tbused'     => 'nanx_activity',
+				'dbcmdtype'  => 'update',
+				'wherecfg'   =>array('pid'=>'hostby'),
+				'paracfg'    => array('view_filter' => '','view_filter_memo'=>'')
+				),
+
+
+
+
 			'add_trigger_group' => array(
 				'successmsg' => 'success_add_trigger_group',
 				'tbused'     => 'nanx_biz_column_trigger_group',
@@ -42,9 +72,6 @@ class Nanx extends CI_Controller {
 				'tbused'     => 'nanx_activity_hooks',
 				'dbcmdtype'  => 'insert',
 				'paracfg'    => array('table_name' => 'table_name', 'backup_name' => 'backup_name')),
-
-
-
 
 			'create_biz_table' => array(
 				'successmsg' => 'success_create_biz_table',
@@ -277,7 +304,7 @@ class Nanx extends CI_Controller {
 				'successmsg' => 'success_add_public_item',
 				'tbused'     => 'nanx_activity_field_public_display_cfg',
 				'dbcmdtype'  => 'insert',
-				'paracfg'    => array('field_e' => 'input_0', 'field_c' => 'input_1')),
+				'paracfg'    => array('field_e' => 'field_e', 'field_c' => 'field_c')),
 
 			'add_user' => array(
 				'successmsg' => 'success_add_user',
@@ -324,6 +351,7 @@ class Nanx extends CI_Controller {
 					'receiver_role_list' => 'receiver_role_list',
 					'action'             => 'action')),
 
+		
 			'reset_pwd' => array(
 				'successmsg' => 'success_reset_pwd',
 				'tbused'     => 'nanx_user',
@@ -336,7 +364,7 @@ class Nanx extends CI_Controller {
 				'successmsg' => 'success_set_logo',
 				'tbused'     => 'nanx_system_cfg',
 				'dbcmdtype'  => 'update',
-				'paracfg'    => array('config_value' => 'input_0'),
+				'paracfg'    => array('config_value' => 'picfile'),
 				'wherecfg'                           => array('config_key' => 'key')),
 
 			'delete_public_item' => array(
@@ -394,18 +422,13 @@ class Nanx extends CI_Controller {
 				'dbcmdtype'  => 'delete',
 				'paracfg'    => array('pid' => 'pid')),
 
-			'reest_pwd' => array(
-				'successmsg' => 'success_reest_pwd',
-				'tbused'     => 'nanx_user',
-				'dbcmdtype'  => 'update',
-				'paracfg'    => array('password' => 'input_0'),
-				'wherecfg'                       => array('pid' => 'pid')),
+			 
 
 			'rename_a2a_btn' => array(
 				'successmsg' => 'success_rename_btn',
 				'tbused'     => 'nanx_activity_a2a_btns',
 				'dbcmdtype'  => 'update',
-				'paracfg'    => array('btn_name' => 'input_0'),
+				'paracfg'    => array('btn_name' => 'btn_name'),
 				'wherecfg'                       => array('pid' => 'pid')),
 
 			'remove_a2a_btn' => array(
@@ -418,7 +441,7 @@ class Nanx extends CI_Controller {
 				'successmsg' => 'success_rename_btn',
 				'tbused'     => 'nanx_activity_batch_btns',
 				'dbcmdtype'  => 'update',
-				'paracfg'    => array('btn_name' => 'input_0'),
+				'paracfg'    => array('btn_name' => 'btn_name'),
 				'wherecfg'                       => array('pid' => 'pid')),
 
 			'remove_batch_btn' => array(
@@ -431,7 +454,7 @@ class Nanx extends CI_Controller {
 				'successmsg' => 'success_rename_btn',
 				'tbused'     => 'nanx_activity_js_btns',
 				'dbcmdtype'  => 'update',
-				'paracfg'    => array('btn_name' => 'input_0'),
+				'paracfg'    => array('btn_name' => 'btn_name'),
 				'wherecfg'                       => array('pid' => 'pid')),
 
 			'remove_js_btn' => array(
@@ -509,14 +532,14 @@ class Nanx extends CI_Controller {
 				'tbused'     => 'nanx_activity_field_special_display_cfg',
 				'dbcmdtype'  => 'update_or_insert',
 				'paracfg'    => array('field_c' => 'field_c'),
-				'wherecfg'                      => array('base_table' => 'hostby', 'field_e' => 'nodevalue')),
+				'wherecfg'   => array('activity_code'=>'ref_activity','base_table' => 'hostby', 'field_e' => 'nodevalue')),
 
 			'set_field_width' => array(
 				'successmsg' => 'success_set',
 				'tbused'     => 'nanx_activity_field_special_display_cfg',
 				'dbcmdtype'  => 'update_or_insert',
 				'paracfg'    => array('field_width' => 'field_width'),
-				'wherecfg'                          => array('base_table' => 'hostby', 'field_e' => 'nodevalue')),
+				'wherecfg'   => array('activity_code'=>'ref_activity','base_table' => 'hostby', 'field_e' => 'nodevalue')),
 
 			'set_field_default_value' => array(
 				'successmsg' => 'success_set_field_default_value',
@@ -527,7 +550,7 @@ class Nanx extends CI_Controller {
 					'field_e'    => 'nodevalue',
 					'default_v'  => 'f_def_fix'),
 				'default'     => array('use_combo' => 1),
-				'wherecfg'                         => array('field_e' => 'nodevalue', 'base_table' => 'hostby')),
+				'wherecfg'    => array('activity_code'=>'ref_activity',   'field_e' => 'nodevalue', 'base_table' => 'hostby')),
 
 			'set_biz_field_combo_resorce' => array(
 				'successmsg' => 'success_set',
@@ -561,7 +584,7 @@ class Nanx extends CI_Controller {
 				'tbused'     => 'nanx_activity_field_special_display_cfg',
 				'dbcmdtype'  => 'update_or_insert',
 				'paracfg'    => array('show_as_pic' => 'show_as_pic'),
-				'wherecfg'                          => array('base_table' => 'hostby', 'field_e' => 'nodevalue')),
+				'wherecfg'   => array('activity_code'=>'ref_activity','base_table' => 'hostby', 'field_e' => 'nodevalue')),
 
 			'set_to_me' => array(
 				'successmsg' => 'success_set',
@@ -569,15 +592,28 @@ class Nanx extends CI_Controller {
 				'dbcmdtype'  => 'update_or_insert',
 				'paracfg'    => array('is_produce_col' => 'is_produce_col'
 					),
-				'wherecfg'                             => array('base_table' => 'hostby', 'field_e' => 'nodevalue') ),
+				'wherecfg'    => array('activity_code'=>'ref_activity','base_table' => 'hostby', 'field_e' => 'nodevalue') ),
 
 			'set_readonly' => array(
 				'successmsg' => 'success_set',
 				'tbused'     => 'nanx_biz_column_editor_cfg',
 				'dbcmdtype'  => 'update_or_insert',
-				'paracfg'    => array('readonly' => 'set_readonly'
+				'paracfg'    => array('readonly' => 'readonly'
 					),
-				'wherecfg'                             => array('base_table' => 'hostby', 'field_e' => 'nodevalue') ),
+				'wherecfg'   => array('base_table' => 'hostby', 'field_e' => 'nodevalue') ),
+
+ 
+
+
+
+			'set_calc_string' => array(
+				'successmsg' => 'success_set',
+				'tbused'     => 'nanx_biz_column_editor_cfg',
+				'dbcmdtype'  => 'update_or_insert',
+				'pre_check_func'=>'cal_check',
+				'paracfg'    => array('cal_string' => 'cal_string'),
+				'wherecfg'   => array('activity_code'=>'ref_activity','base_table' => 'hostby', 'field_e' => 'nodevalue')),
+
 
 
 
@@ -586,7 +622,7 @@ class Nanx extends CI_Controller {
 				'tbused'     => 'nanx_biz_column_editor_cfg',
 				'dbcmdtype'  => 'update_or_insert',
 				'paracfg'    => array('edit_as_html' => 'edit_as_html'),
-				'wherecfg'                           => array('base_table' => 'hostby', 'field_e' => 'nodevalue')),
+				'wherecfg'   => array('activity_code'=>'ref_activity','base_table' => 'hostby', 'field_e' => 'nodevalue')),
 
 			'set_activity_curd' => array(
 				'successmsg' => 'success_set',
@@ -616,7 +652,7 @@ class Nanx extends CI_Controller {
 				'tbused'     => 'nanx_biz_column_editor_cfg',
 				'dbcmdtype'  => 'update_or_insert',
 				'paracfg'    => array('need_upload' => 'need_upload'),
-				'wherecfg'                          => array('base_table' => 'hostby', 'field_e' => 'nodevalue')),
+				'wherecfg'   => array('activity_code'=>'ref_activity','base_table' => 'hostby', 'field_e' => 'nodevalue')),
 
 			'delete_col' => array(
 				'successmsg' => 'success_delete_col',
@@ -631,7 +667,7 @@ class Nanx extends CI_Controller {
 				'paracfg'    => array(
 					'usedtable'         => 'hostby',
 					'orgincol'          => 'nodevalue',
-					'newcolname'        => 'input_0',
+					'newcolname'        => 'newcolname',
 					'field_def' => 'field_def')),
 
 			 
@@ -654,14 +690,14 @@ class Nanx extends CI_Controller {
 				'successmsg' => 'success_rename_table',
 				'dbcmdtype'  => 'rename_table',
 				'tbused'     => 'dependnextarray',
-				'paracfg'    => array('usedtable' => 'nodevalue', 'newtable' => 'input_0'),
+				'paracfg'    => array('usedtable' => 'nodevalue', 'newtable' => 'newtable'),
 			),
 
 			'copy_table' => array(
 				'successmsg' => 'success_duplicate_table',
 				'dbcmdtype'  => 'copy_table',
 				'tbused'     => 'dependnextarray',
-				'paracfg'    => array('usedtable' => 'nodevalue', 'newtable' => 'input_0'),
+				'paracfg'    => array('usedtable' => 'nodevalue', 'newtable' => 'newtable'),
 			),
 
 			'set_col_order' => array(
@@ -718,8 +754,9 @@ class Nanx extends CI_Controller {
 				'dbcmdtype'  => 'drop_table',
 				'tbused'     => 'dependnextarray',
 				'paracfg'    => array('usedtable' => 'table'),
-			),
-			'null' => array());
+			)
+			//'null' => array()
+			);
 		return $cfg;
 	}
 
@@ -761,7 +798,7 @@ class Nanx extends CI_Controller {
 				'dbcmdtype' => 'insert',
 				'paracfg'   => array(
 					'activity_code'    => 'hostby',
-					'btn_name'         => 'input_0',
+					'btn_name'         => 'btn_name',
 					'activity_for_btn' => 'nanxdropdown_0')),
 
 			'dnd_user_role_add_activity' => array(
@@ -834,7 +871,7 @@ class Nanx extends CI_Controller {
 				'user_role_under_acls'),
 
 			'dnd_user_role_add_sql_activity' => array('src' => 'activity_sql', 'target' =>
-				'user_role_under_acls'),
+				'user_role_under_acls'), 
 
 			'dnd_user_role_add_html_activity' => array('src' => 'activity_html', 'target' =>
 				'user_role_under_acls'),
@@ -844,7 +881,7 @@ class Nanx extends CI_Controller {
 
 			'add_user_to_role' => array('src' => 'user', 'target' => 'user_role'),
 		);
-		return $cfg;
+		return $cfg; 
 	}
 
 	function getRawTbnameByPid($pid) {
@@ -867,6 +904,18 @@ class Nanx extends CI_Controller {
 
 		echo $result;
 		return;
+	}
+
+	function retrieve_field_cfg(){
+		$p = (array ) json_decode(file_get_contents('php://input'));
+		$opcode_mask=$p['opcode_mask'];
+		$action_cfg = $this->actionCfg()[$opcode_mask];
+        $wherecfg=$this->getWhereCfg($action_cfg,$p);
+        
+
+        $tbused=$action_cfg['tbused']; 
+        $current_cfg=$this->db->get_where($tbused,$wherecfg)->row_array();
+        echo   json_encode($current_cfg);
 	}
 
 	function getFixedData($action_cfg, $data_received) {
@@ -898,20 +947,21 @@ class Nanx extends CI_Controller {
 			$data_fixed = $this->getDefalultValue($data_received);
 		}
 
-		// if ($opcode == 'set_to_me') {
-
-		// 	if(  !array_key_exists('combo_table',$data_fixed[0])    ){$data_fixed[0]['combo_table']='';}
-		// 	if (strlen($data_fixed[0]['combo_table']) == 0) {
-		// 		$data_fixed[0]['combo_table'] = 'nanx_user';
-		// 		$data_fixed[0]['list_field']  = 'staff_name';
-		// 		$data_fixed[0]['value_field'] = 'pid';
-		// 	}
-		// }
+	 
 
 		return $data_fixed;
 	}
 
 	function getWhereCfg($action_cfg, $data_received) {
+        
+        
+        if (array_key_exists('activity_code', $data_received)){
+           if (!array_key_exists('ref_activity', $data_received)){
+                   $data_received['ref_activity']=$data_received['activity_code'];
+                }
+        }
+        
+        
 		if (array_key_exists('wherecfg', $action_cfg)) {
 			$wherecfg = $action_cfg['wherecfg'];
 			foreach ($wherecfg as $key => $refer_key) {
@@ -920,7 +970,11 @@ class Nanx extends CI_Controller {
 			    	$refer_key=str_replace (DIRECT_STRING_VALUE, '', $refer_key);
                     $wherecfg[$key] = $refer_key;
 			    }else{
-                 $wherecfg[$key] = $data_received[$refer_key];
+
+                     if( array_key_exists($refer_key, $data_received)   ){
+						$wherecfg[$key] = $data_received[$refer_key];
+
+                    } 
 			    }
 			}
 			return $wherecfg;
@@ -929,6 +983,11 @@ class Nanx extends CI_Controller {
 
     function do_precheck($action_cfg,$data_received)
     {
+
+    	$opcode=$data_received['opcode']; 
+
+
+
         if($action_cfg['pre_check_func']=='check_have_produce_col'){
           $pre_check=false;
           $pre_check=call_user_func_array( array($this,'check_have_produce_col'),  array( $data_received ) );
@@ -940,6 +999,35 @@ class Nanx extends CI_Controller {
 								'errmsg'  => $this->lang->line('only_one_col_be_produce_col'));
     			return $res;
           }
+
+
+		if($action_cfg['pre_check_func']=='cal_check'){
+          $pre_check=false;
+          $pre_check=call_user_func_array( array($this,'cal_check'),  array( $data_received ) );
+          		$res = array(
+								'success' => $pre_check,
+								'opcode'  => $opcode,
+								'msg'     => $this->lang->line('sql_syntax_error'),
+								'errcode' => -1,
+								'errmsg'  => $this->lang->line('sql_syntax_error'));
+    			return $res;
+          }
+ 
+
+
+
+         if($action_cfg['pre_check_func']=='sql_syntax'){
+          $pre_check=false;
+          $pre_check=call_user_func_array( array($this,'sql_syntax'),  array( $data_received ) );
+          		$res = array(
+								'success' => $pre_check,
+							//	'opcode'  => $opcode,
+								'msg'     => $this->lang->line('sql_syntax_error'),
+								'errcode' => -1,
+								'errmsg'  => $this->lang->line('sql_syntax_error'));
+    			return $res;
+          }
+
 
         if($action_cfg['pre_check_func']=='filter'){
             $pre_check=false;
@@ -956,9 +1044,45 @@ class Nanx extends CI_Controller {
         }      
     }
 
+
+ 
+
+   function cal_check($para)
+	{
+ 
+     
+    $tb=$para['hostby'];
+    $col=$para['nodevalue'];
+    $cal=$para['cal_string'];
+    $sql=" update $tb set $col =$cal where 1=2";
+
+    $check=true;
+    
+    @$res=$this->db->query($sql);
+    $errno=$this->db->_error_number();  
+	if(!0==$errno){$check=false;}
+	return $check;
+	}
+
+
+   function sql_syntax($para)
+	{
+    $check=true;
+    $pid=$para['hostby'];
+    $sql="select base_table from nanx_activity where pid=$pid ";
+	$filter=$para['view_filter'];
+    $row=$this->db->query($sql)->row_array();
+    $bstable=$row['base_table'];
+    $sql=" select * from $bstable where  $filter limit 1 ";
+    @$res=$this->db->query($sql);
+    $errno=$this->db->_error_number();  
+	if(!0==$errno){$check=false;}
+	return $check;
+	}
+
+
 	function check_have_produce_col($para)
 	{
-   
     $check=false;
     $pid=$para['pid'];
     $sql="select base_table from nanx_activity where pid=$pid";
@@ -1090,20 +1214,13 @@ class Nanx extends CI_Controller {
 					'create_table'))) {
 			$this->rdbms_action($dbcmdtype, $data_fixed);
 		}
-
-		//set_activity_order
-
+ 
 
       if  ($dbcmdtype=='set_activity_order')
        {
       		$this->set_activity_order($data_fixed);
        } 
-	 
-
-
-
-
-
+	  
 		if ($dbcmdtype == 'update_file_content') {
 			$fname = $data_fixed[0]['file'];
 		    $os_path=$data_fixed[0]['os_path'];
@@ -1377,7 +1494,10 @@ class Nanx extends CI_Controller {
 				'filter_field' => $para['filter_field_' . $i],
 				'level'        => $i);
 		}
+
 		return $records;
+		//return null;
+		//return array('lines'=>$records);
 	}
  
  
@@ -1397,9 +1517,6 @@ class Nanx extends CI_Controller {
 		}
 		return $records;
 	}
-
-
-
 
 
 
@@ -1560,7 +1677,7 @@ class Nanx extends CI_Controller {
 			'success'    => true,
 			'msg'        => '',
 			'combo_cfg'  => $combo_cfg,
-			'follow_cfg' => $follow_cfg);
+			'server_resp' => $follow_cfg);
 		echo json_encode($combo_and_follow_cfg);
 	}
 
@@ -1778,7 +1895,7 @@ class Nanx extends CI_Controller {
 		return $sql;
 	}
 
-	function getTriggerGroup() {
+	function retrieveTriggerGroup() {
 		$post = file_get_contents('php://input');
 		$para = (array ) json_decode($post);
 		$w    = array('base_table' => $para['hostby'], 'group_id' => $para['value']);
@@ -1788,6 +1905,7 @@ class Nanx extends CI_Controller {
 		$ret  = array(
 			'success'     => true,
 			'server_resp' => $rows,
+			'group_id'=>$para['value'],
 			'errmsg'      => null);
 
 		echo json_encode($ret);
@@ -1808,9 +1926,7 @@ class Nanx extends CI_Controller {
 
 		echo json_encode($ret);
 	}
-
-
-
+ 
 
 	function resize_image($file, $w, $h, $crop = false) {
 		list($width, $height) = getimagesize($file);
@@ -1850,28 +1966,12 @@ class Nanx extends CI_Controller {
 		$role_code=$act_list_cfg['nodevalue'];
 		$act_list=$act_list_cfg['extradata']->data;
 
-      
         foreach ($act_list as $key => $one) {
-
-
         	$object = array('display_order'=>$key);
             $this->db->where('role_code', $role_code);
             $this->db->where('activity_code', $one->value);
             $this->db->update('nanx_user_role_privilege', $object); 
-
-
-
- 
         }
-
-
 	}
-
-
 }
-
-
-
-
-
 ?>

@@ -22,7 +22,7 @@ class Curd extends CI_Controller
      }
     
     function updateData()
-    {
+    { 
         $post    = file_get_contents('php://input');
         $p       = (array) json_decode($post);
      
@@ -140,7 +140,7 @@ class Curd extends CI_Controller
         if( count($hooks)==0){return true;}
 
         $check_result=true; 
-
+ 
         foreach ($hooks  as $one_hook) {
 
             $model=$one_hook['extra_ci_model'];
@@ -168,43 +168,31 @@ class Curd extends CI_Controller
     function addData()
     {  
 
-         
         $post    = file_get_contents('php://input');
         $p       = (array) json_decode($post);
         $actcode = $p['actcode'];
-
         $this->load->model('MHooks');
         $hooks=$this->MHooks->getHooksbyActcode($actcode,'add');
-        
-
         $before=$hooks['before'];
         $after=$hooks['after'];
         $checks=$hooks['checks'];
-
         $check_result=$this->hookhandler($checks,$p,'add',true);
-        
         if($check_result==false){
-
               $resp = array(
                 'success' => false,
                 'msg'=>'单据号不存在'
-                
-             );
+             ); 
             echo json_encode($resp);
             return;
         }
         
-
         $this->hookhandler($before,$p,'add');
-
-
-
         $this->write_notify($actcode, 'add');
         $base_table = $p['table'];
         $rawData    = (array) $p['rawdata'];
         $this->db->insert($base_table, $rawData);
         $errno = $this->db->_error_number();
-        if ($errno == 0) {
+        if ($errno == 0) { 
             $resp = array(
                 'success' => true,
                 'msg' => $this->lang->line('success_add_table_data')
@@ -217,9 +205,6 @@ class Curd extends CI_Controller
         }
 
         $this->hookhandler($after,$p,'add');
-
-
-
         $this->write_session_log('add', $p, '');
         echo json_encode($resp);
     }
@@ -306,7 +291,7 @@ class Curd extends CI_Controller
         
         if ($action == 'add') {
             $action = $this->lang->line('operation_add');
-        }
+        } 
         if ($action == 'update') {
             $action = $this->lang->line('operation_update');
         }
@@ -316,7 +301,7 @@ class Curd extends CI_Controller
         date_default_timezone_set('PRC');
         $datesend = date('Y-m-d H:i:s');
         $msgs     = $this->db->query($sql)->result_array();
-        if ($msgs) {
+        if ($msgs) { 
             for ($i = 0; $i < count($msgs); $i++) {
                 $operator = $msgs[$i]['operator'];
                 $act      = $msgs[$i]['grid_title'];
@@ -331,9 +316,8 @@ class Curd extends CI_Controller
                 $this->db->insert('nanx_sms', $msg_send);
             }
         }
-    }
-    
-    
+    } 
+
     function write_session_log($type, $p, $old_data)
     {
         
@@ -356,7 +340,7 @@ class Curd extends CI_Controller
         );
         
         switch ($type) {
-            case 'add':
+            case 'add': 
                 $log_data['pids'] = '';
                 
                 break;
@@ -367,8 +351,7 @@ class Curd extends CI_Controller
             
             case 'update':
                 $log_data['pids'] = '';
-                //  $log_data['rawdata']= array2string( (array)($p['rawdata']));
-                
+                 
                 $log_data['old_data'] = array2string($old_data);
                 
                 break;
@@ -377,8 +360,6 @@ class Curd extends CI_Controller
                 break;
         }
         $this->db->insert('nanx_session_log', $log_data);
-        
-        
     }
     
     function getDatetimeFiled($table)
@@ -386,7 +367,7 @@ class Curd extends CI_Controller
         $sql2      = "SELECT  C.`COLUMN_NAME`  FROM information_schema.`COLUMNS` C where  table_schema='oss'  and  table_name='$table' and DATA_TYPE='datetime'";
         $dt_fields = $this->db->query($sql2)->result_array();
     }
-    
+     
     function checkDateFmt($array, $cols)
     {
         $check = true;

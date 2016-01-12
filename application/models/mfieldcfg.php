@@ -160,21 +160,21 @@ class MFieldcfg  extends CI_Model{
      $common=$common1; 
      }
 
-
-
-
      if(count($common)>0)
      {
         unset($common['pid']);
         unset($common['base_table']);
         unset($common['field_e']);
+        $common['found']=true;
+
      }
     else
      {
       $common=array();
+      $common['found']=false;
      }
-     $common['rowbasevalue']=null;
 
+     $common['rowbasevalue']=null;
      return $common;
   }
  

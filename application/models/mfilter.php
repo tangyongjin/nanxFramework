@@ -1,6 +1,5 @@
 <?php
 
-
 class MFilter extends CI_Model
 {
 
@@ -65,7 +64,7 @@ class MFilter extends CI_Model
           'nanx_biz_column_follow_cfg',
           'nanx_biz_column_trigger_group',
           'nanx_biz_tables',
-          'nanx_lang',
+          'nanx_country',
           'nanx_session_log',
           'nanx_shadow',
           'nanx_sms',
