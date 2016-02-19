@@ -124,7 +124,7 @@ class Tree extends CI_Controller {
 
 			'tables' => array('sql' =>
 				"select  TABLE_NAME as value,  TABLE_NAME as  text ,'table' as category from information_schema.TABLES
-                        where table_schema='SCHEMA_REPLACE' and  TABLE_NAME    like  'SCHEMA_REPLACE%'",
+                        where table_schema='cloud_SCHEMA_REPLACE' and  TABLE_NAME    like  'SCHEMA_REPLACE%'",
 				'leaf' => false),
 
 			'buttons' => array('sql' =>
@@ -165,21 +165,21 @@ class Tree extends CI_Controller {
                        COLUMN_TYPE as field_def,
                        '#value' as 'hostby',
                        if(COLUMN_KEY='PRI','primary_column','column') as category  from
-                      `information_schema`.`COLUMNS` where TABLE_SCHEMA ='SCHEMA_REPLACE' and
+                      `information_schema`.`COLUMNS` where TABLE_SCHEMA ='cloud_SCHEMA_REPLACE' and
                        TABLE_NAME ='#value'", 'leaf' => true),
 
 			'raw_table' => array('sql' =>
 				"select COLUMN_NAME  as value, COLUMN_TYPE as column_definition ,concat( COLUMN_NAME,'    ','(', COLUMN_TYPE,')') as  text ,
                        '#value' as 'hostby',
                        if(COLUMN_KEY='PRI','primary_column','column') as category  from
-                      `information_schema`.`COLUMNS` where TABLE_SCHEMA ='SCHEMA_REPLACE' and
+                      `information_schema`.`COLUMNS` where TABLE_SCHEMA ='cloud_SCHEMA_REPLACE' and
                        TABLE_NAME ='#value'", 'leaf' => true),
 
 			'table_columns' => array('sql' =>
 				"select COLUMN_NAME  as value,COLUMN_NAME as  text ,
                        '#value' as 'hostby',
                        if(COLUMN_KEY='PRI','primary_column','column') as category  from
-                      `information_schema`.`COLUMNS` where TABLE_SCHEMA ='SCHEMA_REPLACE' and
+                      `information_schema`.`COLUMNS` where TABLE_SCHEMA ='cloud_SCHEMA_REPLACE' and
                        TABLE_NAME ='#value'", 'leaf' => true),
 
 			'activitys' => array('sql' =>
@@ -280,6 +280,7 @@ class Tree extends CI_Controller {
 
 		$this->load->model('MSystempara');
 		$APP_PREFIX            = $this->MSystempara->getCfgItem('APP_PREFIX');
+ 		 
 		$schema_based_category = array(
 			'fks',
 			'tables',
@@ -335,6 +336,8 @@ class Tree extends CI_Controller {
 
 	function getCategoryResult($tree_request) {
 
+        
+        
 		if (count($tree_request) == 0) {
 			return null;
 		}
@@ -343,6 +346,7 @@ class Tree extends CI_Controller {
 		$category       = $tree_request['category_to_use'];
 		$subCategoryCfg = $trees[$category];
 		if (array_key_exists('sql', $subCategoryCfg)) {
+            
 			$res = $this->getCategoryResultBySqls($subCategoryCfg, $tree_request);
 		} else {
 			$res = $this->getSubCategorybyMethod($subCategoryCfg, $tree_request);
@@ -374,6 +378,9 @@ class Tree extends CI_Controller {
 			$sql  = array($sql);
 			$leaf = array($leaf);
 		}
+
+		// debug( $sql);
+
 		$total_result = array();
 		for ($i = 0; $i < count($sql); $i++) {
 			$result       = $this->getCategoryResultBySql($sql[$i], $treeRequest, $leaf[$i]);

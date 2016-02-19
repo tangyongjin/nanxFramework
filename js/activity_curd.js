@@ -1,14 +1,11 @@
 Ext.Ajax.addListener("requestcomplete",function(conn, response, options, eOpts){  
-    var kickout = response.getResponseHeader('kickoutlogin');  
-    //console.log(kickout)
-
-
-    if (kickout =='kickoutlogin'){
-         window.location.href=AJAX_ROOT+'home/logout'
+    if (typeof response.getResponseHeader == 'function') {
+          var kickout = response.getResponseHeader('kickoutlogin');  
+          if (kickout =='kickoutlogin'){
+                 window.location.href=AJAX_ROOT+'home/logout'
+          }
     }
-
-   
-
+     
 },this);  
 
 
@@ -1159,13 +1156,9 @@ Act.prototype.getLayoutedForms=function(total_cfg,optype,row,orgin_act){
                         var colsCfg_found=master_act.colsCfg[x];
                     }
                 }
- 
-                 
-
-                 var item_one=Fb.getFieldEditor(master_act,optype,colsCfg_found,row,whoami_cfg);
-         
-              
                 
+                var item_one=Fb.getFieldEditor(master_act,optype,colsCfg_found,row,whoami_cfg);
+         
                 if (item_one){
                     var tmp={};
                     tmp.layout='form';
@@ -1191,34 +1184,7 @@ Act.prototype.getLayoutedForms=function(total_cfg,optype,row,orgin_act){
 
     return  all_lines;
 }
-
-// Act.prototype.fixLayout=function(type){
-//     var pid_found=false;
-//     if (this.layoutCfg.length==0){
-//         for (var i=0;i<this.colsCfg.length;i++){
-//             if (this.colsCfg[i].field_e=='pid'){
-//                 pid_found=true;
-//             }
-//             this.layoutCfg.push({
-//                 row:i,
-//                 field_list:this.colsCfg[i].field_e
-//             });
-//         }
-//     } else{
-//         for(i=0;i<this.layoutCfg.length;i++){
-//             var fields=this.layoutCfg[i].field_list.split(",")
-//             if (fields.indexOf('pid')!==-1){
-//                 pid_found=true;
-//             }
-//         }
-//     }
-//     if((type=='update')&&(!pid_found)){
-//         this.layoutCfg.push({
-//             row:this.layoutCfg.length+1,
-//             field_list:'pid'
-//         });
-//     }
-// }
+ 
 
 
 Act.prototype.fixLayout=function(type,orgin_act){
@@ -1312,8 +1278,8 @@ Act.prototype.editData=function(btn){
         return false;
     }
     this.fixLayout('update',this);
-    var x=this.getLayoutedForms(this, 'update', userRecord[0]);
-    var w=this.getLayoutWidth(x)*1.0;
+    var all_fields_form=this.getLayoutedForms(this, 'update', userRecord[0]);
+    var w=this.getLayoutWidth(all_fields_form)*1.0;
     var updateForm =new Ext.form.FormPanel({
         xtype:'form',
         id:'update_form',
@@ -1329,7 +1295,7 @@ Act.prototype.editData=function(btn){
             allowBlank:false,
             width:200
         },
-        items: x 
+        items: all_fields_form 
     });
     this.actionWin('update', updateForm);
 }

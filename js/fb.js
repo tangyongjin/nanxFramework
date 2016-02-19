@@ -122,6 +122,8 @@ Fb.toggle_combo=function(togglefalg)
 
      var fname = field.value.split('/').pop();
      var ftype=Fb.getFileType(fname);
+
+     console.log(ftype)
      if (ftype == 'img'){
          var box = {
              xtype: 'box',
@@ -798,16 +800,11 @@ Fb.toggle_combo=function(togglefalg)
  };
 
  Fb.findSlaves = function(form, gpid, level, direct) {
-
-
-     
-
-
+ 
      if(!form){return []}
      var found = [];
      var slaves = form.find('group_id', gpid);
-     console.log('---->');
-     console.log(slaves);
+    
      
 
      for (i = 0; i < slaves.length; i++) {
@@ -1262,10 +1259,7 @@ Fb.getWhoami=function()
 
 
   Fb.getFieldEditor = function(master_act,op_type, one_col_cfg, row,whoami_cfg) {
-     
-       
-         
-     
+      
      this.determineOriginalValue(op_type, one_col_cfg, row);
      var readonly_flag = false;
      var skip_flag = false;
@@ -1276,35 +1270,28 @@ Fb.getWhoami=function()
      
      if(  one_col_cfg.editor_cfg.hasOwnProperty('readonly')){ 
         if(one_col_cfg.editor_cfg.readonly=='1')
-
         readonly_flag=true;
-     
-
      }
 
      if (one_col_cfg.editor_cfg.is_produce_col == 1){ readonly_flag = true;} 
      if ((one_col_cfg['field_e'] == 'pid') && (op_type == 'add')) {skip_flag = true;}
      if (skip_flag){return null;}
      
-     
-    
-
     if ((one_col_cfg['field_e'] == master_act.cfg.filter_field) && (op_type == 'add')) {
          return [this.getInheritEditor(one_col_cfg, master_act.cfg.filter_value)];
      }
 
-    
-      
      if (!Ext.isEmpty(one_col_cfg.editor_cfg.trigger_cfg)) {
          return [Fb.getTriggerEditor(  one_col_cfg, row, readonly_flag,whoami_cfg )];
      } 
      
+     
 
-     if (one_col_cfg.editor_cfg.need_upload == 1) {
+     if (one_col_cfg.editor_cfg.need_upload == 1) { 
          var cfg = {
              label: one_col_cfg.display_cfg.field_c,
              name: one_col_cfg['field_e'],
-             value: one_col_cfg.editor_cfg.default_v
+             value: one_col_cfg.editor_cfg.ini
          };
          return [this.getAttachmentEditor(cfg)];
      }
@@ -1323,11 +1310,6 @@ Fb.getWhoami=function()
      }
 
      if ((one_col_cfg['edit_type'] == null) || (one_col_cfg['edit_type'] == '')) {
-
-
-        
-
-
          return [this.getDefaultEditor(master_act,one_col_cfg, readonly_flag)];
      }
 
@@ -1429,9 +1411,7 @@ Fb.getWhoami=function()
          fmdata['activity_pic']=picname;
      }
 
-
-
-    
+ 
      var extradata = getGridExtraData();
      if (extradata){
        if (extradata.mustHaveOneRow && 0==extradata.row_count)
