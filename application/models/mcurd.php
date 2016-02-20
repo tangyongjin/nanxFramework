@@ -35,7 +35,7 @@ class MCurd extends CI_Model{
 
     function getActivityData($p)
     {
-        
+         
         $this->load->model('MDatafactory'); 
         if (array_key_exists('code', $p)) {
             $code = $p['code'];
@@ -87,7 +87,8 @@ class MCurd extends CI_Model{
         {
 
              if (($activity_type == 'table') || ($p['code'] == 'NANX_TBL_DATA')) {
-               
+                
+
                 $who_is_who_found=$this->MDatafactory->getWhoIsWho_where($p);
  
 

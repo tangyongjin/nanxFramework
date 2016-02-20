@@ -21,6 +21,27 @@ class MRdbms extends CI_Model
         return $col_info;
     }
 
+
+
+    function check_filed_is_number_type($table,$field){
+      $fields = $this->MRdbms->getTableColInfo($table);
+      
+      $found=-1;
+      foreach ($fields as $key => $one_field) {
+          if( $one_field['field_name']== $field ){
+             $found=$key;
+          }
+      }
+      $datatype= $fields[$found]['datatype'];
+      $number_types=array('int','tinyint','smallint','mediumint','bigint','float','double','decimal');
+      if( in_array($datatype, $number_types)  ){
+        return true;
+      }else
+      {
+        return false;
+      }
+    }
+
      
 
     function get_table_creation_info_directshow()

@@ -166,14 +166,18 @@ class MDatafactory extends CI_Model
        if ($row)
        {
         $main_table_field=$row['field_e'];
+        
         $sql_who_is_who=" $maintable.$main_table_field='$whoami'";
-        }
+       }
        return $sql_who_is_who;
     }
     
     function getWhoIsWho_where($p)
     {
-    
+
+      
+
+      $this->load->model('MRdbms');
       if(! array_key_exists('whoami', $p) ) {return '';}  
       $sql_who_is_who='';  
       $who_is_who=$p['who_is_who'];
@@ -188,9 +192,17 @@ class MDatafactory extends CI_Model
               $row=$this->db->query($sql)->row_array();
               if($row){
                 $main_table_field=$row['field_e'];
-                $sql_who_is_who=" $maintable.$main_table_field = $who_is_who_value";
+
+                $field_is_number_type = $this->MRdbms->check_filed_is_number_type($maintable,$main_table_field );
+                if($field_is_number_type){
+                 $sql_who_is_who=" $maintable.$main_table_field = $who_is_who_value";
+                }
+                else{
+                 $sql_who_is_who=" $maintable.$main_table_field ='".$who_is_who_value."'";
+                }
                } 
-              }
+            }
+
      return $sql_who_is_who;
     }
 

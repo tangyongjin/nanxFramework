@@ -1,0 +1,26 @@
+bugfix history
+
+
+tree.php:
+  修改system_user sql 语句 :
+
+'system_users' => array('sql' =>
+				"select user as value, IFNULL(staff_name,user) as text ,'system_user' as category from nanx_user ",
+				'leaf' => true),
+
+因为staff_name可能为空(null)
+
+
+mdatafactory.php:
+
+getWhoIsWho_where :
+
+   $sql_who_is_who=" $maintable.$main_table_field = $who_is_who_value";
+   要考虑 who_is_who_value 是字符型号的情况.
+
+
+
+mrdbms.php:
+
+增加函数:
+check_filed_is_number_type

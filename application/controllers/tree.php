@@ -92,7 +92,7 @@ class Tree extends CI_Controller {
 				'leaf'     => true),
 
 			'system_users' => array('sql' =>
-				"select user as value,  staff_name as text,'system_user' as category from nanx_user ",
+				"select user as value, IFNULL(staff_name,user) as text ,'system_user' as category from nanx_user ",
 				'leaf' => true),
 
 
