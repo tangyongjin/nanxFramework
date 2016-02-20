@@ -180,6 +180,8 @@ class MFieldcfg  extends CI_Model{
  
   function getFollowCfg($base_table,$field)
 	{
+    //echo $field ;
+
     $where=array(
       'base_table'=> $base_table,
       'field_e' => $field

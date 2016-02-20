@@ -1683,7 +1683,7 @@ Act.prototype.setLogo=function(grid){
       var fmv = {
              rawdata: {
                  'opcode': 'set_logo',
-                 'input_0': picname,
+                 'picfile': picname,
                  'key': 'COMPANY_LOGO'
              }
          };

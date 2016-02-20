@@ -952,6 +952,21 @@ class Nanx extends CI_Controller {
 		return $data_fixed;
 	}
 
+	function getTriggerGroup() {
+		$post = file_get_contents('php://input');
+		$para = (array ) json_decode($post);
+		$w    = array('base_table' => $para['hostby'], 'group_id' => $para['value']);
+		$this->db->where($w);
+		$this->db->order_by('level');
+		$rows = $this->db->get('nanx_biz_column_trigger_group')->result_array();
+		$ret  = array(
+			'success'     => true,
+			'server_resp' => $rows,
+			'errmsg'      => null);
+
+		echo json_encode($ret);
+	}
+
 	function getWhereCfg($action_cfg, $data_received) {
         
         
@@ -1662,13 +1677,26 @@ class Nanx extends CI_Controller {
 		$post  = file_get_contents('php://input');
 		$para  = (array ) json_decode($post);
 		$where = array('field_e' => $para['value'], 'base_table' => $para['hostby']);
+
+ 
 		$this->db->where($where);
 		$combo_cfg = $this->db->get('nanx_biz_column_trigger_group')->row_array();
 		if (count($combo_cfg) > 0) {
+
+
+
+
 			$combo_table      = $combo_cfg['combo_table'];
 			$where_for_follow = array('base_table' => $para['hostby'], 'combo_table' => $combo_table);
+
+			     
+
 			$this->db->where($where_for_follow);
 			$follow_cfg = $this->db->get('nanx_biz_column_follow_cfg')->result_array();
+
+           
+
+
 		} else {
 			$follow_cfg = array();
 		}
@@ -1677,7 +1705,9 @@ class Nanx extends CI_Controller {
 			'success'    => true,
 			'msg'        => '',
 			'combo_cfg'  => $combo_cfg,
+			'follow_cfg' => $follow_cfg,
 			'server_resp' => $follow_cfg);
+
 		echo json_encode($combo_and_follow_cfg);
 	}
 

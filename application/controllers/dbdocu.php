@@ -6,42 +6,46 @@ class Dbdocu extends CI_Controller {
 
     function index()
     {
-       //debug($_SERVER) ;
-
-      echo '<a href=http://'.$_SERVER['SERVER_NAME'].$_SERVER['REQUEST_URI'].'/lang_js'.">lang_js </a>"  ;
+       
+  
+       
+        echo '<a href=http://'.$_SERVER['SERVER_NAME'].$_SERVER['REQUEST_URI'].'/lang_js'.">lang_js </a>"  ;
       
-      echo "<br/>";
+        echo "<br/>";
       
-      echo '<a href=http://'.$_SERVER['SERVER_NAME'].$_SERVER['REQUEST_URI'].'/lang_php'.">lang_php </a>"  ;
+        echo '<a href=http://'.$_SERVER['SERVER_NAME'].$_SERVER['REQUEST_URI'].'/lang_php'.">lang_php </a>"  ;
 
-      echo "<br/>";
+        echo "<br/>";
 
-      echo '<a href=http://'.$_SERVER['SERVER_NAME'].$_SERVER['REQUEST_URI'].'/help_html'.">help_html </a>"  ;
+        echo '<a href=http://'.$_SERVER['SERVER_NAME'].$_SERVER['REQUEST_URI'].'/help_html'.">help_html </a>"  ;
       
       
       
     }
 
     function help_html(){
+
  
     include "nanx.php" ;
     
     $nanx=new Nanx;
     $cfg=$nanx->actionCfg();
-   // debug($cfg) ;
 
     $keys=array_keys($cfg);
- 
+    $DOCUMENT_ROOT=$_SERVER['DOCUMENT_ROOT'];
 
-    $root=$_SERVER['DOCUMENT_ROOT'];
-    $help_dir=$root.'//cloud/standx/application/language/zh-cn/';
-        
+    
+    $help_dir=$DOCUMENT_ROOT.'/standx/application/language/zh-cn/';
+    
+
+    echo "help dir is ".$help_dir.'<br/>';
+    echo "下列帮助文件没有生成:<br/>" ;
 
     foreach ($keys as $key => $one_code) {
     	$one_html=$help_dir.$one_code.".html";
-
+          
     	if (!file_exists($one_html)){
-	echo $one_html."<br/>";
+	      echo $one_html."<br/>";
     	}
 
      
@@ -123,15 +127,24 @@ class Dbdocu extends CI_Controller {
 		$this->write($para);
 	}
 
+
+    function  get_eid_os_dir(){
+
+        $DOCUMENT_ROOT=$_SERVER['DOCUMENT_ROOT'] ;
+        $eid = $this->config->item('eidfolder');    
+        return $DOCUMENT_ROOT.'/'.$eid.'/';
+
+    }
+
+
 	function lang_js() {
+
 		$this->load->helper('file');
-
 		echo "/js/language/en/i18n.js  与 /js/language/zh-cn/i18n.js 比较: <br/>";
-		
+        
+        $eid_os_dir=$this->get_eid_os_dir();
 
-		$webroot = $this->config->item('webroot');
-		$ejs     = $webroot . '/js/language/en/i18n.js';
-
+     	$ejs     = $eid_os_dir.'js/language/en/i18n.js';
 		$e     = fopen($ejs, 'r');
 		$e_arr = array();
 		while (!feof($e)) {
@@ -144,7 +157,7 @@ class Dbdocu extends CI_Controller {
 			}
 		}
 
-		$cjs = $webroot . '/js/language/zh-cn/i18n.js';
+		$cjs = $eid_os_dir . '/js/language/zh-cn/i18n.js';
 
 		$c     = fopen($cjs, 'r');
 		$c_arr = array();
@@ -178,10 +191,12 @@ class Dbdocu extends CI_Controller {
         }
 
 		$sql = "select  concat('cp  en/i18n.js   ',id,'/i18n.js   ' ) as vv from  nanx_country where id not in ('en','zh-cn');";
-		echo $sql;
+		echo $sql.'<br/><br/>';
+
+
+        echo '<br/>拷贝下面的到jjs/language目录,执行<br/><br/>';
 
 		$bat = $this->db->query($sql)->result_array();
-		//debug($bat);
 		foreach ($bat as $cp) {
 			echo $cp['vv'] . "<br/>";
 		}
@@ -189,26 +204,21 @@ class Dbdocu extends CI_Controller {
 	}
 
 
-    function lang_help()
-    {
-
-    	$sql = "select  concat('cp  en/*.html   ',id,'/   ' ) as vv from  nanx_country where id not in ('en','zh-cn');";
-		$bat = $this->db->query($sql)->result_array();
-		foreach ($bat as $cp) {
-			echo $cp['vv'] . "<br/>";
-		}
-    }
+    
 
 	function lang_php() {
 
 		echo " /application/language/en/messages_lang.php  与 /application/language/zh-cn/messages_lang.php 比较: <br/>";
-		$webroot = $this->config->item('webroot');
-        require( $webroot . '/application/language/en/messages_lang.php' );
+
+		$eid_os_dir=$this->get_eid_os_dir();
+
+        require( $eid_os_dir . '/application/language/en/messages_lang.php' );
         $e_config=$lang;
         $e_arr=array_keys($e_config);
         debug($e_arr);
         unset($lang);
-        require( $webroot . '/application/language/zh-cn/messages_lang.php' );
+        
+        require( $eid_os_dir . '/application/language/zh-cn/messages_lang.php' );
         $c_config=$lang;
         $c_arr=array_keys($c_config);
         debug($c_arr);
@@ -235,6 +245,17 @@ class Dbdocu extends CI_Controller {
 		return;
 
 	}
+
+
+	 function lang_help()
+    {
+
+    	$sql = "select  concat('cp  en/*.html   ',id,'/   ' ) as vv from  nanx_country where id not in ('en','zh-cn');";
+		$bat = $this->db->query($sql)->result_array();
+		foreach ($bat as $cp) {
+			echo $cp['vv'] . "<br/>";
+		}
+    }
 
 	function write($cfg) {
 

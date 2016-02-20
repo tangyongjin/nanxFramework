@@ -298,7 +298,6 @@ class Tree extends CI_Controller {
 
 		$tree_request = $_REQUEST;
 
-
  
 
 		if (array_key_exists('category_to_use', $tree_request)) {
@@ -477,14 +476,12 @@ class Tree extends CI_Controller {
 
 		if ($method == 'get_model_methods') {
 
-		  $model_root=$this->config->item('webroot').'application/models/';
+         
+ 		  
           $model=$params['value'];
           $this->load->model($model);
-         
-
-          include_once( $model_root.$model.".php" ) ;
+          include_once( APPPATH.'/models/'.$model.".php" ) ;
           $class_methods=get_class_methods($model);
-
          if(($key = array_search('__construct', $class_methods)) !== false) {
           unset($class_methods[$key]);
          }

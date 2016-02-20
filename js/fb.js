@@ -409,6 +409,8 @@ Fb.toggle_combo=function(togglefalg)
  }
  
  Fb.addTriggerRow12_from_response = function(follow_cfg) {
+     console.log(follow_cfg);
+
      var current_form = Ext.getCmp('back_opform');
      for (var n = 0; n < follow_cfg.length; n++) {
          var field_2 = Fb.triggerRow12({
@@ -632,8 +634,6 @@ Fb.toggle_combo=function(togglefalg)
      var btn=Ext.getCmp('trigger_bar_button');
      var tfm = btn.findParentByType('form');
      
-     console.log('0000000000')
-
      tfm.insert(12,trigger_row);
      tfm.doLayout();
     }
@@ -865,32 +865,18 @@ Fb.toggle_combo=function(togglefalg)
          mode: 'local',
          store: store
      };
-
-
- 
-
-
      var combo = new Ext.form.ComboBox(combox_cfg);
-
      store.on('load', function() {
 
          var p = Ext.getCmp(combox_cfg.id);
-
- 
           if (cfg.ini) {
              p.setValue(cfg.ini);
              cfg.ini = null;
          } else {
              p.setValue(p.getValue());
          }
-
-
-
-
          var tfm = Ext.getCmp(combox_cfg.id).findParentByType('form');
          var tmp_v = combo.getValue();
- 
-         
 
          if (Ext.isEmpty(tmp_v)) {
              console.log('return 1111!!!!');
@@ -898,17 +884,9 @@ Fb.toggle_combo=function(togglefalg)
          }
          var current_rec = combo.findRecord(combo.valueField || combo.displayField, tmp_v);
          if(!current_rec){
-
-             console.log(combo);
-             console.log( tmp_v );
-
-              console.log('return 2222!!!!');
-        
-            return
+            return;
         }
          var current_v = current_rec.json[cfg.value_key_for_slave] || combo.getValue();
-        
-
          var x_group_id = combox_cfg.group_id;
          var level = combox_cfg.level;
          
@@ -1018,23 +996,17 @@ Fb.setJsonPath=function(obj,path, val) {
  }
 
  Fb.buildTreeStore = function(treecfg) {
-    
-    
-
      baseParaObj = {};
      baseParaObj.category_to_use = treecfg.category_to_use;
      baseParaObj.value = treecfg.value;
      
+
      var id = treecfg.id ? treecfg.id : Ext.id();
-
-
      if(  treecfg.hasOwnProperty('serial') )
      {
         id=id+'_'+treecfg.serial;
      }
-      
-     
-
+    
      var ds_auto = treecfg.hasOwnProperty('ds_auto') ? treecfg['ds_auto'] : true;
      var store = new Ext.data.JsonStore({
          proxy: new Ext.data.HttpProxy({
@@ -1744,7 +1716,147 @@ Fb.getWhoami=function()
  };
 
 
+ Fb.triggerRow12345 = function(cfg,meta5){
 
+ console.log(cfg);
+    
+     var hostcfg = {
+         item_type: 'combo_list',
+         id: 'field_e_' + cfg.serial,
+         value: cfg.base_table,
+         width:140,
+         displayField: 'text',
+         valueField: 'value',
+         category_to_use: 'biz_cols'
+     }
+     if(meta5&&meta5.field_e)hostcfg.ini=meta5.field_e;
+     
+
+
+      var store = Fb.buildTreeStore(hostcfg);
+
+
+     var host_combo = Fb.getBasicCombo(hostcfg, store);
+     group_id = 'TR_' + cfg.serial;
+     var combo_cfg = {
+         item_type: 'combo_group',
+         root_combox: {
+             id: 'combo_table_' + cfg.serial,
+             ds_auto: true,
+             group_id: group_id,
+             level: 1,
+             width:140,
+             nanx_type: 'root',
+             value_key_for_slave: 'value',
+             category_to_use: 'biz_tables' 
+         },
+         slave_comboxes: [{
+             id: 'list_field_' + cfg.serial,
+             ds_auto: false,
+             level: 2,
+             width:140,
+             group_id: group_id,
+             nanx_type: 'slave',
+             category_to_use: 'biz_cols'
+         }, {
+             id: 'value_field_' + cfg.serial,
+             ds_auto: false,
+             group_id: group_id,
+             level: 2,
+             width:140,
+             nanx_type: 'slave',
+             category_to_use: 'biz_cols'
+         }
+         ]
+     };
+     
+     if(meta5&&meta5.combo_table)combo_cfg.root_combox.ini=meta5.combo_table;
+     if(meta5&&meta5.list_field)combo_cfg.slave_comboxes[0].ini=meta5.list_field;
+     if(meta5&&meta5.value_field)combo_cfg.slave_comboxes[1].ini=meta5.value_field;
+     
+     
+     if(cfg.serial>1){
+     combo_cfg.slave_comboxes.push(
+     {
+             id: 'filter_field_' + cfg.serial,
+             ds_auto: false,
+             group_id: group_id,
+             level: 2,
+             width:140,
+             nanx_type: 'slave',
+             category_to_use: 'biz_cols'
+         });
+     }
+
+     if(meta5&&meta5.filter_field)combo_cfg.slave_comboxes[2].ini=meta5.filter_field;
+         
+         
+     var root_slave = Fb.getComboGroup(combo_cfg);
+     var btn_del = new Ext.Button({
+         text: i18n.remove,
+         id:Ext.id(),
+         serial:cfg.serial,
+         handler: function(){
+             var form = this.findParentByType('form');
+             var tr =form.find('nanx_type','trigger_row');
+             if(this.serial==tr.length)
+                 {
+                   this.ownerCt.ownerCt.remove(this.ownerCt);
+                 }
+         }
+     });
+
+     var field_link = new Ext.Container({
+         'id': 'followRow_'+Ext.id(),
+         'layout':'table',
+         'nanx_type':'trigger_row',
+         'style':'{margin-left:105px;}',
+         items:[btn_del,host_combo,root_slave]
+     });
+     return field_link;
+ }
+
+
+
+
+ Fb.getTriggerBar12345 = function(item,node) {
+
+
+     main_table=node.attributes.value;
+     
+     var dropdown_item_add = new Ext.Button({
+         text:i18n.add_trigger,
+         id:'trigger_bar_button',
+         handler: function() {
+             {
+
+                 var form = this.findParentByType('form');
+                 var trigger_rows =form.find('nanx_type','trigger_row');
+                 var newline = Fb.triggerRow12345({
+                     'serial': trigger_rows.length+1,
+                     'base_table': main_table
+                 });
+                 this.ownerCt.ownerCt.insert(12,newline);
+                 this.ownerCt.ownerCt.doLayout();
+             }
+         }
+     })
+    
+     var headers=['base_table_col','trigger_table','trigger_table_list','trigger_table_value','trigger_table_filter'];
+     var head_tb="<table><tr>";
+     for(var i=0;i<headers.length;i++)
+     {
+      head_tb+='<td width=140px>'+i18n[headers[i]]+'</td>';
+     }
+     head_tb+="</tr></table>";
+     var tb_c=new Ext.Container({html:head_tb});
+     var f = new Ext.Container({
+         fieldLabel:i18n.group_item,
+         layout:'table',
+      items:[dropdown_item_add,tb_c]
+     });
+     return f;
+ }
 
 Fb.setSingleField=function(jsondata, item) {
          if (item.path) {
@@ -2133,7 +2245,7 @@ Fb.setSingleField=function(jsondata, item) {
 
          case 'trigger_bar':
           
-             var f = Fb.getTriggerBar12345(item);
+             var f = Fb.getTriggerBar12345(item,node);
              break;
 
          case 'layout_panel':
