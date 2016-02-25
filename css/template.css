@@ -751,4 +751,11 @@ border-collapse:collapse;
     filter: progid:DXImageTransform.Microsoft.Shadow(Strength = 10, Direction = 135, Color = '#cccccc');
 }
 
+
+.icon > a img {
+    height: 48px;
+    width: auto;
+     
+}
+
  

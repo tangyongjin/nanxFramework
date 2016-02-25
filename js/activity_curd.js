@@ -228,6 +228,7 @@ Act.prototype.createActivityGridPanel=function(){
             },
             beforeedit:function(col){
                 console.log(this);
+                  console.log(col.record.data.config_key);
                 if (col.field=='pid'){
                     return false;
                 }
@@ -237,9 +238,19 @@ Act.prototype.createActivityGridPanel=function(){
                 }
 
                 if (this.id=='grid_NANX_SYS_CONFIG'){
+                    
+                    //APP_PREFIX VER SECRET_KEY
+
+
                   if( col.field=='config_key' || col.field=='config_memo' ||col.field=='memo_of_config_item'  ) {
                     return false;
-                  }                
+                  }        
+                   _colvar=col.record.data.config_key;
+                  if(_colvar=='APP_PREFIX' || _colvar=='VER' ||_colvar=='SECRET_KEY'  ) {
+                    return false;
+                  }        
+
+
                 }
             },
             afteredit:function(row){
