@@ -1,3 +1,5 @@
+/*fix browser*/
+
 function resize()
 {
     viewHigh=document.body.clientHeight;
