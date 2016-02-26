@@ -1075,8 +1075,21 @@ Fb.setJsonPath=function(obj,path, val) {
     }
  }
 
+ Fb.checkPidHidden=function(oneFieldCfg){
+    if ((oneFieldCfg.field_e=='pid')&&(oneFieldCfg.display_cfg.pidhidden)){
+      return true;
+   } 
+   else
+   {
+  return false;
+   }
+ }
+
  Fb.getDefaultEditor = function( master_act, oneFieldCfg,readonly_flag) {
 
+    _hide=Fb.checkPidHidden(oneFieldCfg);
+ 
+    console.log(oneFieldCfg);
     var that=this;
      var f_width = Fb.getFieldWidth(oneFieldCfg);
      var defaultEditor = {
@@ -1086,6 +1099,7 @@ Fb.setJsonPath=function(obj,path, val) {
          height: 25,
          value:oneFieldCfg.editor_cfg.ini,
          readOnly: readonly_flag,
+         hidden:_hide,
          xtype: 'textfield',
          blankText: i18n.not_allow_blank,
          onBlur :function(e,f,g,h)

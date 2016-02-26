@@ -459,10 +459,14 @@ Act.prototype.getOneColModel = function(colCfg) {
         editor = Fb.getDirectComboEditor(colCfg.editor_cfg.combo);
     }
     
-     
+        _hid=false;
+        if(colCfg.display_cfg.pidhidden){
+           _hid=true;
+        }
     var oneColModel = {
         header: colCfg['display_cfg']['field_c'] || colCfg['field_e'],
         dataIndex: colCfg['field_e'],
+        hidden:_hid,
         'asPic': colCfg.display_cfg.show_as_pic,
         editor: editor,
         renderer: (colCfg.display_cfg.show_as_pic == 1) ? function(v) {

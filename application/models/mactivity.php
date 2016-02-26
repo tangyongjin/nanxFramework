@@ -3,15 +3,31 @@
 class MActivity extends CI_Model
 {
 
+ 
+
     function skip_field($activity_code, $fields_e)
     {
+
         $this->load->model('MFieldcfg');
         $forbidden_fields = $this->MFieldcfg->getForbiddenFields($activity_code);
-        $fields_e         = array_diff($fields_e, $forbidden_fields);
+        if( in_array('pid', $forbidden_fields) ){
+            $pid_hidden=true;
+        }else
+        {
+            $pid_hidden=false;
+        }
+        $fields_e_not_forbidden         = array_diff($fields_e, $forbidden_fields);
         $res              = array_diff($fields_e, $forbidden_fields);
-        return $res;
+        $field_all=array(
+           'pid_hidden'=>$pid_hidden,
+           'NotForbidden'=>$fields_e_not_forbidden
+            );
+        return $field_all;
     }
     
+
+
+
     function getJSBtns($activity_code)
     {
         $this->db->where('activity_code', $activity_code);
@@ -253,8 +269,17 @@ class MActivity extends CI_Model
       
        if ($activity_type == 'table') {
             $para_array['transfer'] = true;
-            $fields_e               = $this->skip_field($activity_code, $this->db->list_fields($base_table));
+            $fields_e_with_pidforbidden_option = $this->skip_field($activity_code, $this->db->list_fields($base_table));
+
+
+            $fields_e=$fields_e_with_pidforbidden_option['NotForbidden'];
             $col_cfg = $this->MFieldcfg->getColsCfg($activity_code,$base_table, $fields_e, $para_array['transfer']);
+           
+            if( $fields_e_with_pidforbidden_option['pid_hidden'] ){
+               $pid_col_cfg = $this->MFieldcfg->getColsCfg($activity_code,$base_table,array('pid'), $para_array['transfer']);
+               $pid_col_cfg[0]['display_cfg']['pidhidden']=true;
+               $col_cfg=array_merge($pid_col_cfg,$col_cfg);
+            }
         }
 
         if ($activity_type == 'sql') {
