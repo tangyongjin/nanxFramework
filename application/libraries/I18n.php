@@ -49,7 +49,7 @@ class I18n  extends CI_Controller {
            $lang='en';
             }
             
-          if(in_array($lang,array('zh','zh-cn')))
+            if(in_array($lang,array('zh','zh-cn','zh-hans-cn')))
             {
            $lang='zh-cn';
             }

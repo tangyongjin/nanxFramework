@@ -893,6 +893,7 @@ class Nanx extends CI_Controller {
 	}
 
 	function index() {
+		 date_default_timezone_set('Asia/Chongqing');
 		$data_get_post = (array ) json_decode(file_get_contents('php://input'));
 		$data_recevied = (array ) $data_get_post['rawdata'];
 		$opcode        = $data_recevied['opcode'];
