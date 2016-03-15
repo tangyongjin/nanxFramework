@@ -319,5 +319,6 @@ hookname:'钩子名称',
 viewhook:'查看钩子',
 deletehook:'删除钩子',
 addhock:'增加钩子',
+set_activity_order:'设置活动次序',
 zzz:'zzz'
 }

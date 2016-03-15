@@ -52,7 +52,7 @@ $db['default']['hostname'] = '127.0.0.1';
 $db['default']['username'] = 'root';
 $db['default']['password'] = 'dongman';
 
-$db['default']['database'] = 'standx';
+$db['default']['database'] = 'cloud_standx';
 
 $db['default']['dbdriver'] = 'mysql';
 $db['default']['dbprefix'] = '';

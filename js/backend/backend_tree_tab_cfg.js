@@ -2119,6 +2119,44 @@ var contextMenu = [
         ]
     },
     {
+        category: ['user_role_under_acls'],
+        menus:[{
+            title:i18n.set_activity_order,
+            opcode:'set_activity_order',
+            place:'context',
+            itemcfg:
+            [{
+                item_type:'field',
+                label:i18n.table,
+                value:'#text'
+            }, 
+             {
+                item_type:'dndgrid',
+                gridlabel:i18n.col_reorder_help,
+                category_to_use:'activity_under_role',
+                dndgrid:true,
+                self_dnd:true,
+                grid_ext_id:'reorder_activity_order_grid',
+                value_reference:'value',
+                width:470,
+                fields: [
+                {
+                    column:'text',
+                    width:300,
+                    column_title:i18n.activity
+                },
+                {
+                    column:'value',
+                    hidden:true,
+                    column_title:i18n.activity
+                }
+                
+                 
+                ]
+            }]
+        }]
+    }, 
+    {
         category: ['user_under_role'],
         menus:[{
             title:i18n.remove_user_from_role,

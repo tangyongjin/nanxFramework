@@ -319,5 +319,6 @@ hook_type:'hook_type',
 viewhook:'View Hook',
 deletehook:'Delete Hook',
 addhock:'Add Hock',
+set_activity_order:'Set Activity order',
 zzz:'zzz'
 }

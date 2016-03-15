@@ -3,13 +3,17 @@
 
 class MInventory extends CI_Model{
 
-
+    
  
     function docu(){
         echo 'called' ;
         
     }
 
+    function check_if_can_input_log(){
+        echo 'called' ;
+        
+    }
 
    function  check_foreign_key($para){
      

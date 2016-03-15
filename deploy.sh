@@ -1,7 +1,7 @@
 
-#######
-clone from gitserver, and deploy local
-#######
+#clone from gitserver, and deploy local
+
+
 deploy()
 {
 echo "clean tmp dirs"
@@ -29,10 +29,17 @@ echo "deply to:/var/www/html/nanx_cloud/"$1
 cp -rp /tmp/standxgit/application  /var/www/html/nanx_cloud/$1/
 cp -rp /tmp/standxgit/js           /var/www/html/nanx_cloud/$1/
 
-
-
-
-
 }
-var="$1"
-deply "$var"
+
+
+if [ ! -n "$1" ] ;then  
+    echo "You must specify a folder to deploy"
+else  
+  var="$1"
+  deploy "$var"
+fi  
+
+
+
+
+
