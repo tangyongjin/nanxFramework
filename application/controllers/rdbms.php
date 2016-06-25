@@ -25,6 +25,82 @@ class Rdbms extends CI_Controller
 
  
 
+
+    function get_min_table_indexes($table)
+    {
+
+        $this->load->model('MRdbms');
+      //  $ret = $this->MRdbms->get_min_table_indexes($table);
+
+
+
+        $output = new stdClass();
+        $output->success = true;
+        $output->primary_keys = array();
+
+        $cols4index = array();
+        $table_columns = $this->getTableColumnNames($table);
+        foreach ($table_columns as $column)
+        {
+            $cols4index[] = $column;
+        }
+
+        $rows =  $this->MRdbms->getTableKeys($table);
+        $indexes = array();
+        for ($i = 0; $i < count($rows); $i++)
+        {
+
+            if (strtolower($rows[$i]['Key_name']) == 'primary')
+            {
+                $output->primary_keys[] = $rows[$i]['Column_name'];
+            }
+
+            $index = $this->MRdbms->index_with_key($rows[$i]['Key_name'], $indexes);
+            if ($index)
+            {
+                $index->columns = $index->columns . ', ' . $rows[$i]['Column_name'];
+                continue;
+            }
+
+            $index = new stdClass();
+
+            $index->index = $rows[$i]['Key_name'];
+            $index->columns = $rows[$i]['Column_name'];
+            $index->add_column = '';
+            $index->option = (!$rows[$i]['Non_unique']) ? 'UNIQUE' : (($rows[$i]['Index_type'] ==
+                'FULLTEXT') ? 'FULLTEXT' : '');
+            $indexes[] = $index;
+        }
+        $response = array();
+        $response['id'] = 1989;
+        $response['table'] = $table;
+        $response['server_resp'] = $output;
+        $response['rows'] = $indexes;
+        for ($j = 0; $j < count($indexes); $j++)
+        {
+            $response['rows'][$j]->pid = $j;
+        }
+
+
+        $response['cols4index'] = $cols4index;
+        $response['success'] = true;
+        $response[0] = array(
+            'pid' => 'pid',
+            'index' => 'index',
+            'columns' => 'columns',
+            'add_column' => 'add_column',
+            'option' => 'option');
+        return $response;
+    }
+
+
+
+       function getTableColumnNames($table)
+    {
+        $fields = $this->db->query("show columns from $table")->result_array();
+        return $fields;
+    }
+
  function get_min_table_indexes_directshow()
     {
         $post = file_get_contents('php://input');
