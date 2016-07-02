@@ -8,21 +8,24 @@ App.init = function(){
 
    
 App.bind = function() {
-        if (Ext.get('cpanel-left')){
-                Ext.get('cpanel-left').on('click', function(e, target) {
+
+  Ext.getBody().on('click', function(event, target){
+
+                        console.log('called');
                         var activity_type = target.getAttribute('activity_type');
                         var acode = target.getAttribute('id');
                         var fnname= target.getAttribute('fnname');
-                        service_url
-
-
                         var service_url= target.getAttribute('service_url');
                         var memo=target.getAttribute('memo');
                         App.route(activity_type, acode,fnname,service_url,memo);
-                }, this,{
-                        delegate: 'a.nanx-4-ext'
-                })
-        }
+        
+
+    }, this, {
+        delegate: '.nanx-4-ext a'
+    });
+
+        
+
 
         if (Ext.get('border-top')){
                 Ext.get('border-top').on('click', function(e, target){
@@ -124,6 +127,17 @@ App.route = function(activity_type, code,fnname,service_url,memo){
         if(activity_type=='service')
         	{
            Act_service(code,service_url,memo);
+          }
+
+     if(activity_type=='menugroup')
+          {
+           new Act({
+                'code': code,
+                'edit_type':'noedit',
+                'showwhere': 'autowin',
+                'tbar_type':'bar4menu',
+                'host': null
+                });
           }
 }
  

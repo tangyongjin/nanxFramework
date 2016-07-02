@@ -337,6 +337,10 @@ class MActivity extends CI_Model
             $activity_summary['sql_syntax_error']   = $col_cfg['sql_syntax_error'];
             $col_cfg=array();     
         }
+
+        if($activity_type=='menugroup'){
+           $activity_summary['data_url']='xmenu/getchild/'.$activity_code;
+        }
         
         $activity_summary['pidOrder']           = $this->getPidOrder($activity_code);
         $activity_summary['curdCfg']            = $this->getCURDcfg($activity_code);

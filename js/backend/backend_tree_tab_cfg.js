@@ -2120,7 +2120,8 @@ var contextMenu = [
     },
     {
         category: ['user_role_under_acls'],
-        menus:[{
+        menus:[
+        {
             title:i18n.set_activity_order,
             opcode:'set_activity_order',
             place:'context',
@@ -2154,7 +2155,57 @@ var contextMenu = [
                  
                 ]
             }]
-        }]
+        },
+        {
+            title:i18n.set_activity_menu,
+            opcode:'set_activity_menu',
+            place:'context',
+            width: 800,
+            height: 420,
+            itemcfg:
+            [{
+                item_type:'field',
+                label:i18n.table,
+                value:'#text'
+            }, 
+             {
+                item_type:'dndgrid',
+                gridlabel:i18n.col_reorder_help,
+                category_to_use:'activity_under_role',
+                dndgrid:true,
+                self_dnd:false,
+                grid_ext_id:'reorder_activity_order_grid',
+                value_reference:'value',
+                width:304,
+                fields: [
+                {
+                    column:'text',
+                    width:200,
+                    column_title:i18n.activity
+                },
+                {
+                    column:'value',
+                    hidden:true,
+                    column_title:i18n.activity
+                }
+                
+                 
+                ]
+            },
+            {
+      
+                item_type:'treeGrid' 
+               
+            
+            },
+
+            ]
+        },
+
+
+
+
+        ]
     }, 
     {
         category: ['user_under_role'],

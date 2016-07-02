@@ -126,6 +126,18 @@ class Nanx extends CI_Controller {
 				'wherecfg'   => array('activity_code' => 'hostby'),
 				'paracfg'                             => array('activity_code' => 'hostby', 'field' => 'field')),
 
+			 
+
+           'set_activity_menu' => array(
+				'successmsg' => 'success_set_forbidden_col',
+				'tbused'     => 'nanx_menu',
+				'dbcmdtype'  => 'delete_and_insert',
+				'batch_type' => 'comma',
+				'wherecfg'   => array('role_code' => 'nodevalue'),
+				'paracfg'                             => array('role_code' => 'nodevalue')),
+
+
+
 			'set_form_layout' => array(
 				'successmsg' => 'success_set_form_layout',
 				'tbused'     => 'nanx_activity_biz_layout',
@@ -708,18 +720,13 @@ class Nanx extends CI_Controller {
 			),
 
 
-			//set_activity_order
-
+ 
              'set_activity_order' => array(
 				'successmsg' => 'success_set',
 				'dbcmdtype'  => 'set_activity_order',
 				'tbused'     => 'dependnextarray',
 				'paracfg'    => array('nodevalue' => 'nodevalue', 'extradata' => 'extradata'),
 			),
-
-
-
-
 
 
 			'create_table_from_excel' => array(
@@ -948,6 +955,9 @@ class Nanx extends CI_Controller {
 			$data_fixed = $this->getDefalultValue($data_received);
 		}
 
+		if ($opcode == 'set_activity_menu') {
+			$data_fixed = $this->getTreeJson($data_received);
+		}
 	 
 
 		return $data_fixed;
@@ -1001,6 +1011,9 @@ class Nanx extends CI_Controller {
     {
 
     	$opcode=$data_received['opcode']; 
+
+        
+
 
 
 
@@ -1212,7 +1225,6 @@ class Nanx extends CI_Controller {
 		}
 
 		if ($dbcmdtype == 'delete_and_insert') {
-
 			$this->db->delete($tbused, $wherecfg);
 			if (count($data_fixed) > 0) {
 				$this->db->insert_batch($tbused, $data_fixed);
@@ -1532,6 +1544,44 @@ class Nanx extends CI_Controller {
 				);
 		}
 		return $records;
+	}
+
+
+	 function findchildren(&$ret,$a,$parent){
+         
+        
+         if( is_array($a) ){
+
+         }else
+         {
+         	$a=(array)$a;
+         }
+
+         foreach ($a['children'] as $key => $one_value) {
+        
+              $tmp=array('activity_code'=> $one_value->activity_code ,'grid_title'=>$one_value->text,'parent'=>$parent);
+              $ret[]=$tmp;
+               if( is_array($one_value) ){
+
+               }else{
+                  $one_value=(array)$one_value;
+               }  
+               $this->findchildren($ret,$one_value,$one_value['activity_code']);
+         }
+
+    }
+    
+
+	function getTreeJson($para){
+         $a=(array)$para['extradata'];
+         $ret=array();
+         $role_code=$para['nodevalue'];
+         $this->findchildren($ret,$a,null);
+         foreach ($ret as $key => $one_value) {
+         	 $ret[$key]['role_code']=$role_code;
+         }
+	     return $ret;
+    
 	}
 
 

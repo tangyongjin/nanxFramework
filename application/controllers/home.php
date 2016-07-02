@@ -4,7 +4,6 @@ if (!defined('BASEPATH'))
 class Home extends CI_Controller
 {
  
-
     function index()
     {
         
@@ -16,8 +15,64 @@ class Home extends CI_Controller
         $left          = $this->MUi->getActionBlock($activities);
         $page['left']  = $left;
         $page['right'] = 'jpanel_right';
+       
+        $allsession=$this->session->all_userdata();
+        $roles=$allsession['roles'][0]['role_code'];
+       
+
+
+        $page['bootstrap_menu']=$this->getThemeMenu($roles);
         $this->load->view('framework', $page);
         
+    }
+
+    function getThemeMenu($roles){
+        $this->load->model('MXmenu');
+        $menu_html=$this->MXmenu->getMenuByRole($roles); 
+        $bootstrap_menu='
+           <div  id="ul_menu"> 
+                <ul id="main-menu">
+                    <li class="current-menu-item"><a href="http://www.freshdesignweb.com">Home</a></li>
+                    <li class="parent">
+                        <a href="http://www.freshdesignweb.com/responsive-drop-down-menu-jquery-css3-using-icon-symbol.html">Server</a>
+                        <ul class="sub-menu">
+                            <li>
+                                <a class="parent" href="#"><i class="icon-file-alt"></i>IBM</a>
+                                <ul class="sub-menu">
+                                    <li><a href="http://www.freshdesignweb.com/responsive-drop-down-menu-jquery-css3-using-icon-symbol.html">Full Width</a></li>
+                                    <li><a href="http://www.freshdesignweb.com/responsive-drop-down-menu-jquery-css3-using-icon-symbol.html">Left Sidebar</a></li>
+                                    <li><a href="http://www.freshdesignweb.com/responsive-drop-down-menu-jquery-css3-using-icon-symbol.html">Right Sidebar</a></li>
+                                    <li><a href="http://www.freshdesignweb.com/responsive-drop-down-menu-jquery-css3-using-icon-symbol.html">Double Sidebar</a></li>
+                                </ul>
+                            </li>
+
+                            <li><a href="http://www.freshdesignweb.com/responsive-drop-down-menu-jquery-css3-using-icon-symbol.html"><i class="icon-wrench"></i>HP</a></li>
+                            <li><a href="http://www.freshdesignweb.com/responsive-drop-down-menu-jquery-css3-using-icon-symbol.html"><i class="icon-credit-card"></i>Dell</a></li>
+                            <li><a href="http://www.freshdesignweb.com/responsive-drop-down-menu-jquery-css3-using-icon-symbol.html"><i class="icon-gift"></i> Icons</a></li>
+                            
+                        </ul>
+                    </li>
+                    <li><a href="http://www.freshdesignweb.com/responsive-drop-down-menu-jquery-css3-using-icon-symbol.html">Portfolio</a></li>
+                    <li class="parent">
+                        <a href="http://www.freshdesignweb.com/responsive-drop-down-menu-jquery-css3-using-icon-symbol.html">Blog</a>
+                        <ul class="sub-menu">
+                            <li><a href="http://www.freshdesignweb.com/responsive-drop-down-menu-jquery-css3-using-icon-symbol.html">Large Image</a></li>
+                            <li><a href="http://www.freshdesignweb.com/responsive-drop-down-menu-jquery-css3-using-icon-symbol.html">Medium Image</a></li>
+                            <li><a href="http://www.freshdesignweb.com/responsive-drop-down-menu-jquery-css3-using-icon-symbol.html">Masonry</a></li>
+                            <li><a href="http://www.freshdesignweb.com/responsive-drop-down-menu-jquery-css3-using-icon-symbol.html">Double Sidebar</a></li>
+                            <li><a href="http://www.freshdesignweb.com/responsive-drop-down-menu-jquery-css3-using-icon-symbol.html">Single Post</a></li>
+                        </ul>
+                    </li>
+                    <li><a href="http://www.freshdesignweb.com/responsive-drop-down-menu-jquery-css3-using-icon-symbol.html">Contact</a></li>
+                </ul>
+             
+                </div>
+        ';
+
+
+         $bootstrap_menu='<div  id="ul_menu">'.$menu_html.'</div>';
+         return $bootstrap_menu;
+
     }
     
     
@@ -32,6 +87,8 @@ class Home extends CI_Controller
     
     function login()
     {
+
+
         if ($this->uri->segment(3) === FALSE) {
             $lang = $this->i18n->get_current_locale();
             $this->i18n->load_language();
@@ -41,10 +98,12 @@ class Home extends CI_Controller
         }
         
         $this->load->model('MUi');
+
         $page              = $this->MUi->getCommPage("login", $lang);
         $page['lang']      = $lang;
         $page['loginview'] = 'loginview';
         $this->load->view('framework', $page);
+
     }
     
     

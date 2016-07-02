@@ -1,5 +1,5 @@
-APP_PREFIX='standx';
-BASE_URL='http://cloud.nan-x.com/standx/';
+APP_PREFIX='haokuan';
+BASE_URL='http://cloud.nan-x.com/haokuan/';
 TMP_DIR=BASE_URL+'tmp/';
 AJAX_ROOT=BASE_URL+'index.php/';
 HELP_DIR=AJAX_ROOT+'dbdocu/gethelp/';

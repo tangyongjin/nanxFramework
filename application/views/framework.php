@@ -16,15 +16,20 @@
 	</head>
     <body id="minwidth-body">
 		<?php
+
+		  
 		echo '<div id="border-top" class="h_blue">';
 		$bs_url = $this->config->item('base_url');
-		echo "<div id=oss_menu1></div>";
+		 
 
 		$hostname ='http://'.getenv('HTTP_HOST');
 
 		echo "<div id=logo_nanx><a href=$hostname><img src=$bs_url/css/images/nanx_logo.png /></a></div>";
+		 
+
 		echo "<div id=menu_wrapper>";
 		echo $banner_title;
+		 
         if (!isset($loginview))
 			{
 			echo $current_user_info;
@@ -33,9 +38,16 @@
 			echo $logout_info;
 			echo $backend_info;
 			}
+        
+         if( isset($bootstrap_menu) ){
+            echo $bootstrap_menu;
+         }
+        
 
 		echo '</div>';
+		 
 		echo '</div>';
+
 		?>	 
    
 	<div id="content-box">

@@ -74,6 +74,7 @@ function Act(cfg) {
 }
 
 Act.prototype.init_all = function(cfg) {
+    console.log(cfg);
     this.cfg = cfg;
     this.with_checkbox_col = cfg.hasOwnProperty('checkbox') ? cfg.checkbox : true;
     this.gridHeader = cfg.hasOwnProperty('gridheader') ? cfg.gridheader : false;
@@ -99,6 +100,7 @@ Act.prototype.init_all = function(cfg) {
     if (cfg.hasOwnProperty('gridTitle')) {this.gridTitle = cfg.gridTitle; }
     if (cfg.hasOwnProperty('pid_order')) {this.pid_order = cfg.pid_order; }
     if (cfg.hasOwnProperty('tbar_type')) {
+ 
      } 
     else{
         cfg.tbar_type ='stand';
@@ -169,11 +171,21 @@ Act.prototype.showActivityWindow=function(){
             WaitMask.hide();
             var ret_json=Ext.util.JSON.decode(response.responseText);
             that.setcfg(ret_json);
-            if(ret_json.activity_type=='html'){
-                that.createActivityHtmlPanel();
-            } else{
-                that.createActivityGridPanel();
-            }
+
+      //      alert(ret_json.activity_type);
+            console.log(ret_json)
+
+           switch(ret_json.activity_type)
+                {
+                case 'html':
+                     that.createActivityHtmlPanel();
+                     break;
+                case 'menugroup':
+                     that.createActivityHtmlPanel();
+                     break;
+                default:
+                     that.createActivityGridPanel();
+                }
             that.showWindow();
         }
     });
@@ -238,10 +250,7 @@ Act.prototype.createActivityGridPanel=function(){
                 }
 
                 if (this.id=='grid_NANX_SYS_CONFIG'){
-                    
-                    //APP_PREFIX VER SECRET_KEY
-
-
+                
                   if( col.field=='config_key' || col.field=='config_memo' ||col.field=='memo_of_config_item'  ) {
                     return false;
                   }        
@@ -249,8 +258,6 @@ Act.prototype.createActivityGridPanel=function(){
                   if(_colvar=='APP_PREFIX' || _colvar=='VER' ||_colvar=='SECRET_KEY'  ) {
                     return false;
                   }        
-
-
                 }
             },
             afteredit:function(row){
@@ -526,9 +533,16 @@ Act.prototype.getMainStore=function(){
     if (this.activity_type=='service'){
         var mainStore=this.getStoreByService();
     }
+    
     if (this.activity_type=='sql'){
         var mainStore=this.getStoreBySql();
     }
+
+   if (this.activity_type=='menugroup'){
+        var mainStore=this.getStoreBySql();
+    }
+
+
     return mainStore;
 }
 
@@ -1938,6 +1952,7 @@ Act.prototype.getBbar=function(){
         items:[this.paginator]
     });
 };
+
 Act.prototype.showWindow = function(){
     if (this.sql_syntax_error){
         Ext.MessageBox.minWidth=250;
@@ -1954,8 +1969,13 @@ Act.prototype.showWindow = function(){
     var win_w=this.win_size_width||this.cfg.width;
     var win_h=this.win_size_height||this.cfg.height;
 
+    console.log(this.cfg)
+
+
     if (this.cfg.showwhere=='autowin'){
         this.cfg.tbar_type='stand';
+
+        
         this.gridPanel.height=win_h * 1.0 - 34;
         var winid = 'win_' + this.actcode;
         if (!Ext.getCmp(winid)){
@@ -2170,11 +2190,7 @@ Act.prototype.ConfirmBtnHandler=function(btn){
         Act.prototype.FormAction(fm);
         this.disable();
         return;
-
-        // if (this.btntype=='add')
-        // {
-        //     this.disable();
-        // }
+ 
 }
 
 Act.prototype.FormAction=function(form){

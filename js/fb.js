@@ -238,6 +238,190 @@ Fb.toggle_combo=function(togglefalg)
      return [compo, box];
  }
 
+Ext.data.Node.prototype.getJson = function ( node) {
+      // Should deep copy so we don't affect the tree
+      var json = this.attributes;
+      delete json['loader'];
+
+      json.children = [];
+      for (var i=0; i < node.childNodes.length; i++) {
+          json.children.push( node.childNodes[i].getJson(node.childNodes[i]) )
+      }
+      return json;
+}
+
+
+Fb.getTreeBtns=function(yy){
+   
+    var public_btns=[];
+    {
+        public_btns.push({
+            xtype:'button',
+            text:i18n.add,
+            iconCls:'n_add',
+            style:{
+                marginRight:'6px'
+            },
+            ctCls:'x-btn-over',
+            handler:function(){
+
+
+                var tree=Ext.getCmp('menutree');
+                var rootnode=tree.getRootNode()
+                var currentNode=tree.getSelectionModel().getSelectedNode() || tree.root;
+                currentNode.appendChild({
+                 text : '菜单',
+                 activity_code: 'mgroup_'.concat(Fb.randomString()),
+                 leaf : false,
+                 children:[]
+                  });
+            }
+        });
+    }
+
+   
+   public_btns.push({
+            text:i18n.drop,
+            iconCls:'n_del',
+            style:{
+                marginRight: '6px'
+            },
+            ctCls:'x-btn-over',
+            id:'pub_delete',
+            handler:function(e,x){
+              
+            
+                var tree=Ext.getCmp('menutree');
+                console.log(tree)
+                var sm=tree.getSelectionModel()
+                console.log(sm)
+                
+                var record = tree.getSelectionModel().getSelectedNode() 
+                 console.log(record)
+                 if(record){
+                     record.remove(true);
+                 }
+            }
+        });
+        
+     
+   
+        public_btns.push({
+            text:i18n.update,
+            iconCls:'n_edit',
+            style:{
+                marginRight: '6px'
+            },
+            ctCls:'x-btn-over',
+            id:'pub_edit',
+            handler:function(){
+
+
+
+                var tree=Ext.getCmp('menutree');
+                var currentNode=tree.getSelectionModel().getSelectedNode() || tree.root;
+                console.log(currentNode)
+
+                console.log( currentNode.hasChildNodes())
+               
+            }
+        });
+
+    
+
+     
+    return public_btns;
+}
+
+
+ Fb.getTreeGrid=function(cfg){
+    console.log(cfg);
+
+     
+
+
+    var tree = new Ext.tree.TreePanel(
+     {
+        // root with some static demo nodes
+        root:{text:'root',leaf:false,activity_code:'',id:'root',expanded:false, children:[]}
+
+        // preloads 1st level children
+//        ,loader:new Ext.tree.TreeLoader({preloadChildren:true})
+
+        // enable DD
+        ,enableDD:true
+
+        // set ddGroup - same as for grid
+        ,ddGroup:'NANX_gridDD'
+
+        ,id:'menutree'
+        ,region:'east'
+        ,title:'菜单'
+        ,layout:'fit'
+        ,width:300
+        ,height:360
+         ,tbar:{
+            xtype:'buttongroup',
+            title:'',
+            items:this.getTreeBtns()
+        }
+
+        ,split:true
+        ,bodyStyle:'background-color:white;'
+        ,border:true
+        ,collapsible:true
+        ,autoScroll:true
+        ,listeners:{
+            // create nodes based on data from grid
+            beforenodedrop:{fn:function(e) {
+
+                // e.data.selections is the array of selected records
+                if(Ext.isArray(e.data.selections)) {
+
+                    // reset cancel flag
+                    e.cancel = false;
+
+                    // setup dropNode (it can be array of nodes)
+                    e.dropNode = [];
+                    var r;
+                    for(var i = 0; i < e.data.selections.length; i++) {
+
+                        // get record from selectons
+                        r = e.data.selections[i];
+
+                        // create node from record data
+                        console.log(r);
+                        e.dropNode.push(this.loader.createNode({
+                             text:r.get('text')
+                            ,leaf:true,
+                             activity_code:r.get('value')
+                        }));
+                    }
+                    return true;
+                }
+            }}
+        }
+    });
+
+
+
+        var te = new Ext.tree.TreeEditor(tree, new Ext.form.TextField({
+            allowBlank: false,
+            blankText:''
+        }), {
+            editDelay: 100,
+            revertInvalid: false
+        });
+
+        te.on('beforestartedit', function(ed, boundEl, value) {
+            if (ed.editNode.leaf)
+                return false;
+        });
+    console.log(tree);
+    return tree;
+ }
+
+
  Fb.showUploadResult=function(r)
  {
    if(r.result.show_client_upload_info)
@@ -321,6 +505,9 @@ Fb.toggle_combo=function(togglefalg)
 
  
   Fb.getHtmlEditor = function(id, label, value) {
+
+     console.log(value);
+
      var htmlEditor = {
          xtype: "StarHtmleditor",
          fieldLabel: label,
@@ -1283,6 +1470,8 @@ Fb.getWhoami=function()
      }
 
      if (one_col_cfg.editor_cfg.edit_as_html == 1) {
+        // alert('hhh');
+         console.log(one_col_cfg);
          return [this.getHtmlEditor(one_col_cfg['field_e'], one_col_cfg['display_cfg'].field_c, one_col_cfg['editor_cfg']['ini']     )];
      }
 
@@ -1399,6 +1588,14 @@ Fb.getWhoami=function()
 
  
      var extradata = getGridExtraData();
+
+     if( Ext.getCmp('menutree') ){
+        Ext.getCmp('menutree').getRootNode().expand(true);
+        extradata= getTreeData('menutree');
+     }
+
+
+
      if (extradata){
        if (extradata.mustHaveOneRow && 0==extradata.row_count)
          {
@@ -2099,6 +2296,7 @@ Fb.setSingleField=function(jsondata, item) {
                  checked: true
              };
              break;
+
          case 'textarea':
              var f = {
                  fieldLabel: item.label,
@@ -2212,6 +2410,18 @@ Fb.setSingleField=function(jsondata, item) {
          case 'uploadFile':
              var f = Fb.getAttachmentEditor(item);
              break;
+
+
+         case 'treeGrid':
+              var menutree = Fb.getTreeGrid(item);
+              var f = new Ext.Container({
+                  layout: 'absolute',
+                  items: menutree,
+                  x:400,
+                  y:-360
+             });
+
+           break;
 
          case 'file_selector':
               var container_id = 'media_grid_' + Ext.id();
@@ -2415,13 +2625,7 @@ Fb.validate_password_input = function(v) {
 
  Fb.backendForm = function(category, opcode, xnode) {
      var o_mcfg = AppCategory.getSubMenuCfg(category, opcode);
-    // var fixed_mcfg = Fb.preProcessNodeAtt(o_mcfg, xnode);
-     //var opform = Fb.getOperationForm(xnode, fixed_mcfg);
-
-
-    var opform = Fb.getOperationForm(xnode, o_mcfg);
-
-
+     var opform = Fb.getOperationForm(xnode, o_mcfg);
      return opform;
  }
 
@@ -2502,8 +2706,8 @@ Fb.validate_password_input = function(v) {
     if (Ext.getCmp('raw_table_grid_id')) {
          gridid = 'raw_table_grid_id';
      }
+  
  
-
 
      if (!Ext.getCmp(gridid)) {
          return null;
@@ -2543,6 +2747,16 @@ Fb.validate_password_input = function(v) {
      }
  }
 
+
+function getTreeData(treeid){
+
+                var tree=Ext.getCmp(treeid);
+                var rootnode=tree.getRootNode()
+                var treejson=tree.getRootNode().getJson(rootnode);
+                return treejson;
+                // return JSON.stringify(treejson) ;
+                 
+}
 
 
  Fb.DeepClone = function(obj) {

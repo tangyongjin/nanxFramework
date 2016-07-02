@@ -21,14 +21,18 @@ class MUI extends CI_Model
   'front'=>
    array(
     'css'=>array(
+        'menutheme/css/menu.css',
+        'menutheme/css/font-awesome.css',
          'css/template.css',
          'jslib/ext/resources/css/ext-all.css',
          'jslib/ext/ux/fileuploadfield/css/fileuploadfield.css',
          'jslib/Datetime/Spinner.css' ,
-         'css/toolbars.css' 
+         'css/toolbars.css',
+       
          ),
          
     'js'=>array(
+        'jslib/jquery/jquery-1.7.1.min.js',
         'js/language/'.$lang_folder.'/i18n.js',
         'jslib/ext/ext-base.js', 
         'jslib/ext/ext-all.js',
@@ -43,7 +47,8 @@ class MUI extends CI_Model
          'js/fb.js', 
          'js/fixheight.js',
         'js/event_list.js', 
-         'js/boot.js'
+         'js/boot.js',
+         'menutheme/js/function.js',
         )
   ),
   'backend'=>array(
@@ -133,13 +138,17 @@ class MUI extends CI_Model
    
  function getActionBlock($acts)
 	{
-		$left= '<div  id="cpanel-left" class="cpanel-left"><div class="cpanel">';
+		$left= '<div  id="cpanel-left" class="cpanel-left">';
+
+    $left.='<div class="cpanel">';
 		$divs = '';
 		foreach($acts as $one_activity)
 		{
 			$divs.= $this->getOneBlockbyActivityCode($one_activity); //取得单个活动
 		}
-		$left.= $divs . "</div></div>";
+		$left.= $divs ;
+    $left.="</div>";
+    $left.="</div>";
 		return $left;
 	}
 	
@@ -156,7 +165,24 @@ class MUI extends CI_Model
 		 $act_type=$data['activity_type'];
      $base_url = $this->config->item('base_url');
      $onediv ="<div>not set</div>";
+
+
+   //  echo "  <br/> $acode  activity_type is $act_type"     ;
+
+     if($act_type=='menugroup')
+     {  
+        $bs= $this->config->base_url();
+        $onediv =" 
+            <div class='icon'>  
+              <a class='nanx-4-ext'  activity_type='menugroup' id=$acode  href=#>
+                <img src='{$bs}/imgs/{$data['pic_url']}'/>
+                <span>{$data['grid_title']}</span>
+              </a>
+          </div>";
+     }
      
+     
+
      if($act_type=='table')
      {  
      	  $bs= $this->config->base_url();
@@ -169,6 +195,7 @@ class MUI extends CI_Model
           </div>";
      }
 	   
+
 	   
 	   if($act_type=='html')
      {  
