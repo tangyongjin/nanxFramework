@@ -1,0 +1,16 @@
+set_biz_field_combo_resorce,set_biz_field_combo_follow.html file deleted ! should copy back
+
+
+
+files:
+
+js/globalvars.js
+
+APP_PREFIX='cnix';
+BASE_URL='http://114.113.88.2:3010/';
+
+
+
+database:
+
+  cloud_cnix
