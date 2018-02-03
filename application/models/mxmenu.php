@@ -89,7 +89,10 @@ public function build_a_tag($type,$cfg){
          where parent is null and role_code='$roles')" ;
         $sql.=" union select activity_code,activity_type, grid_title from nanx_menu  
            where parent is null and  activity_code not in (select activity_code from   nanx_activity) and  role_code='$roles' ";
-          
+       
+
+        // echo $sql;die;   
+        
         $this->tree=$this->db->query($sql)->result_array();
          
        

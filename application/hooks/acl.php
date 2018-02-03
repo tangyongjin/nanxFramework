@@ -9,6 +9,7 @@ class ACL
     
     function check_login()
     {
+
       $user = $this->CI->session->userdata('user');
       $eid= $this->CI->session->userdata('eid');
     
@@ -24,14 +25,22 @@ class ACL
     {
  
     	  $this->CI = & get_instance();
-        $url = $_SERVER['PHP_SELF'];
+        $url = $_SERVER['REQUEST_URI'];
         $arr = explode('/', $url);
+
+
+        
         $arr = array_slice($arr, array_search('index.php', $arr) + 1, count($arr));
         $this->url_model = isset($arr[0]) ? $arr[0] : '';
         $this->url_method = isset($arr[1]) ? $arr[1] : 'index';
         $this->url_param = isset($arr[2]) ? $arr[2] : '';
- 
-        if(in_array($this->url_method,array('logger','login','ie6issue','dologin','logout')))
+
+        // debug($_SERVER['REQUEST_URI']);
+        // print_r($url);
+        // print_r($arr);die;
+
+
+        if(in_array($this->url_method,array('logger','login','dologin','logout')))
         {  
           return;
         }
@@ -42,16 +51,10 @@ class ACL
         { 
             $CI=&get_instance();
         	  $bs_url=$CI->config->item('base_url');
-            $using_ie6 = (strpos($_SERVER['HTTP_USER_AGENT'], 'MSIE 6.') !== FALSE);
-            if($using_ie6)
-             {
-        	  header("Location:$bs_url/index.php/home/ie6issue");
-             }
-             else
-        	   {
-        	   header("Location:$bs_url/index.php/home/login");
-        	  }
-        }
+            redirect('home/login');
+
+            // header("Location:{$bs_url}home/login");
+          }
          else 
         {
           return;

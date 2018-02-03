@@ -226,7 +226,7 @@ class MUI extends CI_Model
 	   
 	    if($act_type=='url')
      { 
-     	 $url= $base_url . "/index.php/".$data['service_url'];
+     	 $url= $base_url .$data['service_url'];
      	 $onclick="alert('$url')";
      	 $onediv = " 
             <div class='icon'  onClick=$onclick>  
@@ -305,6 +305,8 @@ class MUI extends CI_Model
  function getTopBar()
  {
  	   $bs_url = $this->config->item('base_url');
+
+
  	   $current_user_info = '';
      $sms_info='';
      $mail_info='';
@@ -328,8 +330,8 @@ class MUI extends CI_Model
          $sms_info =    '<a class=tbar_a  href=# id=send_sms>'.$this->lang->line('sms').'</a>';
          
          
-         $logout_info=  "<a class=tbar_a  href=$bs_url/index.php/home/logout>".$this->lang->line('logout')."</a>";
-         $backend_info= "<a class=tbar_a  href=$bs_url/index.php/backend/admin>".$this->lang->line('backend')."</a>";
+         $logout_info=  "<a class=tbar_a  href={$bs_url}home/logout>".$this->lang->line('logout')."</a>";
+         $backend_info= "<a class=tbar_a  href={$bs_url}backend/admin>".$this->lang->line('backend')."</a>";
          $roles   =$this->session->userdata('roles');
          $role_list=array_retrieve($roles ,'role_code');
          $isadmin=false;

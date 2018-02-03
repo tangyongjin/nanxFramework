@@ -17,7 +17,7 @@ function get_log_name()
 
  
     $XCI = &get_instance();
-    $logpath=$_SERVER['DOCUMENT_ROOT'].'/'.$XCI->config->config['eidfolder'].'/log/';
+    $logpath=$_SERVER['DOCUMENT_ROOT'].'/'.'/logs/';
     $callstack = debug_backtrace();
     $clsname='';
     foreach ($callstack as $key => $row) {

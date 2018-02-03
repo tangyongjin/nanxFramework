@@ -27,6 +27,9 @@ class MSystempara extends CI_Model{
 	
 	function getCfgItem($item){
 		$item = $this->db->select('config_value')->get_where('nanx_system_cfg', array('config_key' => $item))->result_array()[0]['config_value'];
+
+		$sql = $this->db->last_query();
+		
   	return $item; 
 	}
 }

@@ -11,6 +11,20 @@ BASE_URL='http://114.113.88.2:3010/';
 
 
 
+
+mysqli_driver.php  line 320:
+
+@$str = mysql_escape_string($str);
+
+
+
+
+
+sed -ie s/^APP_PREFIX=.*/APP_PREFIX=\'techblog.moerks.dk\'/  globalvars.js
+sed -ie s/^BASE_URL=.*/BASE_URL=\'http:\\/\\/techblog.moerks.dk\'/  globalvars.js && more globalvars.js
+
+
+
 database:
 
   cloud_cnix

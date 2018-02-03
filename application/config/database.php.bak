@@ -48,10 +48,10 @@
 
 $active_group = 'default';
 $active_record = TRUE;
-$db['default']['hostname'] = '172.18.0.3';
-$db['default']['username'] = 'root';
-$db['default']['password'] = 'cnix@1234';
-$db['default']['database'] = 'cass';
+$db['default']['hostname'] = 'hostname_to_change';
+$db['default']['username'] = 'username_to_change';
+$db['default']['password'] = 'password_to_change';
+$db['default']['database'] = 'database_to_change';
 $db['default']['dbdriver'] = 'mysqli';
 $db['default']['dbprefix'] = '';
 $db['default']['pconnect'] = FALSE;

@@ -87,7 +87,8 @@ class Home extends CI_Controller
     
     function login()
     {
- 
+
+
         if ($this->uri->segment(3) === FALSE) {
             $lang = $this->i18n->get_current_locale();
             $this->i18n->load_language();
@@ -149,12 +150,9 @@ class Home extends CI_Controller
                 $result['user'] = $p['account'];
                 
                 $eid = $this->config->item('eidfolder');
-                $user_logged=$p['account'];
-                
-                logtext("after longin, eid is $eid,user is $user_logged  ");
 
                 $this->session->set_userdata('eid', $eid);
-                $this->session->set_userdata('user', $user_logged);
+                $this->session->set_userdata('user', $p['account']);
                  
                 echo json_encode($result);
                 return;
@@ -176,22 +174,16 @@ class Home extends CI_Controller
         $session_data=array();
 
         $user=$this->session->userdata('user');
-        $user='admin';
-
-
         $this->load->model('MUserRole');
         $this->load->model('MSystempara');
         $eid = $this->config->item('eidfolder');
  
         $session_data['eid']=$eid;
         $session_data['user']=$user;
-        // $session_data['user']='admin';
            
 
 
         $sql   = "select role_code from nanx_user_role_assign where user='" . $user . "' ";
-        // echo $sql;
-
         $roles = $this->db->query($sql)->result_array();
         $session_data['roles']=$roles;
         
@@ -214,13 +206,6 @@ class Home extends CI_Controller
       
         $session_data['page_title']=$page_title;
         $session_data['banner_title']=$banner_title;
-
-        // print_r($session_data);die;
-
-
-
-        logtext('set_session abcd');
-
         $this->session->set_userdata($session_data);
 
 
@@ -242,21 +227,8 @@ class Home extends CI_Controller
     }
     function logout()
     {
-       logtext('logout') ;
-       echo "will logout";
-
-       print_r($this->session->userdata); 
        $this->session->sess_destroy();
-       print_r($this->session->userdata); 
-       
-       
-       redirect('/home/index');
-       // redirect('backend/admin');
-       
-
-    
-
-
+       redirect('home/index');
     }
     
     function test()

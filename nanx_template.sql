@@ -1,8 +1,8 @@
--- MySQL dump 10.13  Distrib 5.6.20, for osx10.9 (x86_64)
+-- MySQL dump 10.16  Distrib 10.1.26-MariaDB, for Linux (x86_64)
 --
--- Host: localhost    Database: nanx_template
+-- Host: 127.0.0.1    Database: cass
 -- ------------------------------------------------------
--- Server version	5.6.20
+-- Server version	5.6.35
 
 /*!40101 SET @OLD_CHARACTER_SET_CLIENT=@@CHARACTER_SET_CLIENT */;
 /*!40101 SET @OLD_CHARACTER_SET_RESULTS=@@CHARACTER_SET_RESULTS */;
@@ -14,6 +14,36 @@
 /*!40014 SET @OLD_FOREIGN_KEY_CHECKS=@@FOREIGN_KEY_CHECKS, FOREIGN_KEY_CHECKS=0 */;
 /*!40101 SET @OLD_SQL_MODE=@@SQL_MODE, SQL_MODE='NO_AUTO_VALUE_ON_ZERO' */;
 /*!40111 SET @OLD_SQL_NOTES=@@SQL_NOTES, SQL_NOTES=0 */;
+
+--
+-- Table structure for table `ci_sessions`
+--
+
+DROP TABLE IF EXISTS `ci_sessions`;
+/*!40101 SET @saved_cs_client     = @@character_set_client */;
+/*!40101 SET character_set_client = utf8 */;
+CREATE TABLE `ci_sessions` (
+  `timestamp` char(100) DEFAULT NULL,
+  `user_data` text,
+  `session_id` varchar(40) NOT NULL DEFAULT '0',
+  `ip_address` varchar(45) NOT NULL DEFAULT '0',
+  `user_agent` varchar(200) NOT NULL DEFAULT '',
+  `last_activity` int(10) unsigned NOT NULL DEFAULT '0',
+  `prevent_update` int(10) DEFAULT NULL,
+  `data` varchar(500) DEFAULT NULL,
+  `id` char(200) DEFAULT NULL
+) ENGINE=InnoDB DEFAULT CHARSET=utf8;
+/*!40101 SET character_set_client = @saved_cs_client */;
+
+--
+-- Dumping data for table `ci_sessions`
+--
+
+LOCK TABLES `ci_sessions` WRITE;
+/*!40000 ALTER TABLE `ci_sessions` DISABLE KEYS */;
+INSERT INTO `ci_sessions` VALUES (NULL,'a:4:{s:9:\"user_data\";s:0:\"\";s:4:\"lang\";b:0;s:3:\"eid\";s:4:\"cass\";s:4:\"user\";s:5:\"admin\";}','e81efda9b42f77837bb9c8848c0a09ba','221.219.169.246','Mozilla/5.0 (Macintosh; Intel Mac OS X 10_13_2) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/63.0.3239.132 Safari/537.3',1517613187,NULL,NULL,NULL),(NULL,'a:10:{s:9:\"user_data\";s:0:\"\";s:4:\"lang\";b:0;s:3:\"eid\";s:4:\"cass\";s:4:\"user\";b:0;s:5:\"roles\";a:0:{}s:13:\"user_activity\";a:0:{}s:10:\"staff_name\";N;s:10:\"who_is_who\";a:0:{}s:10:\"page_title\";s:28:\"Brower title/浏览器标题\";s:12:\"banner_title\";s:12:\"Title/标题\";}','c581b633fcc6a62c3082587b7bc9a4ec','221.219.169.246','Mozilla/5.0 (Macintosh; Intel Mac OS X 10_13_2) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/63.0.3239.132 Safari/537.3',1517613187,NULL,NULL,NULL),(NULL,'a:2:{s:9:\"user_data\";s:0:\"\";s:4:\"lang\";b:0;}','f8796781e17097bfb23a457faae72f41','221.219.169.246','Mozilla/5.0 (Macintosh; Intel Mac OS X 10_13_2) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/63.0.3239.132 Safari/537.3',1517613188,NULL,NULL,NULL),(NULL,'a:4:{s:9:\"user_data\";s:0:\"\";s:4:\"lang\";b:0;s:3:\"eid\";s:4:\"cass\";s:4:\"user\";s:5:\"admin\";}','32d4d8711b95fd58e9eb64e82eec5216','221.219.169.246','Mozilla/5.0 (Macintosh; Intel Mac OS X 10_13_2) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/63.0.3239.132 Safari/537.3',1517613759,NULL,NULL,NULL),(NULL,'a:10:{s:9:\"user_data\";s:0:\"\";s:4:\"lang\";b:0;s:3:\"eid\";s:4:\"cass\";s:4:\"user\";b:0;s:5:\"roles\";a:0:{}s:13:\"user_activity\";a:0:{}s:10:\"staff_name\";N;s:10:\"who_is_who\";a:0:{}s:10:\"page_title\";s:28:\"Brower title/浏览器标题\";s:12:\"banner_title\";s:12:\"Title/标题\";}','cad7a79237ad4b3d9366ef941dd1baaa','221.219.169.246','Mozilla/5.0 (Macintosh; Intel Mac OS X 10_13_2) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/63.0.3239.132 Safari/537.3',1517613759,NULL,NULL,NULL),(NULL,'a:2:{s:9:\"user_data\";s:0:\"\";s:4:\"lang\";b:0;}','b12dda448a2d8e74276837c0110a796a','221.219.169.246','Mozilla/5.0 (Macintosh; Intel Mac OS X 10_13_2) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/63.0.3239.132 Safari/537.3',1517613759,NULL,NULL,NULL),(NULL,'a:4:{s:9:\"user_data\";s:0:\"\";s:4:\"lang\";b:0;s:3:\"eid\";s:4:\"cass\";s:4:\"user\";s:5:\"admin\";}','df507fec8b5cfee7cf4b81866d3422c4','221.219.169.246','Mozilla/5.0 (Macintosh; Intel Mac OS X 10_13_2) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/63.0.3239.132 Safari/537.3',1517613765,NULL,NULL,NULL),(NULL,'a:10:{s:9:\"user_data\";s:0:\"\";s:4:\"lang\";b:0;s:3:\"eid\";s:4:\"cass\";s:4:\"user\";b:0;s:5:\"roles\";a:0:{}s:13:\"user_activity\";a:0:{}s:10:\"staff_name\";N;s:10:\"who_is_who\";a:0:{}s:10:\"page_title\";s:28:\"Brower title/浏览器标题\";s:12:\"banner_title\";s:12:\"Title/标题\";}','d6ced9dd1dc4a95853e8543ec04a75e7','221.219.169.246','Mozilla/5.0 (Macintosh; Intel Mac OS X 10_13_2) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/63.0.3239.132 Safari/537.3',1517613765,NULL,NULL,NULL),(NULL,'a:2:{s:9:\"user_data\";s:0:\"\";s:4:\"lang\";b:0;}','6fa4104ace946b186eeae9109e9cab2c','221.219.169.246','Mozilla/5.0 (Macintosh; Intel Mac OS X 10_13_2) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/63.0.3239.132 Safari/537.3',1517613765,NULL,NULL,NULL),(NULL,'a:2:{s:9:\"user_data\";s:0:\"\";s:4:\"lang\";b:0;}','ede2b8ed8dc46753feba3e40b583d659','221.219.169.246','Mozilla/5.0 (Macintosh; Intel Mac OS X 10_13_2) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/63.0.3239.132 Safari/537.3',1517613833,NULL,NULL,NULL),(NULL,'a:4:{s:9:\"user_data\";s:0:\"\";s:4:\"lang\";b:0;s:3:\"eid\";s:4:\"cass\";s:4:\"user\";s:5:\"admin\";}','62ef763bcad0d38e21666536a3f49ed5','221.219.169.246','Mozilla/5.0 (Macintosh; Intel Mac OS X 10_13_2) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/63.0.3239.132 Safari/537.3',1517613839,NULL,NULL,NULL),(NULL,'a:10:{s:9:\"user_data\";s:0:\"\";s:4:\"lang\";b:0;s:3:\"eid\";s:4:\"cass\";s:4:\"user\";b:0;s:5:\"roles\";a:0:{}s:13:\"user_activity\";a:0:{}s:10:\"staff_name\";N;s:10:\"who_is_who\";a:0:{}s:10:\"page_title\";s:28:\"Brower title/浏览器标题\";s:12:\"banner_title\";s:12:\"Title/标题\";}','769f5fd210f9f002aa0ca6274e799e99','221.219.169.246','Mozilla/5.0 (Macintosh; Intel Mac OS X 10_13_2) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/63.0.3239.132 Safari/537.3',1517613839,NULL,NULL,NULL),(NULL,'a:2:{s:9:\"user_data\";s:0:\"\";s:4:\"lang\";b:0;}','e7625f761af8bca6855943dbdf5137c7','221.219.169.246','Mozilla/5.0 (Macintosh; Intel Mac OS X 10_13_2) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/63.0.3239.132 Safari/537.3',1517613839,NULL,NULL,NULL),(NULL,'a:4:{s:9:\"user_data\";s:0:\"\";s:4:\"lang\";b:0;s:3:\"eid\";s:4:\"cass\";s:4:\"user\";s:5:\"admin\";}','c959b8e40e4d050d1b3be9f1374dbea0','221.219.169.246','Mozilla/5.0 (Macintosh; Intel Mac OS X 10_13_2) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/63.0.3239.132 Safari/537.3',1517614199,NULL,NULL,NULL),(NULL,'a:10:{s:9:\"user_data\";s:0:\"\";s:4:\"lang\";b:0;s:3:\"eid\";s:4:\"cass\";s:4:\"user\";b:0;s:5:\"roles\";a:0:{}s:13:\"user_activity\";a:0:{}s:10:\"staff_name\";N;s:10:\"who_is_who\";a:0:{}s:10:\"page_title\";s:28:\"Brower title/浏览器标题\";s:12:\"banner_title\";s:12:\"Title/标题\";}','0233a31994eafd32267ee56f8abe36b8','221.219.169.246','Mozilla/5.0 (Macintosh; Intel Mac OS X 10_13_2) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/63.0.3239.132 Safari/537.3',1517614199,NULL,NULL,NULL),(NULL,'a:2:{s:9:\"user_data\";s:0:\"\";s:4:\"lang\";b:0;}','aa3da2b39d1d067e5518fe5ce33d97ee','221.219.169.246','Mozilla/5.0 (Macintosh; Intel Mac OS X 10_13_2) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/63.0.3239.132 Safari/537.3',1517614199,NULL,NULL,NULL),(NULL,'a:2:{s:9:\"user_data\";s:0:\"\";s:4:\"lang\";b:0;}','87dfb7b65545d92ef5a4022f1ec2c54d','221.219.169.246','Mozilla/5.0 (Macintosh; Intel Mac OS X 10_13_2) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/63.0.3239.132 Safari/537.3',1517614272,NULL,NULL,NULL),(NULL,'a:4:{s:9:\"user_data\";s:0:\"\";s:4:\"lang\";b:0;s:3:\"eid\";s:4:\"cass\";s:4:\"user\";s:5:\"admin\";}','5453f329235f6f72ea2425ec0c6c4f24','221.219.169.246','Mozilla/5.0 (Macintosh; Intel Mac OS X 10_13_2) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/63.0.3239.132 Safari/537.3',1517614278,NULL,NULL,NULL),(NULL,'a:10:{s:9:\"user_data\";s:0:\"\";s:4:\"lang\";b:0;s:3:\"eid\";s:4:\"cass\";s:4:\"user\";b:0;s:5:\"roles\";a:0:{}s:13:\"user_activity\";a:0:{}s:10:\"staff_name\";N;s:10:\"who_is_who\";a:0:{}s:10:\"page_title\";s:28:\"Brower title/浏览器标题\";s:12:\"banner_title\";s:12:\"Title/标题\";}','9367bc7ca11fd74678bb4d47c8fe0eb3','221.219.169.246','Mozilla/5.0 (Macintosh; Intel Mac OS X 10_13_2) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/63.0.3239.132 Safari/537.3',1517614287,NULL,NULL,NULL),(NULL,'a:2:{s:9:\"user_data\";s:0:\"\";s:4:\"lang\";b:0;}','edbe97c2d1eff707f6d401bb1aa9f4a2','221.219.169.246','Mozilla/5.0 (Macintosh; Intel Mac OS X 10_13_2) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/63.0.3239.132 Safari/537.3',1517614288,NULL,NULL,NULL);
+/*!40000 ALTER TABLE `ci_sessions` ENABLE KEYS */;
+UNLOCK TABLES;
 
 --
 -- Table structure for table `nanx_activity`
@@ -442,6 +472,32 @@ LOCK TABLES `nanx_biz_tables` WRITE;
 UNLOCK TABLES;
 
 --
+-- Table structure for table `nanx_country`
+--
+
+DROP TABLE IF EXISTS `nanx_country`;
+/*!40101 SET @saved_cs_client     = @@character_set_client */;
+/*!40101 SET character_set_client = utf8 */;
+CREATE TABLE `nanx_country` (
+  `pid` mediumint(9) NOT NULL AUTO_INCREMENT,
+  `id` char(30) DEFAULT NULL,
+  `lang_txt` char(100) DEFAULT NULL,
+  `active` char(1) DEFAULT NULL,
+  PRIMARY KEY (`pid`)
+) ENGINE=InnoDB AUTO_INCREMENT=152 DEFAULT CHARSET=utf8;
+/*!40101 SET character_set_client = @saved_cs_client */;
+
+--
+-- Dumping data for table `nanx_country`
+--
+
+LOCK TABLES `nanx_country` WRITE;
+/*!40000 ALTER TABLE `nanx_country` DISABLE KEYS */;
+INSERT INTO `nanx_country` VALUES (1,'af','Afrikaans',NULL),(2,'sq','Albanian',NULL),(3,'ar-dz','Arabic (Algeria)',NULL),(4,'ar-bh','Arabic (Bahrain)',NULL),(5,'ar-eg','Arabic (Egypt)',NULL),(6,'ar-iq','Arabic (Iraq)',NULL),(7,'ar-jo','Arabic (Jordan)',NULL),(8,'ar-kw','Arabic (Kuwait)',NULL),(9,'ar-lb','Arabic (Lebanon)',NULL),(10,'ar-ly','Arabic (libya)',NULL),(11,'ar-ma','Arabic (Morocco)',NULL),(12,'ar-om','Arabic (Oman)',NULL),(13,'ar-qa','Arabic (Qatar)',NULL),(14,'ar-sa','Arabic (Saudi Arabia)',NULL),(15,'ar-sy','Arabic (Syria)',NULL),(16,'ar-tn','Arabic (Tunisia)',NULL),(17,'ar-ae','Arabic (U.A.E.)',NULL),(18,'ar-ye','Arabic (Yemen)',NULL),(19,'ar','Arabic',NULL),(20,'hy','Armenian',NULL),(21,'as','Assamese',NULL),(22,'az','Azeri',NULL),(23,'eu','Basque',NULL),(24,'be','Belarusian',NULL),(25,'bn','Bengali',NULL),(26,'bg','Bulgarian',NULL),(27,'ca','Catalan',NULL),(28,'zh-cn','中文','y'),(29,'zh-hk','Chinese (Hong Kong)','y'),(30,'zh-mo','Chinese (Macau)','n'),(31,'zh-sg','Chinese (Singapore)','n'),(32,'zh-tw','Chinese (Taiwan)','y'),(34,'hr','Croatian',NULL),(35,'cs','Czech',NULL),(36,'da','Danish',NULL),(37,'div','Divehi',NULL),(38,'nl-be','Dutch (Belgium)',NULL),(39,'nl','Dutch (Netherlands)',NULL),(40,'en-au','English (Australia)',NULL),(41,'en-bz','English (Belize)',NULL),(42,'en-ca','English (Canada)',NULL),(43,'en-ie','English (Ireland)',NULL),(44,'en-jm','English (Jamaica)',NULL),(45,'en-nz','English (New Zealand)',NULL),(46,'en-ph','English (Philippines)',NULL),(47,'en-za','English (South Africa)',NULL),(48,'en-tt','English (Trinidad)',NULL),(49,'en-gb','English (United Kingdom)',NULL),(50,'en-us','English (United States)',NULL),(51,'en-zw','English (Zimbabwe)',NULL),(52,'en','English','y'),(53,'us','English (United States)',NULL),(54,'et','Estonian',NULL),(55,'fo','Faeroese',NULL),(56,'fa','Farsi',NULL),(57,'fi','Finnish',NULL),(58,'fr-be','French (Belgium)',NULL),(59,'fr-ca','French (Canada)',NULL),(60,'fr-lu','French (Luxembourg)',NULL),(61,'fr-mc','French (Monaco)',NULL),(62,'fr-ch','French (Switzerland)',NULL),(63,'fr','French (France)','y'),(64,'mk','FYRO Macedonian',NULL),(65,'gd','Gaelic',NULL),(66,'ka','Georgian',NULL),(67,'de-at','German (Austria)',NULL),(68,'de-li','German (Liechtenstein)',NULL),(69,'de-lu','German (Luxembourg)',NULL),(70,'de-ch','German (Switzerland)',NULL),(71,'de','German (Germany)','y'),(72,'el','Greek',NULL),(73,'gu','Gujarati',NULL),(74,'he','Hebrew',NULL),(75,'hi','Hindi',NULL),(76,'hu','Hungarian','y'),(77,'is','Icelandic',NULL),(78,'id','Indonesian',NULL),(79,'it-ch','Italian (Switzerland)',NULL),(80,'it','Italian (Italy)','y'),(81,'ja','Japanese','y'),(82,'kn','Kannada',NULL),(83,'kk','Kazakh',NULL),(84,'kok','Konkani',NULL),(85,'ko','Korean','y'),(86,'kz','Kyrgyz',NULL),(87,'lv','Latvian',NULL),(88,'lt','Lithuanian',NULL),(89,'ms','Malay',NULL),(90,'ml','Malayalam',NULL),(91,'mt','Maltese',NULL),(92,'mr','Marathi',NULL),(93,'mn','Mongolian (Cyrillic)',NULL),(94,'ne','Nepali (India)',NULL),(95,'nb-no','Norwegian (Bokmal)',NULL),(96,'nn-no','Norwegian (Nynorsk)',NULL),(97,'no','Norwegian (Bokmal)',NULL),(98,'or','Oriya',NULL),(99,'pl','Polish','y'),(100,'pt-br','Portuguese (Brazil)',NULL),(101,'pt','Portuguese (Portugal)',NULL),(102,'pa','Punjabi',NULL),(103,'rm','Rhaeto-Romanic',NULL),(104,'ro-md','Romanian (Moldova)',NULL),(105,'ro','Romanian',NULL),(106,'ru-md','Russian (Moldova)',NULL),(107,'ru','Russian',NULL),(108,'sa','Sanskrit',NULL),(109,'sr','Serbian',NULL),(110,'sk','Slovak',NULL),(111,'ls','Slovenian',NULL),(112,'sb','Sorbian',NULL),(113,'es-ar','Spanish (Argentina)',NULL),(114,'es-bo','Spanish (Bolivia)',NULL),(115,'es-cl','Spanish (Chile)',NULL),(116,'es-co','Spanish (Colombia)',NULL),(117,'es-cr','Spanish (Costa Rica)',NULL),(118,'es-do','Spanish (Dominican Republic)',NULL),(119,'es-ec','Spanish (Ecuador)',NULL),(120,'es-sv','Spanish (El Salvador)',NULL),(121,'es-gt','Spanish (Guatemala)',NULL),(122,'es-hn','Spanish (Honduras)',NULL),(123,'es-mx','Spanish (Mexico)',NULL),(124,'es-ni','Spanish (Nicaragua)',NULL),(125,'es-pa','Spanish (Panama)',NULL),(126,'es-py','Spanish (Paraguay)',NULL),(127,'es-pe','Spanish (Peru)',NULL),(128,'es-pr','Spanish (Puerto Rico)',NULL),(129,'es-us','Spanish (United States)',NULL),(130,'es-uy','Spanish (Uruguay)',NULL),(131,'es-ve','Spanish (Venezuela)',NULL),(132,'es','Spanish (Traditional Sort)',NULL),(133,'sx','Sutu',NULL),(134,'sw','Swahili',NULL),(135,'sv-fi','Swedish (Finland)',NULL),(136,'sv','Swedish',NULL),(137,'syr','Syriac',NULL),(138,'ta','Tamil',NULL),(139,'tt','Tatar',NULL),(140,'te','Telugu',NULL),(141,'th','Thai',NULL),(142,'ts','Tsonga',NULL),(143,'tn','Tswana',NULL),(144,'tr','Turkish',NULL),(145,'uk','Ukrainian',NULL),(146,'ur','Urdu',NULL),(147,'uz','Uzbek',NULL),(148,'vi','Vietnamese',NULL),(149,'xh','Xhosa',NULL),(150,'yi','Yiddish',NULL),(151,'zu','Zulu',NULL);
+/*!40000 ALTER TABLE `nanx_country` ENABLE KEYS */;
+UNLOCK TABLES;
+
+--
 -- Table structure for table `nanx_lang`
 --
 
@@ -465,6 +521,33 @@ LOCK TABLES `nanx_lang` WRITE;
 /*!40000 ALTER TABLE `nanx_lang` DISABLE KEYS */;
 INSERT INTO `nanx_lang` VALUES (1,'af','Afrikaans',NULL),(2,'sq','Albanian',NULL),(3,'ar-dz','Arabic (Algeria)',NULL),(4,'ar-bh','Arabic (Bahrain)',NULL),(5,'ar-eg','Arabic (Egypt)',NULL),(6,'ar-iq','Arabic (Iraq)',NULL),(7,'ar-jo','Arabic (Jordan)',NULL),(8,'ar-kw','Arabic (Kuwait)',NULL),(9,'ar-lb','Arabic (Lebanon)',NULL),(10,'ar-ly','Arabic (libya)',NULL),(11,'ar-ma','Arabic (Morocco)',NULL),(12,'ar-om','Arabic (Oman)',NULL),(13,'ar-qa','Arabic (Qatar)',NULL),(14,'ar-sa','Arabic (Saudi Arabia)',NULL),(15,'ar-sy','Arabic (Syria)',NULL),(16,'ar-tn','Arabic (Tunisia)',NULL),(17,'ar-ae','Arabic (U.A.E.)',NULL),(18,'ar-ye','Arabic (Yemen)',NULL),(19,'ar','Arabic',NULL),(20,'hy','Armenian',NULL),(21,'as','Assamese',NULL),(22,'az','Azeri',NULL),(23,'eu','Basque',NULL),(24,'be','Belarusian',NULL),(25,'bn','Bengali',NULL),(26,'bg','Bulgarian',NULL),(27,'ca','Catalan',NULL),(28,'zh-cn','中文','y'),(29,'zh-hk','Chinese (Hong Kong)','y'),(30,'zh-mo','Chinese (Macau)','n'),(31,'zh-sg','Chinese (Singapore)','n'),(32,'zh-tw','Chinese (Taiwan)','y'),(34,'hr','Croatian',NULL),(35,'cs','Czech',NULL),(36,'da','Danish',NULL),(37,'div','Divehi',NULL),(38,'nl-be','Dutch (Belgium)',NULL),(39,'nl','Dutch (Netherlands)',NULL),(40,'en-au','English (Australia)',NULL),(41,'en-bz','English (Belize)',NULL),(42,'en-ca','English (Canada)',NULL),(43,'en-ie','English (Ireland)',NULL),(44,'en-jm','English (Jamaica)',NULL),(45,'en-nz','English (New Zealand)',NULL),(46,'en-ph','English (Philippines)',NULL),(47,'en-za','English (South Africa)',NULL),(48,'en-tt','English (Trinidad)',NULL),(49,'en-gb','English (United Kingdom)',NULL),(50,'en-us','English (United States)',NULL),(51,'en-zw','English (Zimbabwe)',NULL),(52,'en','English','y'),(53,'us','English (United States)',NULL),(54,'et','Estonian',NULL),(55,'fo','Faeroese',NULL),(56,'fa','Farsi',NULL),(57,'fi','Finnish',NULL),(58,'fr-be','French (Belgium)',NULL),(59,'fr-ca','French (Canada)',NULL),(60,'fr-lu','French (Luxembourg)',NULL),(61,'fr-mc','French (Monaco)',NULL),(62,'fr-ch','French (Switzerland)',NULL),(63,'fr','French (France)','y'),(64,'mk','FYRO Macedonian',NULL),(65,'gd','Gaelic',NULL),(66,'ka','Georgian',NULL),(67,'de-at','German (Austria)',NULL),(68,'de-li','German (Liechtenstein)',NULL),(69,'de-lu','German (Luxembourg)',NULL),(70,'de-ch','German (Switzerland)',NULL),(71,'de','German (Germany)','y'),(72,'el','Greek',NULL),(73,'gu','Gujarati',NULL),(74,'he','Hebrew',NULL),(75,'hi','Hindi',NULL),(76,'hu','Hungarian','y'),(77,'is','Icelandic',NULL),(78,'id','Indonesian',NULL),(79,'it-ch','Italian (Switzerland)',NULL),(80,'it','Italian (Italy)','y'),(81,'ja','Japanese','y'),(82,'kn','Kannada',NULL),(83,'kk','Kazakh',NULL),(84,'kok','Konkani',NULL),(85,'ko','Korean','y'),(86,'kz','Kyrgyz',NULL),(87,'lv','Latvian',NULL),(88,'lt','Lithuanian',NULL),(89,'ms','Malay',NULL),(90,'ml','Malayalam',NULL),(91,'mt','Maltese',NULL),(92,'mr','Marathi',NULL),(93,'mn','Mongolian (Cyrillic)',NULL),(94,'ne','Nepali (India)',NULL),(95,'nb-no','Norwegian (Bokmal)',NULL),(96,'nn-no','Norwegian (Nynorsk)',NULL),(97,'no','Norwegian (Bokmal)',NULL),(98,'or','Oriya',NULL),(99,'pl','Polish','y'),(100,'pt-br','Portuguese (Brazil)',NULL),(101,'pt','Portuguese (Portugal)',NULL),(102,'pa','Punjabi',NULL),(103,'rm','Rhaeto-Romanic',NULL),(104,'ro-md','Romanian (Moldova)',NULL),(105,'ro','Romanian',NULL),(106,'ru-md','Russian (Moldova)',NULL),(107,'ru','Russian',NULL),(108,'sa','Sanskrit',NULL),(109,'sr','Serbian',NULL),(110,'sk','Slovak',NULL),(111,'ls','Slovenian',NULL),(112,'sb','Sorbian',NULL),(113,'es-ar','Spanish (Argentina)',NULL),(114,'es-bo','Spanish (Bolivia)',NULL),(115,'es-cl','Spanish (Chile)',NULL),(116,'es-co','Spanish (Colombia)',NULL),(117,'es-cr','Spanish (Costa Rica)',NULL),(118,'es-do','Spanish (Dominican Republic)',NULL),(119,'es-ec','Spanish (Ecuador)',NULL),(120,'es-sv','Spanish (El Salvador)',NULL),(121,'es-gt','Spanish (Guatemala)',NULL),(122,'es-hn','Spanish (Honduras)',NULL),(123,'es-mx','Spanish (Mexico)',NULL),(124,'es-ni','Spanish (Nicaragua)',NULL),(125,'es-pa','Spanish (Panama)',NULL),(126,'es-py','Spanish (Paraguay)',NULL),(127,'es-pe','Spanish (Peru)',NULL),(128,'es-pr','Spanish (Puerto Rico)',NULL),(129,'es-us','Spanish (United States)',NULL),(130,'es-uy','Spanish (Uruguay)',NULL),(131,'es-ve','Spanish (Venezuela)',NULL),(132,'es','Spanish (Traditional Sort)',NULL),(133,'sx','Sutu',NULL),(134,'sw','Swahili',NULL),(135,'sv-fi','Swedish (Finland)',NULL),(136,'sv','Swedish',NULL),(137,'syr','Syriac',NULL),(138,'ta','Tamil',NULL),(139,'tt','Tatar',NULL),(140,'te','Telugu',NULL),(141,'th','Thai',NULL),(142,'ts','Tsonga',NULL),(143,'tn','Tswana',NULL),(144,'tr','Turkish',NULL),(145,'uk','Ukrainian',NULL),(146,'ur','Urdu',NULL),(147,'uz','Uzbek',NULL),(148,'vi','Vietnamese',NULL),(149,'xh','Xhosa',NULL),(150,'yi','Yiddish',NULL),(151,'zu','Zulu',NULL);
 /*!40000 ALTER TABLE `nanx_lang` ENABLE KEYS */;
+UNLOCK TABLES;
+
+--
+-- Table structure for table `nanx_menu`
+--
+
+DROP TABLE IF EXISTS `nanx_menu`;
+/*!40101 SET @saved_cs_client     = @@character_set_client */;
+/*!40101 SET character_set_client = utf8 */;
+CREATE TABLE `nanx_menu` (
+  `pid` int(11) unsigned NOT NULL AUTO_INCREMENT,
+  `parent` int(11) DEFAULT NULL,
+  `activity_code` char(100) DEFAULT NULL,
+  `grid_title` char(200) DEFAULT NULL,
+  `activity_type` char(100) DEFAULT NULL,
+  `role_code` int(11) DEFAULT NULL,
+  PRIMARY KEY (`pid`)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8;
+/*!40101 SET character_set_client = @saved_cs_client */;
+
+--
+-- Dumping data for table `nanx_menu`
+--
+
+LOCK TABLES `nanx_menu` WRITE;
+/*!40000 ALTER TABLE `nanx_menu` DISABLE KEYS */;
+/*!40000 ALTER TABLE `nanx_menu` ENABLE KEYS */;
 UNLOCK TABLES;
 
 --
@@ -569,7 +652,7 @@ CREATE TABLE `nanx_system_cfg` (
 
 LOCK TABLES `nanx_system_cfg` WRITE;
 /*!40000 ALTER TABLE `nanx_system_cfg` DISABLE KEYS */;
-INSERT INTO `nanx_system_cfg` VALUES (1,'VER','2.02','系统版 本','Version of system'),(2,'BANNER_TITLE','Title/标题','网站左上角标题','Text on  lett-top '),(3,'SECRET_KEY','3cd9342dc190','应用加密串','Secret key'),(6,'PAGE_TITLE','Brower title/浏览器标题','浏览器标题','Title of Browser'),(7,'APP_PREFIX','newoss','表格前缀','Prefix of table'),(8,'COMPANY_LOGO','nanx_logo.png','企业的logo','Logo on login'),(9,'WIN_SIZE_HEIGHT','644','窗口高度(像素为单位)','Default window  height'),(10,'WIN_SIZE_WIDTH','800','窗口宽度(像素为单位)','Default window  width'),(11,'WIN_SIZE_WIDTH_OPERATION','899','数据修改窗口的宽度(像素为单位))','Default window width on modify data');
+INSERT INTO `nanx_system_cfg` VALUES (1,'VER','2.02','系统版 本','Version of system'),(2,'BANNER_TITLE','Title/标题','网站左上角标题','Text on  lett-top '),(3,'SECRET_KEY','3cd9342dc190','应用加密串','Secret key'),(6,'PAGE_TITLE','Brower title/浏览器标题','浏览器标题','Title of Browser'),(7,'APP_PREFIX','cass','表格前缀','Prefix of table'),(8,'COMPANY_LOGO','nanx_logo.png','企业的logo','Logo on login'),(9,'WIN_SIZE_HEIGHT','644','窗口高度(像素为单位)','Default window  height'),(10,'WIN_SIZE_WIDTH','800','窗口宽度(像素为单位)','Default window  width'),(11,'WIN_SIZE_WIDTH_OPERATION','899','数据修改窗口的宽度(像素为单位))','Default window width on modify data');
 /*!40000 ALTER TABLE `nanx_system_cfg` ENABLE KEYS */;
 UNLOCK TABLES;
 
@@ -648,7 +731,7 @@ CREATE TABLE `nanx_user_role_assign` (
   KEY `role_code` (`role_code`),
   CONSTRAINT `nanx_user_role_assign_ibfk_1` FOREIGN KEY (`user`) REFERENCES `nanx_user` (`user`),
   CONSTRAINT `nanx_user_role_assign_ibfk_2` FOREIGN KEY (`role_code`) REFERENCES `nanx_user_role` (`role_code`)
-) ENGINE=InnoDB DEFAULT CHARSET=utf8;
+) ENGINE=InnoDB AUTO_INCREMENT=2 DEFAULT CHARSET=utf8;
 /*!40101 SET character_set_client = @saved_cs_client */;
 
 --
@@ -657,6 +740,7 @@ CREATE TABLE `nanx_user_role_assign` (
 
 LOCK TABLES `nanx_user_role_assign` WRITE;
 /*!40000 ALTER TABLE `nanx_user_role_assign` DISABLE KEYS */;
+INSERT INTO `nanx_user_role_assign` VALUES (1,'admin','admin');
 /*!40000 ALTER TABLE `nanx_user_role_assign` ENABLE KEYS */;
 UNLOCK TABLES;
 
@@ -893,4 +977,4 @@ UNLOCK TABLES;
 /*!40101 SET COLLATION_CONNECTION=@OLD_COLLATION_CONNECTION */;
 /*!40111 SET SQL_NOTES=@OLD_SQL_NOTES */;
 
--- Dump completed on 2015-03-05 22:09:08
+-- Dump completed on 2018-02-03  9:41:49

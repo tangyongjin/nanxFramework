@@ -1,6 +1,6 @@
 <?php 
 
-$config['eidfolder']   ='cass';
+$config['eidfolder']   ='eidfolder_to_change';
 // $config['webroot']= $_SERVER['DOCUMENT_ROOT'];
 // $config['base_url']   ='';
 // $config['index_page'] = 'index.php';
