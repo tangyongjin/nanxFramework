@@ -22,12 +22,13 @@ class File extends CI_Controller {
               $realpath= (dirname(dirname(dirname(__FILE__)))).'/'.$path.'/';
             }
 
+    
             if(!@unlink($realpath.$truefile)){$success=false;}
          }
 
-            $result=array(  'success' =>$success,
+            $result=array(   'success' =>$success,
                              'errmsg' =>$this->lang->line('file_delete_failed'),
-                              'msg'=> $this->lang->line('file_delete_success'));
+                             'msg'=> $this->lang->line('file_delete_success'));
            echo json_encode($result);
     }
 

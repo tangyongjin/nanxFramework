@@ -78,14 +78,14 @@ class Rdbms extends CI_Controller
         $response['rows'] = $indexes;
         for ($j = 0; $j < count($indexes); $j++)
         {
-            $response['rows'][$j]->pid = $j;
+            $response['rows'][$j]->id = $j;
         }
 
 
         $response['cols4index'] = $cols4index;
         $response['success'] = true;
         $response[0] = array(
-            'pid' => 'pid',
+            'id' => 'id',
             'index' => 'index',
             'columns' => 'columns',
             'add_column' => 'add_column',
@@ -195,7 +195,7 @@ class Rdbms extends CI_Controller
         for ($i = 0; $i < count($a); $i++)
         {
             $a_row = (array )$a[$i];
-            unset($a_row['pid']);
+            unset($a_row['id']);
             $this->db->insert($table, $a_row);
             $errmsg = $this->db->_error_message();
             $errno = $this->db->_error_number();
@@ -209,7 +209,7 @@ class Rdbms extends CI_Controller
         for ($i = 0; $i < count($d); $i++)
         {
             $d_row = (array )$d[$i];
-            $this->db->delete($table, array('pid' => $d_row[0]));
+            $this->db->delete($table, array('id' => $d_row[0]));
             $errno = $this->db->_error_number();
             if ($errno > 0)
             {
@@ -221,8 +221,8 @@ class Rdbms extends CI_Controller
         for ($i = 0; $i < count($u); $i++)
         {
             $u_row = (array )$u[$i];
-            $pid = $u_row['pid'];
-            $this->db->where('pid', $pid);
+            $id = $u_row['id'];
+            $this->db->where('id', $id);
             $this->db->update($table, $u_row);
             $errno = $this->db->_error_number();
             if ($errno > 0)
@@ -257,7 +257,7 @@ class Rdbms extends CI_Controller
         for ($i = 0; $i < count($a); $i++)
         {
             $a_row = (array )$a[$i];
-            unset($a_row['pid']);
+            unset($a_row['id']);
             $newcol = $a_row['field_name'];
             $newcol_datatype = $a_row['datatype'];
             if (array_key_exists('length', $a_row))
@@ -282,7 +282,7 @@ class Rdbms extends CI_Controller
             $d_row = (array )$d[$i];
             $col_to_drop = $cols_all[$d_row[0]]['field_name'];
             $alt_sql = "alter table $table drop $col_to_drop";
-            if(! ($col_to_drop=='pid'))
+            if(! ($col_to_drop=='id'))
             {
              $this->db->query($alt_sql);
              $errno = $this->db->_error_number();
@@ -297,11 +297,11 @@ class Rdbms extends CI_Controller
         for ($i = 0; $i < count($u); $i++)
         {
             $u_row = (array )$u[$i];
-            $pid = $u_row['pid'];
-            $col_orginal_name = $cols_all[$pid]['field_name'];
-            $col_orginal_datatype = $cols_all[$pid]['datatype'];
-            $col_orginal_len = '(' . $cols_all[$pid]['length'] . ')';
-            $col_orginal_comment=" comment '". $cols_all[$pid]['comment']."'";
+            $id = $u_row['id'];
+            $col_orginal_name = $cols_all[$id]['field_name'];
+            $col_orginal_datatype = $cols_all[$id]['datatype'];
+            $col_orginal_len = '(' . $cols_all[$id]['length'] . ')';
+            $col_orginal_comment=" comment '". $cols_all[$id]['comment']."'";
             $new_col_name = $col_orginal_name;
             $new_col_datatype = $col_orginal_datatype;
             $new_col_len = $col_orginal_len;
@@ -338,7 +338,7 @@ class Rdbms extends CI_Controller
                 $new_null = ($u_row['not_null'] == true) ? ' not null' : ' null';
             }
              
-            if(!($col_orginal_name=='pid'))
+            if(!($col_orginal_name=='id'))
             {
               
              if( in_array( $new_col_datatype , array('date','datetime'))) 
@@ -385,7 +385,7 @@ class Rdbms extends CI_Controller
         for ($i = 0; $i < count($u); $i++)
         {
             $update_info = (array )$u[$i];
-            $pid_of_index = $update_info['pid'];
+            $id_of_index = $update_info['id'];
             
             if(array_key_exists ('columns',$update_info))
             {
@@ -393,7 +393,7 @@ class Rdbms extends CI_Controller
             }
             else
             {
-            $columns = $all_indexs[$pid_of_index]->columns;
+            $columns = $all_indexs[$id_of_index]->columns;
             }
             
             if(array_key_exists ('option',$update_info))
@@ -402,7 +402,7 @@ class Rdbms extends CI_Controller
             }
             else
             {
-            $option = $all_indexs[$pid_of_index]->option;
+            $option = $all_indexs[$id_of_index]->option;
             }
             
             
@@ -412,7 +412,7 @@ class Rdbms extends CI_Controller
             }
             else
             {
-            $index_name = $all_indexs[$pid_of_index]->index;
+            $index_name = $all_indexs[$id_of_index]->index;
             }
             if($option=='(NULL)')
             {
@@ -424,7 +424,7 @@ class Rdbms extends CI_Controller
             'columns'=> $columns,
             'option' => $option
             );
-            array_push($d, $pid_of_index);
+            array_push($d, $id_of_index);
             array_push($a, $fixed_update_info);
         }
         

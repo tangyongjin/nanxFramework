@@ -223,7 +223,7 @@ function specialCodeRoute(node,category,opcode)
                   common_fn=function(){
                   var  copypaste_src={'category':node.attributes.category,
                                     'id':node.attributes.id,
-                                    'pid':node.attributes.pid,
+                                    'id':node.attributes.id,
                                     'text':node.attributes.text,
                                     'value':node.attributes.value 
                                      };

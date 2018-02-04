@@ -60,12 +60,12 @@ class MCurd extends CI_Model{
             }
 
 
-            if (array_key_exists('pid_order', $p)) {
-                $pidorder = $p['pid_order'];
+            if (array_key_exists('id_order', $p)) {
+                $idorder = $p['id_order'];
             } else {
-                $pidorder = 'asc';
+                $idorder = 'asc';
             }
-            $this->db->order_by('pid', $pidorder);
+            $this->db->order_by('id', $idorder);
             
 
              if (array_key_exists('cols_selected', $p)) {
@@ -87,12 +87,7 @@ class MCurd extends CI_Model{
         {
 
              if (($activity_type == 'table') || ($p['code'] == 'NANX_TBL_DATA')) {
-                
-
                 $who_is_who_found=$this->MDatafactory->getWhoIsWho_where($p);
- 
-
-
                 if ( strlen( trim($who_is_who_found))==0  &&  array_key_exists('owner_data_only', $p)  )
                 {
                    if($p['owner_data_only']==1){
@@ -108,8 +103,8 @@ class MCurd extends CI_Model{
                 }
                 
                 $table     = $p['table'];
-                $pid_order = (isset($p['pid_order'])) ? $p['pid_order'] : 'asc';
-                $result    = $this->MDatafactory->getDatabyBasetable($table, $pid_order, $query_cfg,$who_is_who_found,$view_filter);
+                $id_order = (isset($p['id_order'])) ? $p['id_order'] : 'asc';
+                $result    = $this->MDatafactory->getDatabyBasetable($table, $id_order, $query_cfg,$who_is_who_found,$view_filter);
             }
         }
         

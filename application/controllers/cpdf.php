@@ -6,16 +6,17 @@
 if ( ! defined('BASEPATH')) exit('No direct script access allowed');
 
 class Cpdf extends CI_Controller {
+  
 	function resBillPdf()
   {
   
   $post = file_get_contents('php://input');
   $para = (array )json_decode($post); 	
   
-  $pid=$para['pid'];
+  $id=$para['id'];
   $filename=$para['pdfname'];
   
-  $sql="select * from  newoss_res_pay_request where pid=$pid ";
+  $sql="select * from  newoss_res_pay_request where id=$id ";
   $data=$this->db->query($sql)->result_array();
   $d=$data[0];
   

@@ -216,59 +216,39 @@ function fs2array()
      function getFileList($path,$ftype='all')
     { 
 
-
-       
-
-
-
        $p='/'.$path.'/';
-       
- 
     	 $path= (dirname(dirname(dirname(__FILE__)))).$p;
-         
-
-       
-
-
        if($ftype=='img')
     	 {
     	 $ext = '{*.jpg,*.JPG,*.bmp,*.BMP,*.gif,*.GIF,*.png,*.PNG}';
     	 }
-    	else
-    	{
+    	 else
+     	 {
     	  $ext='{*.'.$ftype.'}';
-    	}
-
-
-    	 
-
+    	 }
        $files  = glob($path.$ext, GLOB_BRACE);
-      
-
-
-      usort($files, function($a, $b) {
+       usort($files, function($a, $b) {
          return filemtime($a) < filemtime($b);
-      });
+       });
 
        
        $rows=array();
-       $pid=0;
+       $id=0;
        foreach($files  as $file)
              {
                 $tmp=array();
                	$shortname=str_replace($path,'',$file);
               	$realname=$this->getFilename4Client($file);
-                $tmp['pid']= $pid;
+                $tmp['id']= $id;
                 $tmp['Filename']= $shortname; 
                 $tmp['Size']=  filesize($realname);   
                 $tmp['Date']= @date ("Y-m-d H:i:s A", filemtime($realname));
                 $rows[]=$tmp;
-                $pid++;
+                $id++;
              }
 
          $this->load->model('MFilter');
          $filtered=$this->MFilter->filter($rows,'file'); 
-
          return $filtered;
     }
     

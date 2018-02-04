@@ -10,16 +10,16 @@ class MActivity extends CI_Model
 
         $this->load->model('MFieldcfg');
         $forbidden_fields = $this->MFieldcfg->getForbiddenFields($activity_code);
-        if( in_array('pid', $forbidden_fields) ){
-            $pid_hidden=true;
+        if( in_array('id', $forbidden_fields) ){
+            $id_hidden=true;
         }else
         {
-            $pid_hidden=false;
+            $id_hidden=false;
         }
         $fields_e_not_forbidden         = array_diff($fields_e, $forbidden_fields);
         $res              = array_diff($fields_e, $forbidden_fields);
         $field_all=array(
-           'pid_hidden'=>$pid_hidden,
+           'id_hidden'=>$id_hidden,
            'NotForbidden'=>$fields_e_not_forbidden
             );
         return $field_all;
@@ -84,15 +84,15 @@ class MActivity extends CI_Model
     
     
     
-    function getPidOrder($activity_code)
+    function getIdOrder($activity_code)
     {
-        $sql = "select  pid_order from nanx_activity_pid_order";
+        $sql = "select  id_order from nanx_activity_id_order";
         $sql .= " where activity_code='$activity_code' ";
         $pordercfg = $this->db->query($sql)->row();
         if (empty($pordercfg)) {
             $pordercfg = array(
                 'activity_code' => $activity_code,
-                'pid_order' => 'asc'
+                'id_order' => 'asc'
             );
         }
         return $pordercfg;
@@ -157,7 +157,7 @@ class MActivity extends CI_Model
                     else 
                     {
                         $fields_e = array(
-                            0 => 'pid'
+                            0 => 'id'
                         );
                         if ($activity_code == 'NANX_TB_LAYOUT') {
                             $fields_e = array(
@@ -214,7 +214,7 @@ class MActivity extends CI_Model
                 {
                     $col_cfg    = array();
                     if( in_array($para_array['file_type'],array('php','js'))){
-                       array_push($col_cfg, array('field_e'=>'pid','display_cfg'=>array('field_c'=>'pid','value'=>'pid')));
+                       array_push($col_cfg, array('field_e'=>'id','display_cfg'=>array('field_c'=>'id','value'=>'id')));
                        array_push($col_cfg, array('field_e'=>'Filename','display_cfg'=>array('field_c'=>'Filename','value'=>'Filename')));
                        array_push($col_cfg, array('field_e'=>'Size','display_cfg'=>array('field_c'=>'Size','value'=>'Size')));
                        array_push($col_cfg, array('field_e'=>'Date','display_cfg'=>array('field_c'=>'Date','value'=>'Date')));
@@ -233,18 +233,6 @@ class MActivity extends CI_Model
                                 array_push($col_cfg, $col_i);
                             }
                     }
-                        
-                     
-
-
-
-
-
-
-
-
-
-
                 }
             }
         return $col_cfg;   
@@ -269,16 +257,16 @@ class MActivity extends CI_Model
       
        if ($activity_type == 'table') {
             $para_array['transfer'] = true;
-            $fields_e_with_pidforbidden_option = $this->skip_field($activity_code, $this->db->list_fields($base_table));
+            $fields_e_with_idforbidden_option = $this->skip_field($activity_code, $this->db->list_fields($base_table));
 
 
-            $fields_e=$fields_e_with_pidforbidden_option['NotForbidden'];
+            $fields_e=$fields_e_with_idforbidden_option['NotForbidden'];
             $col_cfg = $this->MFieldcfg->getColsCfg($activity_code,$base_table, $fields_e, $para_array['transfer']);
            
-            if( $fields_e_with_pidforbidden_option['pid_hidden'] ){
-               $pid_col_cfg = $this->MFieldcfg->getColsCfg($activity_code,$base_table,array('pid'), $para_array['transfer']);
-               $pid_col_cfg[0]['display_cfg']['pidhidden']=true;
-               $col_cfg=array_merge($pid_col_cfg,$col_cfg);
+            if( $fields_e_with_idforbidden_option['id_hidden'] ){
+               $id_col_cfg = $this->MFieldcfg->getColsCfg($activity_code,$base_table,array('id'), $para_array['transfer']);
+               $id_col_cfg[0]['display_cfg']['idhidden']=true;
+               $col_cfg=array_merge($id_col_cfg,$col_cfg);
             }
         }
 
@@ -342,7 +330,7 @@ class MActivity extends CI_Model
            $activity_summary['data_url']='xmenu/getchild/'.$activity_code;
         }
         
-        $activity_summary['pidOrder']           = $this->getPidOrder($activity_code);
+        $activity_summary['idOrder']           = $this->getIdOrder($activity_code);
         $activity_summary['curdCfg']            = $this->getCURDcfg($activity_code);
         $activity_summary['colsCfg']            = $col_cfg;
         $activity_summary['layoutCfg']          = $layout_cfg;

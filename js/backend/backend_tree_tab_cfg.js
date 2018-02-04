@@ -96,7 +96,7 @@ var contextMenu = [
             callback_set_url:'sms/getSms',
             callback_set_json_key:'/',
             json:{
-                pid:'#pid'
+                id:'#id'
             },
             itemcfg:[
             {
@@ -370,7 +370,7 @@ var contextMenu = [
                 nosm:true,
                 hideHeaders:true,
                 checkbox:false,
-                pid_order:'desc',
+                id_order:'desc',
                 os_path:'imgs'
             } 
             ]
@@ -389,7 +389,7 @@ var contextMenu = [
                 edit_type:'noedit',
                 hideHeaders:false,
                 checkbox:false,
-                pid_order:'desc',
+                id_order:'desc',
                 os_path:'application/controllers'
             }
             ]
@@ -408,7 +408,7 @@ var contextMenu = [
                 nosm:true,
                 hideHeaders:false,
                 checkbox:false,
-                pid_order:'desc',
+                id_order:'desc',
                 os_path:'application/models'
             }
             ]
@@ -427,7 +427,7 @@ var contextMenu = [
                 nosm:true,
                 hideHeaders:false,
                 checkbox:false,
-                pid_order:'desc',
+                id_order:'desc',
                 os_path:'js/upload'
             }
             ]
@@ -1361,7 +1361,7 @@ var contextMenu = [
                 nosm:true,
                 hideHeaders:true,
                 checkbox:false,
-                pid_order:'desc',
+                id_order:'desc',
                 os_path:'imgs'
             } 
             ]
@@ -1572,7 +1572,7 @@ var contextMenu = [
                 {
                     item_type:'field',
                     label:i18n.hookname,
-                    id:'hook_pid',
+                    id:'hook_id',
                     value:'#text' 
                 } 
                 ]
@@ -1666,7 +1666,7 @@ var contextMenu = [
             place:'context',
             callback_set_url:'activity/getActRawData',
                 json:{
-                    pid:'#pid'
+                    id:'#id'
                 },
             callback_set_json_key:'/',
             itemcfg:[{
@@ -1734,24 +1734,24 @@ var contextMenu = [
                 }]
             }, {
                 title:i18n.set_order,
-                opcode:'set_pid_order',
+                opcode:'set_id_order',
                 place:'context',
                 itemcfg:[{
                     item_type:'radio_group',
                     label:i18n.select_order,
-                    id:'pid_order_select',
+                    id:'id_order_select',
                     items:[{
                         xtype:'radio',
                         boxLabel:i18n.asc,
-                        id:'pid_order_asc',
-                        name:'pid_order',
+                        id:'id_order_asc',
+                        name:'id_order',
                         inputValue:'asc',
                         checked: true
                     }, {
                         xtype:'radio',
                         boxLabel:i18n.desc,
-                        id:'pid_order_desc',
-                        name:'pid_order',
+                        id:'id_order_desc',
+                        name:'id_order',
                         inputValue:'desc'
                     }]
                 }]
@@ -1888,7 +1888,7 @@ var contextMenu = [
             place:'context',
             callback_set_url:'nanx/get_a2a_detail',
             json:{
-                pid:'#pid'
+                id:'#id'
             },
             callback_set_json_key:'a2a_detail',
             itemcfg:[

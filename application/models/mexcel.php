@@ -69,7 +69,7 @@ class MExcel extends CI_Model
   {  
      $this->load->helper('my_pinyin'); 
   	 $field_display_cfg=array();
-  	 $first_col_is_pid=false;
+  	 $first_col_is_id=false;
   	 
   	 if($sheet['summary']['rows_total']>0)
   	  { 
@@ -79,10 +79,10 @@ class MExcel extends CI_Model
   	  	{
   	  	 $cname=$sheet['col'][$i]['colname'];
   	  	 $colname=strtolower(pinyin($sheet['col'][$i]['colname']));
-  	  	 if(($i==0)&&($colname=='pid'))
+  	  	 if(($i==0)&&($colname=='id'))
   	  	 {
   	  	 	 $colstr.=' ';
-  	  	   $first_col_is_pid=true;
+  	  	   $first_col_is_id=true;
   	  	 }
   	  	 else
   	  	 {
@@ -91,7 +91,7 @@ class MExcel extends CI_Model
   	  	 array_push($field_display_cfg,array('base_table' => $tbname,'field_e'=> $colname,'field_c'=> $cname));
   	  	}
 
-  	    $col_lists="pid int(11) NOT NULL AUTO_INCREMENT,".$colstr. " PRIMARY KEY (pid)";
+  	    $col_lists="id int(11) NOT NULL AUTO_INCREMENT,".$colstr. " PRIMARY KEY (id)";
   	    $sql="create table  $tbname ( $col_lists ) ";
   	    $this->db->query($sql);
   	   
@@ -102,14 +102,14 @@ class MExcel extends CI_Model
   
     for($i=1;$i<=count($sheet['data']);$i++)
     {
-       if($first_col_is_pid)
+       if($first_col_is_id)
         {
        	$row=$sheet['data'][$i];
        	}
        else
        { 
-       	$pid=array( '0' => $i);
-        $row=array_merge($pid, $sheet['data'][$i]);
+       	$id=array( '0' => $i);
+        $row=array_merge($id, $sheet['data'][$i]);
        }
         
        $insertsql='';

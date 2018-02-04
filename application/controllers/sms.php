@@ -7,12 +7,11 @@ class Sms extends CI_Controller {
     {
        $post= (array )json_decode(file_get_contents('php://input'));
        $para=(array)$post;
-       $pid=$para['pid'];
-       $this->db->where('pid',$pid);
+       $id=$para['id'];
+       $this->db->where('id',$id);
        $msgs=$this->db->get('nanx_sms')->result_array();
        $msg=$msgs[0];
-      // debug($msg);
-        echo json_encode($msg);
+       echo json_encode($msg);
     }
     
      

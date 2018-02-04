@@ -115,7 +115,7 @@ class Home extends CI_Controller
         
         $result = array();
         
-        $user = $this->db->select('pid,user,password,staff_name,active,salt')->get_where('nanx_user', $u)->result_array();
+        $user = $this->db->select('id,user,password,staff_name,active,salt')->get_where('nanx_user', $u)->result_array();
         
         
         if (sizeof($user) != 1) {

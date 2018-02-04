@@ -24,7 +24,7 @@ class Copynode extends CI_Controller
      $cfg=array(
        'activity_to_activitys'=>array(
          'root_table'=>'nanx_activity',
-         'root_table_selector'=>'pid',
+         'root_table_selector'=>'id',
          'hook_field'=>'activity_code',
          'new_field_value_to_set'=>array('activity_code','grid_title'),
          'related_tables'=>array(
@@ -34,7 +34,7 @@ class Copynode extends CI_Controller
                            'nanx_activity_a2a_btns',
                            'nanx_activity_curd_cfg',
                            'nanx_activity_forbidden_field',
-                           'nanx_activity_pid_order',
+                           'nanx_activity_id_order',
                            'nanx_activity_js_btns'
                            )
         )
@@ -69,7 +69,7 @@ class Copynode extends CI_Controller
         $related_rows=$this->db->get($related_table)->result_array();
         foreach($related_rows as $related_row)
          {  
-            unset($related_row['pid']);
+            unset($related_row['id']);
             while(list($key,$value)=each($new_values)){
               if (array_key_exists($key,$related_row)){$related_row[$key]=$value;}
               }

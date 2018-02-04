@@ -46,6 +46,7 @@ class MFilter extends CI_Model
           'msession.php',
           'msystempara.php',
           'mui.php',
+          'mxmenu.php',
           'muserrole.php',
           'mvtable.php'),
        'table'=>array( 
@@ -59,7 +60,7 @@ class MFilter extends CI_Model
           'nanx_activity_forbidden_field',
           'nanx_activity_js_btns',
           'nanx_activity_nofity',
-          'nanx_activity_pid_order',
+          'nanx_activity_id_order',
           'nanx_biz_column_editor_cfg',
           'nanx_biz_column_follow_cfg',
           'nanx_biz_column_trigger_group',
@@ -96,12 +97,12 @@ class MFilter extends CI_Model
       if($filter_type=='file'){
          $forbidden_files=$forbidden['file'];
          $filtered=array();
-         $pid=0;
+         $id=0;
          foreach ($value_to_check as $onefile) {
            if( !in_array($onefile['Filename'], $forbidden_files)    ){
-                 $onefile['pid']=$pid;
+                 $onefile['id']=$id;
                  $filtered[]=$onefile;            
-                 $pid++;
+                 $id++;
            }
          }
          return  $filtered;

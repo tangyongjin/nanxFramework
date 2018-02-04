@@ -14,14 +14,14 @@ class Tree extends CI_Controller {
    }
 
 
-	function treeCfg() {
+		function treeCfg() {
 		$cfg = array(
 			'biz_tables' => array('sql' =>
-				"select pid ,  table_name as value,  table_name as 'table', table_screen_name as  text ,'biz_table' as category from  nanx_biz_tables",
+				"select id ,  table_name as value,  table_name as 'table', table_screen_name as  text ,'biz_table' as category from  nanx_biz_tables",
 				'leaf' => false),
 
 			'biz_tables_can_follow' => array('sql' =>
-				"select  pid, table_name as value, table_name as 'table', table_screen_name as  text ,'biz_table' as category from  nanx_biz_tables",
+				"select  id, table_name as value, table_name as 'table', table_screen_name as  text ,'biz_table' as category from  nanx_biz_tables",
 				'leaf' => false),
 
 			'fks' => array('sql' =>
@@ -40,21 +40,21 @@ class Tree extends CI_Controller {
 
 			'view_filter' => array('sql' =>
 				"select  view_filter as value,  view_filter_memo  as  text ,'view_filter_item' as category, 
-				      pid as hostby from
-                      nanx_activity   where  LENGTH(view_filter)>3   and pid=#hostby ",
+				      id as hostby from
+                      nanx_activity   where  LENGTH(view_filter)>3   and id=#hostby ",
                        'leaf' => array(true, false)),
  
 			'based_biz_table' => array('sql' =>
 				"select  table_name as value,'" . $this->lang->line('fields') . "'  as  text ,'biz_cols' as category, table_name as hostby
-                    from  nanx_biz_tables      where pid='#value'
+                    from  nanx_biz_tables      where id='#value'
                     union
                     select  table_name as value,'" . $this->lang->line('trigger_groups') . "'  as  text ,'trigger_groups' as category, table_name as hostby
-                    from  nanx_biz_tables      where pid='#value'
+                    from  nanx_biz_tables      where id='#value'
                     union
                     select  table_name as value,'" . $this->lang->line('dropdown_groups') . "'  as  text ,'dropdown_groups' as category, table_name as hostby
-                    from  nanx_biz_tables      where pid='#value'
+                    from  nanx_biz_tables      where id='#value'
                     union 
-                    select  '#hostby' as value,'" . $this->lang->line('view_filter') . "'  as  text ,'view_filter' as category, pid as hostby
+                    select  '#hostby' as value,'" . $this->lang->line('view_filter') . "'  as  text ,'view_filter' as category, id as hostby
                     from  nanx_activity      where activity_code='#hostby' 
                     
                     ",
@@ -68,7 +68,7 @@ class Tree extends CI_Controller {
 
 			'dropdown_groups' => array(
 				'sql' =>
-				"select pid, group_id , field_e  as value, field_e as text , 'dropdown_item' as category, base_table as hostby
+				"select id, group_id , field_e  as value, field_e as text , 'dropdown_item' as category, base_table as hostby
                      from  nanx_biz_column_trigger_group   where base_table='#value' and group_type='nogroup'
                      ",
 				'method'      => "getBizCols",
@@ -98,7 +98,7 @@ class Tree extends CI_Controller {
 
 
              'hooks'=> array(
-                'sql'=>" select pid as value, memo as text, 'hook' as  category from nanx_activity_hooks  where activity_code='#value' order by hook_event ",
+                'sql'=>" select id as value, memo as text, 'hook' as  category from nanx_activity_hooks  where activity_code='#value' order by hook_event ",
                 'leaf'=>true
              	),
 
@@ -106,7 +106,7 @@ class Tree extends CI_Controller {
 
 
 			'public_cols_show' => array('sql' =>
-				"select pid as value,concat('[',field_e,'->',field_c,']') as text,'single_col_display' as category from nanx_activity_field_public_display_cfg",
+				"select id as value,concat('[',field_e,'->',field_c,']') as text,'single_col_display' as category from nanx_activity_field_public_display_cfg",
 				'leaf' => true),
 
 			'public_cols_show_in_summary' => array('sql' =>
@@ -114,7 +114,7 @@ class Tree extends CI_Controller {
 				'leaf' => true),
 
 			'special_cols_show_config_v2' => array('sql' =>
-				"select pid as value,base_table,field_e as value, field_c as text,'single_col_display' as category from nanx_activity_field_special_display_cfg",
+				"select id as value,base_table,field_e as value, field_c as text,'single_col_display' as category from nanx_activity_field_special_display_cfg",
 				'leaf' => true),
 
 			'forbidden_biz_cols_by_actcode' => array(
@@ -128,18 +128,18 @@ class Tree extends CI_Controller {
 				'leaf' => false),
 
 			'buttons' => array('sql' =>
-				"select  nanx_activity_a2a_btns.pid,activity_for_btn  as value , btn_name as text , 'btn_a2a'  as category ,
+				"select  nanx_activity_a2a_btns.id,activity_for_btn  as value , btn_name as text , 'btn_a2a'  as category ,
              '#value' as hostby,base_table  as subtable,'refer_to_parent' as maintable ,grid_title as button_refer_act,
              field_for_main_activity as op_field from  nanx_activity_a2a_btns,nanx_activity
              where  nanx_activity_a2a_btns.activity_code='#value'
              and  nanx_activity_a2a_btns.activity_for_btn=nanx_activity.activity_code
              union
-             select  pid,pid as value , btn_name as text ,'btn_js' as category ,'#value' as hostby,
+             select  id,id as value , btn_name as text ,'btn_js' as category ,'#value' as hostby,
              ''  as subtable,'refer_to_parent' as maintable  ,'' as button_refer_act,'' as op_field
              from  nanx_activity_js_btns
              where  activity_code='#value'
              union
-             select  pid,pid as value , btn_name as text ,'btn_batch' as category ,'#value' as hostby,
+             select  id,id as value , btn_name as text ,'btn_batch' as category ,'#value' as hostby,
              ''  as subtable,'refer_to_parent' as maintable  ,'' as button_refer_act ,  op_field
              from  nanx_activity_batch_btns
              where  activity_code='#value'
@@ -150,7 +150,7 @@ class Tree extends CI_Controller {
 			'button' => array('sql' =>
 				"select   activity_for_btn as value,grid_title as text,'btn_referenced_activity' as category  from
                       nanx_activity_a2a_btns,nanx_activity
-                      where  nanx_activity_a2a_btns.pid='#value' and
+                      where  nanx_activity_a2a_btns.id='#value' and
                       nanx_activity.activity_code=activity_for_btn;", 'leaf' => true),
 
 
@@ -183,15 +183,15 @@ class Tree extends CI_Controller {
                        TABLE_NAME ='#value'", 'leaf' => true),
 
 			'activitys' => array('sql' =>
-				"select  pid, activity_code  as  value, grid_title as text, pic_url as pic, 'activity' as category,base_table from  nanx_activity where level<>'system' and activity_type='table'
+				"select  id, activity_code  as  value, grid_title as text, pic_url as pic, 'activity' as category,base_table from  nanx_activity where level<>'system' and activity_type='table'
                  union
-                 select  pid, activity_code  as  value, grid_title as text, pic_url as pic, 'activity_js' as category,base_table from  nanx_activity where level<>'system' and activity_type='js'
+                 select  id, activity_code  as  value, grid_title as text, pic_url as pic, 'activity_js' as category,base_table from  nanx_activity where level<>'system' and activity_type='js'
                  union
-                 select  pid, activity_code  as  value, grid_title as text, pic_url as pic, 'activity_service' as category ,base_table from  nanx_activity where level<>'system' and activity_type='service'
+                 select  id, activity_code  as  value, grid_title as text, pic_url as pic, 'activity_service' as category ,base_table from  nanx_activity where level<>'system' and activity_type='service'
                  union
-                 select  pid, activity_code  as  value, grid_title as text, pic_url as pic, 'activity_html' as category ,base_table from  nanx_activity where level<>'system' and activity_type='html'
+                 select  id, activity_code  as  value, grid_title as text, pic_url as pic, 'activity_html' as category ,base_table from  nanx_activity where level<>'system' and activity_type='html'
                  union
-                 select  pid, activity_code  as  value, grid_title as text,pic_url as pic, 'activity_sql' as category ,base_table from  nanx_activity where level<>'system' and activity_type='sql'
+                 select  id, activity_code  as  value, grid_title as text,pic_url as pic, 'activity_sql' as category ,base_table from  nanx_activity where level<>'system' and activity_type='sql'
                 ", 'leaf' => false),
 
 			'activity' => array(
@@ -205,7 +205,7 @@ class Tree extends CI_Controller {
 				'leaf' => true),
 
 			'activity_sql' => array('sql' =>
-				"select pid,null as text, extra_js as value,'sql_statement' as category from
+				"select id,null as text, extra_js as value,'sql_statement' as category from
              nanx_activity where activity_code='#value' ",
 				'leaf' => true),
 
@@ -220,7 +220,7 @@ class Tree extends CI_Controller {
 				'leaf' => true),
 
 			'acls' => array('sql' =>
-				"select pid,  role_code  as  value, role_name as text, 'user_role_under_acls' as category from  nanx_user_role  ",
+				"select id,  role_code  as  value, role_name as text, 'user_role_under_acls' as category from  nanx_user_role  ",
 				'leaf' => false),
 
 			'act_notifies' => array('sql' =>
@@ -228,14 +228,14 @@ class Tree extends CI_Controller {
 				'leaf' => true),
 
 			'user_role_under_acls' => array('sql' =>
-				"select nanx_user_role_privilege.pid, nanx_user_role_privilege.activity_code  as  value, grid_title as text,
+				"select nanx_user_role_privilege.id, nanx_user_role_privilege.activity_code  as  value, grid_title as text,
                '#value' as  hostby ,  concat('acl_activity_', activity_type ) as category
                 from nanx_user_role_privilege ,nanx_activity
                  where   nanx_user_role_privilege.activity_code=nanx_activity.activity_code and role_code='#value'  order by display_order ",
 				'leaf' => true),
 
 			'users' => array('sql' =>
-				"select pid,  user  as  value, user  as text, staff_name,'user' as category from  nanx_user",
+				"select id,  user  as  value, user  as text, staff_name,'user' as category from  nanx_user",
 				'leaf' => true),
 
 			 
@@ -265,11 +265,11 @@ class Tree extends CI_Controller {
             	'leaf' => true
 			 	),
 			'roles' => array('sql' =>
-				"select  pid, role_code  as  value, role_name  as text, 'user_role' as category from  nanx_user_role",
+				"select  id, role_code  as  value, role_name  as text, 'user_role' as category from  nanx_user_role",
 				'leaf' => false),
 
 			'user_role' => array('sql' =>
-				"select  pid,  user   as  value, user  as text, 'user_under_role' as category, '#value' as hostby from
+				"select  id,  user   as  value, user  as text, 'user_under_role' as category, '#value' as hostby from
               nanx_user_role_assign  where role_code='#value'", 'leaf' => true),
 
 			'user_role_refer' => array('sql' => "
@@ -343,7 +343,8 @@ class Tree extends CI_Controller {
 	function getCategoryResult($tree_request) {
 
        
-        
+       
+
 		if (count($tree_request) == 0) {
 			return null;
 		}
@@ -359,10 +360,11 @@ class Tree extends CI_Controller {
 		}
 
 		$res = $this->setNodeIDandCss($res, $tree_request);
+		 
 		if (array_key_exists('post_method', $subCategoryCfg)) {
 			$res = $this->change_filed_display($res);
 		}
-
+ 
 		return $res;
 	}
 
@@ -409,8 +411,8 @@ class Tree extends CI_Controller {
 				$raw_tbname = $this->getRawTbnameByActcode($pv);
 			}
 
-			if ($paratype == 'biz_tables_pid') {
-				$raw_tbname = $this->getRawTbnameByPid($pv);
+			if ($paratype == 'biz_tables_id') {
+				$raw_tbname = $this->getRawTbnameById($pv);
 			}
 
 			if ($paratype == 'raw_table_name') {
@@ -509,7 +511,7 @@ class Tree extends CI_Controller {
 
 	function getActivityDetail($actcode) {
 
-		$sql1 = "select nanx_biz_tables.pid  as value , table_name as 'table', table_screen_name as text,'based_biz_table' as category,'#value' as hostby
+		$sql1 = "select nanx_biz_tables.id  as value , table_name as 'table', table_screen_name as text,'based_biz_table' as category,'#value' as hostby
                    from  nanx_activity, nanx_biz_tables where
                    nanx_biz_tables.table_name=base_table
                    and activity_code='#value'";
@@ -527,7 +529,7 @@ class Tree extends CI_Controller {
 
 
 
-		$sql3 = "select  '#value'  as value ,nanx_biz_tables.pid as base_table_pid , 'BTN_TEXT' as text ,'buttons' as category ,'#value' as hostby
+		$sql3 = "select  '#value'  as value ,nanx_biz_tables.id as base_table_id , 'BTN_TEXT' as text ,'buttons' as category ,'#value' as hostby
               from  nanx_activity ,  nanx_biz_tables where
               activity_code='#value'  and nanx_activity.base_table= nanx_biz_tables.table_name  limit 1";
 
@@ -540,7 +542,7 @@ class Tree extends CI_Controller {
 		$ret3 = arrayinsertkv($ret3, 'maintable', $maintable);
 		$ret3 = arrayinsertkv($ret3, 'leaf', false);
 
-		$sql4 = "select  '#value'  as value ,nanx_biz_tables.pid as base_table_pid , 'HOOK_TEXT' as text ,'hooks' as category ,'#value' as hostby
+		$sql4 = "select  '#value'  as value ,nanx_biz_tables.id as base_table_id , 'HOOK_TEXT' as text ,'hooks' as category ,'#value' as hostby
               from  nanx_activity ,  nanx_biz_tables where
               activity_code='#value'  and nanx_activity.base_table= nanx_biz_tables.table_name  limit 1";
 
@@ -572,9 +574,11 @@ class Tree extends CI_Controller {
 		for ($i = 0; $i < count($arr); $i++) {
 			$parent_v           = array_key_exists('value', $tree_request) ? $tree_request['value'] : '';
 			$current_v          = array_key_exists('value', $arr[$i]) ? $arr[$i]['value'] : $arr[$i]['field_e'];
-			$arr[$i]['id']      = 'nanx_' . $parent_v . '_' . $arr[$i]['category'] . '_' . $current_v;
+			$arr[$i]['id_value']      = 'nanx_' . $parent_v . '_' . $arr[$i]['category'] . '_' . $current_v;
+
 			$arr[$i]['iconCls'] = $arr[$i]['category'];
 		}
+
 		return $arr;
 	}
 
@@ -586,10 +590,10 @@ class Tree extends CI_Controller {
 		return $raw_tbname;
 	}
 
-	function getRawTbnameByPid($pid) {
+	function getRawTbnameById($id) {
 
-		$sql        = "select table_name from nanx_biz_tables  where pid=#value";
-		$sql        = str_replace('#value', $pid, $sql);
+		$sql        = "select table_name from nanx_biz_tables  where id=#value";
+		$sql        = str_replace('#value', $id, $sql);
 		$rows       = $this->db->query($sql)->result_array();
 		$raw_tbname = $rows[0]['table_name'];
 		return $raw_tbname;
@@ -612,18 +616,6 @@ class Tree extends CI_Controller {
 		return $col_cfg;
 	}
 
-	function test3() {
-		$raw_tbname = 'newoss_book';
-		$fields_e   = $this->db->list_fields($raw_tbname);
-		$this->load->model('MFieldcfg');
-		$col_cfg = $this->MFieldcfg->getColsCfg($raw_tbname, $fields_e, true);
-		$col_cfg = array_retrieve($col_cfg, array('field_e', array('segment' => 'display_cfg', 'index' => 'value'), array('segment' => 'display_cfg', 'index' => 'field_c')));
-		$col_cfg = arrayinsertkv($col_cfg, 'category', 'biz_col');
-		$col_cfg = arrayinsertkv($col_cfg, 'leaf', true);
-		$col_cfg = arrayinsertkv($col_cfg, 'hostby', $raw_tbname);
-		$col_cfg = arraychangekey($col_cfg, 'field_c', 'text');
-		return $col_cfg;
-	}
 
 	function systemSummary() {
 		$this->load->library('table');

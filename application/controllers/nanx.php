@@ -44,7 +44,7 @@ class Nanx extends CI_Controller {
 				'tbused'     => 'nanx_activity',
 				'dbcmdtype'  => 'update',
 				'pre_check_func'=>'sql_syntax',
-				'wherecfg'   =>array('pid'=>'hostby'),
+				'wherecfg'   =>array('id'=>'hostby'),
 				'paracfg'    => array('view_filter' => 'view_filter','view_filter_memo'=>'view_filter_memo')
 				),
 
@@ -53,7 +53,7 @@ class Nanx extends CI_Controller {
 				'successmsg' => 'success_update_filter',
 				'tbused'     => 'nanx_activity',
 				'dbcmdtype'  => 'update',
-				'wherecfg'   =>array('pid'=>'hostby'),
+				'wherecfg'   =>array('id'=>'hostby'),
 				'paracfg'    => array('view_filter' => '','view_filter_memo'=>'')
 				),
 
@@ -84,21 +84,21 @@ class Nanx extends CI_Controller {
 				'successmsg' => 'success_delete_biz_table',
 				'tbused'     => 'nanx_biz_tables',
 				'dbcmdtype'  => 'delete',
-				'paracfg'    => array('pid' => 'pid')),
+				'paracfg'    => array('id' => 'id')),
 
 			'rename_biz_table' => array(
 				'successmsg' => 'success_rename_biz_table',
 				'tbused'     => 'nanx_biz_tables',
 				'dbcmdtype'  => 'update',
 				'paracfg'    => array('table_screen_name' => 'table_screen_name'),
-				'wherecfg'                                => array('pid' => 'pid')),
+				'wherecfg'                                => array('id' => 'id')),
 
 			'rename_activity' => array(
 				'successmsg' => 'success_rename_activity',
 				'tbused'     => 'nanx_activity',
 				'dbcmdtype'  => 'update',
 				'paracfg'    => array('grid_title' => 'grid_title'),
-				'wherecfg'                         => array('pid' => 'pid')),
+				'wherecfg'                         => array('id' => 'id')),
 
 			'set_act_size' => array(
 				'successmsg' => 'success_set_window_size',
@@ -108,14 +108,14 @@ class Nanx extends CI_Controller {
 					'win_size_width'           => 'win_size_width',
 					'win_size_height'          => 'win_size_height',
 					'win_size_width_operation' => 'win_size_width_operation'),
-				'wherecfg'                  => array('pid' => 'pid')),
+				'wherecfg'                  => array('id' => 'id')),
 
 			'set_activity_table' => array(
 				'successmsg' => 'success_set_base_table',
 				'tbused'     => 'nanx_activity',
 				'dbcmdtype'  => 'update',
 				'paracfg'    => array('base_table' => 'base_table'),
-				'wherecfg'                         => array('pid' => 'pid')),
+				'wherecfg'                         => array('id' => 'id')),
 
 			'set_forbidden_col' => array(
 				'successmsg' => 'success_set_forbidden_col',
@@ -151,7 +151,7 @@ class Nanx extends CI_Controller {
 				'dbcmdtype'  => 'delete_and_insert',
 				'paracfg'    => array('extradata' => 'extradata'),
 				'when_get_where'                  => 'later',
-				'wherecfg'                        => array('inner_table' => 'inner_table', 'inner_table_pid' => 'inner_table_pid')),
+				'wherecfg'                        => array('inner_table' => 'inner_table', 'inner_table_id' => 'inner_table_id')),
 
 			'user_sms' => array(
 				'successmsg' => 'success_send_sms',
@@ -215,7 +215,7 @@ class Nanx extends CI_Controller {
 					'nanx_activity_a2a_btns',
 					'nanx_activity_curd_cfg',
 					'nanx_activity_forbidden_field',
-					'nanx_activity_pid_order',
+					'nanx_activity_id_order',
 					'nanx_activity_js_btns')),
 
 			'delete_dropdown_item' => array(
@@ -383,20 +383,20 @@ class Nanx extends CI_Controller {
 				'successmsg' => 'success_delete_public_item',
 				'tbused'     => 'nanx_activity_field_public_display_cfg',
 				'dbcmdtype'  => 'delete',
-				'paracfg'    => array('pid' => 'nodevalue')),
+				'paracfg'    => array('id' => 'nodevalue')),
 
 			'delete_user' => array(
 				'successmsg' => 'success_delete_user',
 				'tbused'     => 'nanx_user',
 				'dbcmdtype'  => 'delete',
-				'paracfg'    => array('pid' => 'pid')),
+				'paracfg'    => array('id' => 'id')),
 
 
 			'delete_hook' => array(
 				'successmsg' => 'success_delete_hook',
 				'tbused'     => 'nanx_activity_hooks',
 				'dbcmdtype'  => 'delete',
-				'paracfg'    => array('pid' => 'nodevalue')),
+				'paracfg'    => array('id' => 'nodevalue')),
 
  
 
@@ -407,14 +407,14 @@ class Nanx extends CI_Controller {
 				'tbused'     => 'nanx_biz_tables',
 				'dbcmdtype'  => 'update',
 				'paracfg'    => array('table_name' => 'selected_table'),
-				'wherecfg'                         => array('pid' => 'pid')),
+				'wherecfg'                         => array('id' => 'id')),
 
 			'rename_role' => array(
 				'successmsg' => 'success_rename_role',
 				'tbused'     => 'nanx_user_role',
 				'dbcmdtype'  => 'update',
 				'paracfg'    => array('role_name' => 'role_name'),
-				'wherecfg'                        => array('pid' => 'pid')),
+				'wherecfg'                        => array('id' => 'id')),
 
 			'add_role' => array(
 				'successmsg' => 'success_add_role',
@@ -426,13 +426,13 @@ class Nanx extends CI_Controller {
 				'successmsg' => 'success_delete_role',
 				'tbused'     => 'nanx_user_role',
 				'dbcmdtype'  => 'delete',
-				'paracfg'    => array('pid' => 'pid')),
+				'paracfg'    => array('id' => 'id')),
 
 			'remove_activity' => array(
 				'successmsg' => 'success_remove_activity',
 				'tbused'     => 'nanx_user_role_privilege',
 				'dbcmdtype'  => 'delete',
-				'paracfg'    => array('pid' => 'pid')),
+				'paracfg'    => array('id' => 'id')),
 
 			 
 
@@ -441,45 +441,45 @@ class Nanx extends CI_Controller {
 				'tbused'     => 'nanx_activity_a2a_btns',
 				'dbcmdtype'  => 'update',
 				'paracfg'    => array('btn_name' => 'btn_name'),
-				'wherecfg'                       => array('pid' => 'pid')),
+				'wherecfg'                       => array('id' => 'id')),
 
 			'remove_a2a_btn' => array(
 				'successmsg' => 'success_remove_btn',
 				'tbused'     => 'nanx_activity_a2a_btns',
 				'dbcmdtype'  => 'delete',
-				'paracfg'    => array('pid' => 'pid')),
+				'paracfg'    => array('id' => 'id')),
 
 			'rename_batch_btn' => array(
 				'successmsg' => 'success_rename_btn',
 				'tbused'     => 'nanx_activity_batch_btns',
 				'dbcmdtype'  => 'update',
 				'paracfg'    => array('btn_name' => 'btn_name'),
-				'wherecfg'                       => array('pid' => 'pid')),
+				'wherecfg'                       => array('id' => 'id')),
 
 			'remove_batch_btn' => array(
 				'successmsg' => 'success_remove_btn',
 				'tbused'     => 'nanx_activity_batch_btns',
 				'dbcmdtype'  => 'delete',
-				'paracfg'    => array('pid' => 'pid')),
+				'paracfg'    => array('id' => 'id')),
 
 			'rename_js_btn' => array(
 				'successmsg' => 'success_rename_btn',
 				'tbused'     => 'nanx_activity_js_btns',
 				'dbcmdtype'  => 'update',
 				'paracfg'    => array('btn_name' => 'btn_name'),
-				'wherecfg'                       => array('pid' => 'pid')),
+				'wherecfg'                       => array('id' => 'id')),
 
 			'remove_js_btn' => array(
 				'successmsg' => 'success_remove_btn',
 				'tbused'     => 'nanx_activity_js_btns',
 				'dbcmdtype'  => 'delete',
-				'paracfg'    => array('pid' => 'pid')),
+				'paracfg'    => array('id' => 'id')),
 
 			'remove_user' => array(
 				'successmsg' => 'success_remove_user',
 				'tbused'     => 'nanx_user_role_assign',
 				'dbcmdtype'  => 'delete',
-				'paracfg'    => array('pid' => 'pid')),
+				'paracfg'    => array('id' => 'id')),
 
 			'add_a2a_button' => array(
 				'successmsg' => 'success_add_button',
@@ -516,27 +516,27 @@ class Nanx extends CI_Controller {
 				'dbcmdtype'  => 'update',
 				'paracfg'    => array('field_for_main_activity' => 'field_for_main_activity',
 					'field_for_sub_activity'                       => 'field_for_sub_activity'),
-				'wherecfg'                                      => array('pid' => 'pid')),
+				'wherecfg'                                      => array('id' => 'id')),
 
 			'update_sql' => array(
 				'successmsg' => 'success_update_sql',
 				'tbused'     => 'nanx_activity',
 				'dbcmdtype'  => 'update',
 				'paracfg'    => array('sql' => 'sql'),
-				'wherecfg'                  => array('pid' => 'pid')),
+				'wherecfg'                  => array('id' => 'id')),
 
 			'set_service_para_col' => array(
 				'successmsg' => 'success_set',
 				'tbused'     => 'nanx_activity_a2a_btns',
 				'dbcmdtype'  => 'update',
 				'paracfg'    => array('field_for_main_activity' => 'selected_value_nanxdropdown_1'),
-				'wherecfg'                                      => array('pid' => 'pid')),
+				'wherecfg'                                      => array('id' => 'id')),
 
-			'set_pid_order' => array(
-				'successmsg' => 'success_set_pid_order',
-				'tbused'     => 'nanx_activity_pid_order',
+			'set_id_order' => array(
+				'successmsg' => 'success_set_id_order',
+				'tbused'     => 'nanx_activity_id_order',
 				'dbcmdtype'  => 'update_or_insert',
-				'paracfg'    => array('pid_order' => 'pid_order'),
+				'paracfg'    => array('id_order' => 'id_order'),
 				'wherecfg'                        => array('activity_code' => 'hostby')),
 
 			'set_display_text' => array(
@@ -655,7 +655,7 @@ class Nanx extends CI_Controller {
 				'paracfg'    => array(
 					'owner_data_only' =>'owner_data_only'
 					),
-				'wherecfg'   => array('pid' => 'pid')),
+				'wherecfg'   => array('id' => 'id')),
 
 
 
@@ -689,7 +689,7 @@ class Nanx extends CI_Controller {
 				'dbcmdtype'         => 'update',
 			//	'upload_file_field' => 'file_anchor_4_pic',
 				'paracfg'           => array('pic_url' => 'activity_pic'),
-				'wherecfg'                             => array('pid' => 'pid')),
+				'wherecfg'                             => array('id' => 'id')),
 
 			'truncate_table' => array(
 				'successmsg' => 'success_truncate_table',
@@ -773,7 +773,7 @@ class Nanx extends CI_Controller {
 				'tbused'    => 'nanx_activity',
 				'dbcmdtype' => 'update',
 				'paracfg'   => array('base_table' => array('getFrom' => 'src', 'value' => 'value')),
-				'wherecfg'                                           => array('pid' => array('getFrom' => 'target', 'value' => 'pid'))),
+				'wherecfg'                                           => array('id' => array('getFrom' => 'target', 'value' => 'id'))),
 
 			'dnd_create_activity_via_base_table' => array(
 				'tbused'    => 'nanx_activity',
@@ -798,7 +798,7 @@ class Nanx extends CI_Controller {
 				'tbused'    => 'nanx_biz_tables',
 				'dbcmdtype' => 'update',
 				'paracfg'   => array('table_name' => array('getFrom' => 'src', 'value' => 'value')),
-				'wherecfg'                                           => array('pid' => array('getFrom' => 'target', 'value' => 'pid'))),
+				'wherecfg'                                           => array('id' => array('getFrom' => 'target', 'value' => 'id'))),
 
 			'reuse_button' => array(
 				'tbused'    => 'nanx_activity_a2a_btns',
@@ -891,9 +891,9 @@ class Nanx extends CI_Controller {
 		return $cfg; 
 	}
 
-	function getRawTbnameByPid($pid) {
-		$sql        = "select table_name from nanx_biz_tables  where pid=SHOULD_REPLACE";
-		$sql        = str_replace('SHOULD_REPLACE', $pid, $sql);
+	function getRawTbnameById($id) {
+		$sql        = "select table_name from nanx_biz_tables  where id=SHOULD_REPLACE";
+		$sql        = str_replace('SHOULD_REPLACE', $id, $sql);
 		$rows       = $this->db->query($sql)->result_array();
 		$raw_tbname = $rows[0]['table_name'];
 		return $raw_tbname;
@@ -1097,8 +1097,8 @@ class Nanx extends CI_Controller {
    function sql_syntax($para)
 	{
     $check=true;
-    $pid=$para['hostby'];
-    $sql="select base_table from nanx_activity where pid=$pid ";
+    $id=$para['hostby'];
+    $sql="select base_table from nanx_activity where id=$id ";
 	$filter=$para['view_filter'];
     $row=$this->db->query($sql)->row_array();
     $bstable=$row['base_table'];
@@ -1113,8 +1113,8 @@ class Nanx extends CI_Controller {
 	function check_have_produce_col($para)
 	{
     $check=false;
-    $pid=$para['pid'];
-    $sql="select base_table from nanx_activity where pid=$pid";
+    $id=$para['id'];
+    $sql="select base_table from nanx_activity where id=$id";
     $row=$this->db->query($sql)->row_array();
     $bstable=$row['base_table'];
 	$sql=" select count(*) as produce_col_counter from nanx_biz_column_editor_cfg where base_table='$bstable' and is_produce_col=1  ";
@@ -1440,9 +1440,9 @@ class Nanx extends CI_Controller {
 		$info['user']        = $para['field_e'];
 		 
 		$onr_row = $para['extradata']->data[0];
-		$pid     = $onr_row->pid;
+		$id     = $onr_row->id;
 
-		$info['inner_table_pid'] = $pid;
+		$info['inner_table_id'] = $id;
 
 
         $value_field='';
@@ -1453,7 +1453,7 @@ class Nanx extends CI_Controller {
         $info['inner_table_value_field'] = $value_field;
  
         $inner_table_value='';
-        $sql=" select  $value_field  as inner_table_value from  $inner_table where pid= $pid  limit 1 ";
+        $sql=" select  $value_field  as inner_table_value from  $inner_table where id= $id  limit 1 ";
         $res=$this->db->query($sql)->row_array();
         $info['inner_table_value'] =$res['inner_table_value'];
 
@@ -1619,7 +1619,7 @@ class Nanx extends CI_Controller {
 		if ($dbcmdtype == 'delete_col') {
 			$tb      = $paracfg['usedtable'];
 			$dropcol = $paracfg['dropcol'];
-			if ($dropcol == 'pid') {
+			if ($dropcol == 'id') {
 				return;
 			}
 			$sql = "alter table $tb  drop $dropcol   ";
@@ -1628,7 +1628,7 @@ class Nanx extends CI_Controller {
 
 		if ($dbcmdtype == 'rename_col') {
 			$orgincol = $paracfg['orgincol'];
-			if ($orgincol == 'pid') {
+			if ($orgincol == 'id') {
 				return;
 			}
 			$tb                = $paracfg['usedtable'];
@@ -1766,8 +1766,8 @@ class Nanx extends CI_Controller {
 
 		$post       = file_get_contents('php://input');
 		$para       = (array ) json_decode($post);
-		$pid        = $para['pid'];
-		$sql        = "select * from nanx_activity_a2a_btns where pid=$pid";
+		$id        = $para['id'];
+		$sql        = "select * from nanx_activity_a2a_btns where id=$id";
 		$a2a_detail = $this->db->query($sql)->result_array();
 
 		$x = array(
@@ -1996,7 +1996,7 @@ class Nanx extends CI_Controller {
 	function getHook() {
 		$post = file_get_contents('php://input');
 		$para = (array ) json_decode($post);
-		$w    = array('pid' => $para['value']);
+		$w    = array('id' => $para['value']);
 		$this->db->where($w);
 		$this->db->order_by('execute_order');
 		$rows = $this->db->get('nanx_activity_hooks')->result_array();

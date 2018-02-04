@@ -163,7 +163,7 @@ class MFieldcfg  extends CI_Model{
 
      if(count($common)>0)
      {
-        unset($common['pid']);
+        unset($common['id']);
         unset($common['base_table']);
         unset($common['field_e']);
         $common['found']=true;
@@ -235,7 +235,7 @@ class MFieldcfg  extends CI_Model{
   
   
   function checkDatetimeField($base_table,$field){
-		if($field=='pid'){return null;}
+		if($field=='id'){return null;}
 		$dt=null;
 		$table_cols=$this->db->query("show full fields from  $base_table")->result_array();
   	$onecol=arrayfilter($table_cols,'Field',$field);
@@ -258,7 +258,7 @@ class MFieldcfg  extends CI_Model{
 	 function getTransedField($basetable, $field, $combo_fileds)
     {
         
-        if ($field == 'pid') {
+        if ($field == 'id') {
             $transed = $basetable . "." . $field;
             $join    = '';
             return array(

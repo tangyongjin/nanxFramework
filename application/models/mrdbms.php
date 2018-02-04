@@ -9,13 +9,13 @@ class MRdbms extends CI_Model
         $sql = " show full fields from $table ";
         $cols_all = $this->db->query($sql)->result_array();
         $col_info = array();
-        $pid = 0;
+        $id = 0;
         foreach ($cols_all as $col)
         {
             $value_list = array_values($col);
             $col_obj = $this->getColumnDetail($value_list);
-            $col_obj['pid'] = $pid;
-            $pid++;
+            $col_obj['id'] = $id;
+            $id++;
             $col_info[] = $col_obj;
         }
         return $col_info;
@@ -91,7 +91,7 @@ class MRdbms extends CI_Model
         $output['success'] = true;
         
         $output[0] = array(
-            'pid' => 'pid',
+            'id' => 'id',
             'field_name' => 'field_name',
             'datatype' => 'datatype',
             'length' => 'length',
@@ -270,14 +270,14 @@ class MRdbms extends CI_Model
         $response['rows'] = $indexes;
         for ($j = 0; $j < count($indexes); $j++)
         {
-            $response['rows'][$j]->pid = $j;
+            $response['rows'][$j]->id = $j;
         }
 
 
         $response['cols4index'] = $cols4index;
         $response['success'] = true;
         $response[0] = array(
-            'pid' => 'pid',
+            'id' => 'id',
             'index' => 'index',
             'columns' => 'columns',
             'add_column' => 'add_column',

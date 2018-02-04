@@ -53,10 +53,10 @@ App.bind = function() {
         
           if (Ext.get('work_event')){
                 Ext.get('work_event').on('click',function(e, target){
-                    var pid=target.getAttribute('pid');
-                    console.log(pid);
+                    var id=target.getAttribute('id');
+                    console.log(id);
                         var vnode={};
-                	      vnode.attributes={pid:pid};
+                	      vnode.attributes={id:id};
                 	      var opform=Fb.backendForm('all','read_sms', vnode);
                         var xwin=Act.prototype.actionWin('backend',opform,{viewonly:true,title:i18n.read_sms,category:'all',opcode:'read_sms',node:vnode});
                 }, this,{
@@ -69,7 +69,7 @@ App.bind = function() {
                  new Act({
                  code: 'NANX_TBL_DATA',
                  table: 'nanx_sms',
-                 pid_order:'desc',
+                 id_order:'desc',
                  filter_field:'receiver',
                  filter_value:whoami,
                  wintitle:i18n.message,

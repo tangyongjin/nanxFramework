@@ -89,7 +89,7 @@ Act.prototype.init_all = function(cfg) {
     this.grid_h = cfg.hasOwnProperty('grid_h') ? cfg.grid_h:null;
     this.getActCfgUrl = AJAX_ROOT + 'activity/getActCfg';
     this.excelUrl = AJAX_ROOT + 'grid2excel/index';
-    this.deletedPIDs = [];
+    this.deletedIDs = [];
     if (cfg.hasOwnProperty('renderto')) {
         this.renderto = cfg.renderto;
     }
@@ -98,7 +98,7 @@ Act.prototype.init_all = function(cfg) {
     }
     if (cfg.hasOwnProperty('win_size_height')) {this.win_size_height = cfg.win_size_height; }
     if (cfg.hasOwnProperty('gridTitle')) {this.gridTitle = cfg.gridTitle; }
-    if (cfg.hasOwnProperty('pid_order')) {this.pid_order = cfg.pid_order; }
+    if (cfg.hasOwnProperty('id_order')) {this.id_order = cfg.id_order; }
     if (cfg.hasOwnProperty('tbar_type')) {
  
      } 
@@ -138,9 +138,9 @@ Act.prototype.setcfg = function(ret) {
     this.js_btns = ret.js_btns;
     this.sm = this.createSM();
     this.curdCfg = ret.curdCfg ? ret.curdCfg : null;
-    if(!this.pid_order)
+    if(!this.id_order)
     {
-    this.pid_order = ret.pidOrder ? ret.pidOrder : 'asc';
+    this.id_order = ret.idOrder ? ret.idOrder : 'asc';
     }
     this.win_size_height = this.win_size_height ? this.win_size_height : ret.win_size_height;
     this.win_size_width = ret.win_size_width;
@@ -241,7 +241,7 @@ Act.prototype.createActivityGridPanel=function(){
             beforeedit:function(col){
                 console.log(this);
                   console.log(col.record.data.config_key);
-                if (col.field=='pid'){
+                if (col.field=='id'){
                     return false;
                 }
 
@@ -436,7 +436,7 @@ Act.prototype.editIndexCols=function(rowindex,a){
 Act.prototype.get_Fields=function(){
     var fields=[];
     for (var i=0;i<this.colsCfg.length;i++) {
-        (this.colsCfg[i]['field_e']=='pid')?fields.push({
+        (this.colsCfg[i]['field_e']=='id')?fields.push({
             name:this.colsCfg[i]['field_e'],
             type:'int'
         }) : fields.push({
@@ -467,7 +467,7 @@ Act.prototype.getOneColModel = function(colCfg) {
     }
     
         _hid=false;
-        if(colCfg.display_cfg.pidhidden){
+        if(colCfg.display_cfg.idhidden){
            _hid=true;
         }
     var oneColModel = {
@@ -495,7 +495,7 @@ Act.prototype.getOneColModel = function(colCfg) {
      
     
     
-    if (colCfg['field_e']=='pid'){
+    if (colCfg['field_e']=='id'){
         oneColModel.renderer = function(value) {
             return '<span  class="x-grid3-cell-inner" style="color:#004080;">' + value + '</span>'
         };
@@ -622,10 +622,10 @@ Act.prototype.getStoreByTableAndField=function(basetable,fields,cfg){
     var whoami=this.whoami;
     console.log(fields)
     
-    if (this.pid_order) {
-        var pid_order = this.pid_order.pid_order;
+    if (this.id_order) {
+        var id_order = this.id_order.id_order;
     } else {
-        pid_order = 'asc';
+        id_order = 'asc';
     }
     var querycfg=this.filter2QueryCfg(cfg);
     var table_query_obj={
@@ -634,7 +634,7 @@ Act.prototype.getStoreByTableAndField=function(basetable,fields,cfg){
         whoami:this.whoami,
         who_is_who:this.who_is_who,
         owner_data_only:this.owner_data_only,
-        pid_order:pid_order,
+        id_order:id_order,
         query_cfg:querycfg
     };
 
@@ -1217,11 +1217,11 @@ Act.prototype.getLayoutedForms=function(total_cfg,optype,row,orgin_act){
 
 
 Act.prototype.fixLayout=function(type,orgin_act){
-    var pid_found=false;
+    var id_found=false;
     if (orgin_act.layoutCfg.length==0){
         for (var i=0;i<this.colsCfg.length;i++){
-            if (this.colsCfg[i].field_e=='pid'){
-                pid_found=true;
+            if (this.colsCfg[i].field_e=='id'){
+                id_found=true;
             }
             this.layoutCfg.push({
                 row:i,
@@ -1231,15 +1231,15 @@ Act.prototype.fixLayout=function(type,orgin_act){
     } else{
         for(i=0;i<this.layoutCfg.length;i++){
             var fields=this.layoutCfg[i].field_list.split(",")
-            if (fields.indexOf('pid')!==-1){
-                pid_found=true;
+            if (fields.indexOf('id')!==-1){
+                id_found=true;
             }
         }
     }
-    if((type=='update')&&(!pid_found)){
+    if((type=='update')&&(!id_found)){
         this.layoutCfg.push({
             row:this.layoutCfg.length+1,
-            field_list:'pid'
+            field_list:'id'
         });
     }
 }
@@ -1348,16 +1348,16 @@ Act.prototype.batchUpdate=function(btn){
     
 
     var x = this.getLayoutedForms(this,'update',userRecord[0]);
-    var pids_batch = [];
+    var ids_batch = [];
     for (var i = 0; i < len; i++) {
-        pids_batch.push(userRecord[i].get('pid'));
+        ids_batch.push(userRecord[i].get('id'));
     }
     var helper_btns = that.getbatchHelpBtns(btn.op_field);
     var batchForm = new Ext.form.FormPanel({
         xtype:'form',
         table:this.table,
         actcode:this.actcode,
-        'pids_batch': pids_batch,
+        'ids_batch': ids_batch,
         id:'batch_form',
         tbar:{
             xtype:'buttongroup',
@@ -1394,13 +1394,13 @@ Act.prototype.delData=function(btn){
         return false;
     }
     Ext.Msg.confirm(i18n.confirm,i18n.really_delete+"?",function(btn){
-        var pid_to_del=[];
+        var id_to_del=[];
         if (btn=='yes'){
             for (var i=0;i<len;i++){
-                pid_to_del.push(userRecord[i].get('pid'));
+                id_to_del.push(userRecord[i].get('id'));
             }
             var del_data={
-                pid_to_del:pid_to_del,
+                id_to_del:id_to_del,
                 actcode:that.actcode
             };
             var succ=function(){
@@ -1475,11 +1475,11 @@ Act.prototype.insertRow=function(btn,e){
     for (var i=1;i<cm.columns.length;i++){
         var col=cm.columns[i];
         var h=col.header;
-        if (h=='pid'){record['pid']='';}
+        if (h=='id'){record['id']='';}
     }
     var rec=new record_type(record);
     rec.newRow=true;
-    rec.v_pid=Ext.id(null,'virtual_');
+    rec.v_id=Ext.id(null,'virtual_');
     rec.forgetit=false;
     grid.stopEditing();
     grid.store.insert(g,rec);
@@ -1494,17 +1494,17 @@ Act.prototype.deleteSelectedRows=function(btn,e){
     var selections=grid.getSelectionModel().getSelections();
     for (var i=0;i<selections.length;i++){
         if (selections[i].newRow){
-            this.lookupModified(modified,selections[i].v_pid);
+            this.lookupModified(modified,selections[i].v_id);
             continue;
         } else{
-            this.deletedPIDs.push(selections[i].data.pid);
+            this.deletedIDs.push(selections[i].data.id);
         }
     }
     var selected= grid.getSelectionModel().getSelections();
     var ds=grid.getStore();
     for (var i=0;i<selected.length;i++){
         var rec = selected[i];
-        if (!(rec.data.field_name=='pid')){
+        if (!(rec.data.field_name=='id')){
             ds.remove(rec);
         }
     }
@@ -1512,9 +1512,9 @@ Act.prototype.deleteSelectedRows=function(btn,e){
     t.get(1).enable();
 }
 
-Act.prototype.lookupModified=function(modified,v_pid){
+Act.prototype.lookupModified=function(modified,v_id){
     for (var i=0;i<modified.length;i++){
-        if (v_pid==modified[i].v_pid){
+        if (v_id==modified[i].v_id){
             modified[i].forgetit=true;
         }
     }
@@ -1551,12 +1551,12 @@ Act.prototype.SaveDataChanges=function(btn,e){
         optype:this.actcode,
         table:tb,
         a:data_new_insert,
-        d:this.deletedPIDs,
+        d:this.deletedIDs,
         u:data_modified_kv
     };
 
     grid.getStore().modified=[];
-    this.deletedPIDs=[];
+    this.deletedIDs=[];
     var succ=function(){
         grid.getStore().reload()
     };
@@ -1598,7 +1598,7 @@ Act.prototype.getModifiedFieldsValue=function(changedrows){
     for (var i=0;i<changedrows.length;i++){
         var thisrow=changedrows[i];
         var modified=thisrow.modified;
-        thisrow.modified.pid=thisrow.data.pid;
+        thisrow.modified.id=thisrow.data.id;
         for (var p in thisrow.modified){
             thisrow.modified[p]=thisrow.data[p];
         }
@@ -1932,7 +1932,7 @@ Act.prototype.refreshCurrentPage=function(){
 }
 
 Act.prototype.resetEditParams = function(){
-    this.deletedPIDs=[];
+    this.deletedIDs=[];
 };
 
 Act.prototype.getBbar=function(){
@@ -2205,7 +2205,7 @@ Act.prototype.FormAction=function(form){
                 table:form.table,
                 rawdata:formData,
                 actcode:form.actcode,
-                batch_pids:form.pids_batch
+                batch_ids:form.ids_batch
             };
              if(!Ext.isEmpty(form.extra_url))
              {

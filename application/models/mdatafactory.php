@@ -1,7 +1,7 @@
 <?php
 class MDatafactory extends CI_Model
 {
-    function setSqlbyBasetable($basetable,$pid_order)
+    function setSqlbyBasetable($basetable,$id_order)
     {
         $where = array(
             'base_table' => $basetable
@@ -28,7 +28,6 @@ class MDatafactory extends CI_Model
             $joins[]         = $found['join'];
         }
         
-        
         foreach ($transed_field as $field) {
             $field_list_str .= $field . ",";
         }
@@ -41,18 +40,13 @@ class MDatafactory extends CI_Model
         
         $live_and_ghost = $field_list_str . $ghosts_str;
         $live_and_ghost = substr($live_and_ghost, 0, -1);
-        
         foreach ($joins as $join) {
             $join_str .= $join;
         }
         
-        
-        
-        
         $sql = "select $live_and_ghost from $basetable ";
-        
         $sql_select = $sql . $join_str;
-        $sql_select .= " order by $basetable.pid $pid_order";
+        $sql_select .= " order by $basetable.id $id_order";
         return $sql_select;
     }
     
@@ -106,10 +100,10 @@ class MDatafactory extends CI_Model
 
     }
     
-    function getDatabyBasetable($table, $pid_order, $query_cfg,$who_is_who_found,$view_filter)
+    function getDatabyBasetable($table, $id_order, $query_cfg,$who_is_who_found,$view_filter)
     {
         $transfer = true;
-        $sql      = $this->setSqlbyBasetable($table,$pid_order);
+        $sql      = $this->setSqlbyBasetable($table,$id_order);
         if ($query_cfg) {
             $all_fields = $this->db->query("show full fields from  $table")->result_array();
             $all_fields = array_retrieve($all_fields, array(

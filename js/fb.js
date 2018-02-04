@@ -986,11 +986,11 @@ Fb.getTreeBtns=function(yy){
      return multiselector;
  };
 
- Fb.findSlaves = function(form, gpid, level, direct) {
+ Fb.findSlaves = function(form, grp_id, level, direct) {
  
      if(!form){return []}
      var found = [];
-     var slaves = form.find('group_id', gpid);
+     var slaves = form.find('group_id', grp_id);
     
      
 
@@ -1262,8 +1262,8 @@ Fb.setJsonPath=function(obj,path, val) {
     }
  }
 
- Fb.checkPidHidden=function(oneFieldCfg){
-    if ((oneFieldCfg.field_e=='pid')&&(oneFieldCfg.display_cfg.pidhidden)){
+ Fb.checkIdHidden=function(oneFieldCfg){
+    if ((oneFieldCfg.field_e=='id')&&(oneFieldCfg.display_cfg.idhidden)){
       return true;
    } 
    else
@@ -1274,7 +1274,7 @@ Fb.setJsonPath=function(obj,path, val) {
 
  Fb.getDefaultEditor = function( master_act, oneFieldCfg,readonly_flag) {
 
-    _hide=Fb.checkPidHidden(oneFieldCfg);
+    _hide=Fb.checkIdHidden(oneFieldCfg);
  
     console.log(oneFieldCfg);
     var that=this;
@@ -1436,7 +1436,7 @@ Fb.getWhoami=function()
      this.determineOriginalValue(op_type, one_col_cfg, row);
      var readonly_flag = false;
      var skip_flag = false;
-     if (one_col_cfg['field_e']=='pid'){
+     if (one_col_cfg['field_e']=='id'){
          readonly_flag = true;
      }
 
@@ -1447,7 +1447,7 @@ Fb.getWhoami=function()
      }
 
      if (one_col_cfg.editor_cfg.is_produce_col == 1){ readonly_flag = true;} 
-     if ((one_col_cfg['field_e'] == 'pid') && (op_type == 'add')) {skip_flag = true;}
+     if ((one_col_cfg['field_e'] == 'id') && (op_type == 'add')) {skip_flag = true;}
      if (skip_flag){return null;}
      
     if ((one_col_cfg['field_e'] == master_act.cfg.filter_field) && (op_type == 'add')) {
@@ -1852,7 +1852,7 @@ Fb.getWhoami=function()
 
      var layout = 'form';
      var forms = [];
-     var needsend = ['pid','group_id', 'table', 'hostby', 'column_definition', 'DDL'];
+     var needsend = ['id','group_id', 'table', 'hostby', 'column_definition', 'DDL'];
      var hidden = {
          opcode: mcfg.opcode,
          nodevalue: node.attributes.value

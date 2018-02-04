@@ -9,8 +9,14 @@ class Curd extends CI_Controller
     function listData()
      {
         
-         $post = file_get_contents('php://input');
-         $p    = (array) json_decode($post);
+
+       
+
+         $post    = file_get_contents('php://input');
+         $p       = (array) json_decode($post);
+     
+         // debug($p);
+
          $this->load->model('MCurd');
          $result=$this->MCurd->getActivityData($p);
 
@@ -57,15 +63,15 @@ class Curd extends CI_Controller
         $this->write_notify($actcode, 'update');
         $base_table = $p['table'];
         $rawData    = (array) $p['rawdata'];
-        $pid        = $rawData['pid'];
+        $id        = $rawData['id'];
         
         
         $dt_fileds  = $this->getDatetimeFiled($base_table);
         $date_check = $this->checkDateFmt($p, $dt_fileds);
-        unset($rawData['pid']);
+        unset($rawData['id']);
         
         
-        $this->db->where('pid', $pid);
+        $this->db->where('id', $id);
         
         $row_to_update = $this->db->get($base_table)->result_array();
         if (count($row_to_update) == 1) {
@@ -74,7 +80,7 @@ class Curd extends CI_Controller
             $row_to_update = '';
         }
         
-        $this->db->where('pid', $pid);
+        $this->db->where('id', $id);
         $this->db->update($base_table, $rawData);
         $errno = $this->db->_error_number();
         if ($errno == 0) {
@@ -102,16 +108,16 @@ class Curd extends CI_Controller
         $post       = file_get_contents('php://input');
         $p          = (array) json_decode($post);
         $actcode    = $p['actcode'];
-        $batch_pids = $p['batch_pids'];
+        $batch_ids = $p['batch_ids'];
         $base_table = $p['table'];
         $rawData    = (array) $p['rawdata'];
         $arr        = (array) $p['rawdata'];
         
         $errno      = 0;
         $single_err = 0;
-        foreach ($batch_pids as $pid) {
+        foreach ($batch_ids as $id) {
             
-            $this->db->where('pid', $pid);
+            $this->db->where('id', $id);
             $this->db->update($base_table, $arr);
             $single_err = $this->db->_error_number();
             $errno += $single_err;
@@ -209,7 +215,7 @@ class Curd extends CI_Controller
         echo json_encode($resp);
     }
     
-    function deleteData()
+     function deleteData()
     {
         
         $post    = file_get_contents('php://input');
@@ -222,7 +228,7 @@ class Curd extends CI_Controller
         $actcode = $p['actcode'];
         $this->write_notify($actcode, 'delete');
         $base_table   = $p['table'];
-        $pids         = $p['pid_to_del']; // pid like '1,23,4,9'
+        $ids         = $p['id_to_del']; // id like '1,23,4,9'
         $total_error  = 0;
 
         $this->load->model('MHooks');
@@ -234,15 +240,12 @@ class Curd extends CI_Controller
 
         $rows_deleted = array();
         
-        foreach ($pids as $pid) {
+        foreach ($ids as $id) {
             $where = array(
-                'pid' => $pid
+                'id' => $id
             );
             
             $this->db->where($where);
-            
-           
-            
             $row_to_del_query = $this->db->get($base_table);
             $row_to_del= $row_to_del_query->result_array();
             
@@ -251,16 +254,9 @@ class Curd extends CI_Controller
             }
             
             $this->db->delete($base_table, $where);
-
-            $para_for_hooks['pid_to_del']=$pid;
-            
+            $para_for_hooks['id_to_del']=$id;
             $para_for_hooks['row']= $row_to_del[0];
-
-
-
             $this->hookhandler($after,$para_for_hooks,'delete');
-
-
             $errno       = $this->db->_error_number();
             $total_error = $total_error + $errno;
         }
@@ -279,6 +275,7 @@ class Curd extends CI_Controller
         $this->write_session_log('delete', $p, $rows_deleted);
         echo json_encode($resp);
     }
+    
     
     function write_notify($activity_code, $action)
     {
@@ -341,22 +338,22 @@ class Curd extends CI_Controller
         
         switch ($type) {
             case 'add': 
-                $log_data['pids'] = '';
+                $log_data['ids'] = '';
                 
                 break;
             case 'delete':
-                $log_data['pids']     = array2string($p['pid_to_del']);
+                $log_data['ids']     = array2string($p['id_to_del']);
                 $log_data['old_data'] = array2string($old_data);
                 break;
             
             case 'update':
-                $log_data['pids'] = '';
+                $log_data['ids'] = '';
                  
                 $log_data['old_data'] = array2string($old_data);
                 
                 break;
             case 'batchUpdate':
-                $log_data['pids'] = array2string($p['batch_pids']);
+                $log_data['ids'] = array2string($p['batch_ids']);
                 break;
         }
         $this->db->insert('nanx_session_log', $log_data);

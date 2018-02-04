@@ -35,7 +35,7 @@ class Plugin_runner extends CI_Controller {
             $input_date=$master_row['input_date'];
             foreach ($data as $key => $one_row_obj) {
                    $one_row=(array)$one_row_obj;
-                   $pid=$one_row['pid'];
+                   $id=$one_row['id'];
                    $invoice_num=$invoice_num;
                    $unix=$one_row['unix'];
                    $unit_price=$one_row['unit_price'];
@@ -43,9 +43,9 @@ class Plugin_runner extends CI_Controller {
                    $this_used=$one_row['this_used'];
                       
                 
-                   $sql=" update standx_in_log_detail set  used_num=used_num+$this_used  where pid=$pid  " ;
+                   $sql=" update standx_in_log_detail set  used_num=used_num+$this_used  where id=$id  " ;
                    $this->db->query($sql);
-                   $sql=" update standx_in_log_detail set  left_num=input_num - used_num  where pid=$pid  " ;
+                   $sql=" update standx_in_log_detail set  left_num=input_num - used_num  where id=$id  " ;
                    $this->db->query($sql);
 
 
@@ -57,7 +57,7 @@ class Plugin_runner extends CI_Controller {
                    'input_num'=>$this_used,
                    'total_price'=>$unit_price*$this_used,
                    'input_date'=>$input_date,
-                   'ref_pid'=>$pid
+                   'ref_id'=>$id
                    );
 
                    if($this_used>0){
@@ -89,9 +89,9 @@ class Plugin_runner extends CI_Controller {
          $sql=" update standx_in_log_detail set left_num=input_num - used_num" ;
          $this->db->query($sql) ;
 
-         $sql  = "select standx_in_log_detail.pid,standx_prod_list.prod_code,prod_name ,unit_price,unix,input_num,used_num,left_num, 0  as this_used from  standx_prod_list, standx_in_log_detail ";
+         $sql  = "select standx_in_log_detail.id,standx_prod_list.prod_code,prod_name ,unit_price,unix,input_num,used_num,left_num, 0  as this_used from  standx_prod_list, standx_in_log_detail ";
          $sql  .= " where standx_in_log_detail.prod_code='$prod_code'    ";
-         $sql .="  and standx_prod_list.prod_code=standx_in_log_detail.prod_code   and input_num - used_num >0 order by standx_in_log_detail.pid";
+         $sql .="  and standx_prod_list.prod_code=standx_in_log_detail.prod_code   and input_num - used_num >0 order by standx_in_log_detail.id";
         
          return $sql;
     }

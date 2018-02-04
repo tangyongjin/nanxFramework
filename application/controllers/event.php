@@ -15,14 +15,14 @@ class Event extends CI_Controller {
       
 
       $sql=
-      "select pid,sender,title,sendtime from  nanx_sms  where receiver='$user' order by pid  desc limit 25";
+      "select id,sender,title,sendtime from  nanx_sms  where receiver='$user' order by id  desc limit 25";
       $rows=$this->db->query($sql)->result_array();
       $html_work_event='<table  class="msg-table" padding-left:0px  width=615px border="0"><thead>';
       $html_work_event.="<tr><th width=60px>".$sender."</th><th width=446px>".$title."</th><th width=122px>".$sendtime."</th></tr></thead>";
       foreach($rows as $row)
       {
-       $pid=$row['pid']; 
-       $html_work_event.="<tr><td>".$row['sender']."</td><td><a class=sms_tag pid=$pid href=#>".$row['title']."</a></td><td>".$row['sendtime']."</td></tr>";
+       $id=$row['id']; 
+       $html_work_event.="<tr><td>".$row['sender']."</td><td><a class=sms_tag id=$id href=#>".$row['title']."</a></td><td>".$row['sendtime']."</td></tr>";
       }       
     	$html_work_event.="</table>";
     	 
