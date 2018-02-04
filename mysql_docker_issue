@@ -1,0 +1,20 @@
+
+
+mysql  SSH login
+ 
+
+ 
+GMaYx7Y
+
+
+in Container:
+
+ssh -fNg -L 3377:127.0.0.1:3306  root@10.51.83.153
+mysql -uroot -pxcen396t --port 3377      -h127.0.0.1
+
+
+
+
+template_sql:
+
+  没有重新生成

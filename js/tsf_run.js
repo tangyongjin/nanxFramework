@@ -161,56 +161,37 @@ function autologin(){
       var controller=function_radio.value;
       selects='#'+function_radio.value+'_methods';
       var method= $(selects).val() ;
-
       var  version_to_test = $("#test_version_input").val(); 
 
-      
-      
-     
       if(arguments.length==0){
          var args_str_to_post_str=getJSON();
          var args_to_post=str_to_obj(args_str_to_post_str) ;
       }
 
-      //      args_to_post,
 
+      alert('将要远程调用')
 
-// $.ajax({
-// type: "POST",
-// url: "ajaxsubmit.php",
-// data: dataString,
-// cache: false,
-// success: function(result){
-// alert(result);
-// }
-// });
-
-
-      alert('https! remote_execute')
       $.post(
-             base_url+controller+'/'+method+'/',
-             args_str_to_post_str,
-             function(data){ 
-            
-              if (typeof data == 'object'){
-                   if( method=='login'  ){
-                          $('#http_sid').html(data.sid);
-                   }
-
-                $('#server_html').hide();
-                 editor_result.set(data) ;
-              }
-                else
-                { 
-
-                  $('#server_html').html(data);
-                  $('#jsoneditor_result').hide();
-                }
+              base_url+controller+'/'+method+'/',
+              args_str_to_post_str,
+              function(data){ 
+              
+              
+              try { // it is, so now let's see if its valid JSON
+                     var myJson = JSON.parse(data);
+                      // $('#server_html').hide();
+                      editor_result.set(myJson) ;
+                     
+                  } catch (e) {
+                       console.log(data  );
+                       alert('不是有效的json')
+                       // $('#server_html').hide();
+                       $('#server_html').html(data);
+                  }
 
           }).done(function(d) {
-        var response = d;
-
-    }).fail(function(a,b,c) {
+                 var response = d;
+           }).fail(function(a,b,c) {
               alert( "调用出错." );
 
                $('#server_html').show();
