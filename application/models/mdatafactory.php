@@ -128,31 +128,25 @@ class MDatafactory extends CI_Model
         $sql=$this->join_who_is_who($sql,$who_is_who_found);
         $sql=$this->join_view_filter($sql,$view_filter);
         
-       // echo $sql;
+        
+        $total=$this->getRowsCount($table);     // 如果 table 数据太多,有可能导致php 内存用满.直接采取 count(*)计算总条数
 
-        $db_q = $this->db->query($sql);
-        if ($db_q) {
-            $rows  = $db_q->result_array();
-            $total = count($rows);
-            
-            if (isset($_GET['start'])) {
-                $start = $_GET['start'];
-                $limit = $_GET['limit'];
-                $sql   = $sql . " limit $start,$limit";
-            }
-            $rows          = $this->db->query($sql)->result_array();
-            $data['rows']  = $rows;
-            $data['total'] = $total;
-            $data['table'] = $table;
-            $data['sql']   = $sql;
-            return $data;
-        } else {
-            $data['success'] = false;
-            $data['error']   = 'SqlSyntaxError';
-            $data['msg']     = 'check sql para' . $sql;
-            $data['sql']     = $sql;
-            return $data;
+        
+        
+        if (isset($_GET['start'])) {
+            $start = $_GET['start'];
+            $limit = $_GET['limit'];
+            $sql   = $sql . " limit $start,$limit";
         }
+
+        $rows          = $this->db->query($sql)->result_array();
+        $data['rows']  = $rows;
+        $data['total'] = $total;
+        $data['table'] = $table;
+        $data['sql']   = $sql;
+        return $data;
+   
+
     }
     
     function getWhoIsProducer_where($p)
@@ -296,6 +290,14 @@ class MDatafactory extends CI_Model
 
         $data['sql']=$sql; 
         return $data;
+    }
+
+
+
+    function getRowsCount($table){
+           $sql="select count(*) as rowscoutn from $table";
+           $dbres=$this->db->query($sql)->row_array();
+           return   $dbres['rowscoutn'];
     }
     
     
