@@ -139,6 +139,7 @@ class MFieldcfg  extends CI_Model{
       'field_e' => $field
       );
 
+     //debug($w1);die;
      $this->db->where($w1);
      $common1=$this->db->get('nanx_biz_column_editor_cfg')->first_row('array');
      

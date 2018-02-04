@@ -6,7 +6,9 @@ class Home extends CI_Controller
  
     function index()
     {
-        
+
+       
+        // debug($allsession) ;
         $this->setsession();
         $lang = $lang = $this->i18n->get_current_locale();
         $this->load->model('MUi');
@@ -18,9 +20,6 @@ class Home extends CI_Controller
        
         $allsession=$this->session->all_userdata();
         $roles=$allsession['roles'][0]['role_code'];
-       
-
-
         $page['bootstrap_menu']=$this->getThemeMenu($roles);
         $this->load->view('framework', $page);
         
@@ -156,6 +155,14 @@ class Home extends CI_Controller
                 $this->session->set_userdata('eid', $eid);
                 $this->session->set_userdata('user', $user_logged);
                  
+                $this->db->where('user',$user_logged);
+                $user_roles= $this->db->get('nanx_user_role_assign')->result_array();
+
+                // debug($user_roles);die;
+                $this->session->set_userdata('roles', $user_roles);
+              
+               
+
                 echo json_encode($result);
                 return;
             } else {
@@ -176,7 +183,7 @@ class Home extends CI_Controller
         $session_data=array();
 
         $user=$this->session->userdata('user');
-        $user='admin';
+        // $user='admin';
 
 
         $this->load->model('MUserRole');
@@ -226,20 +233,7 @@ class Home extends CI_Controller
 
 
     }
-    
-    function ie6issue()
-    {
-        if ($this->uri->segment(3) === FALSE) {
-            $lang = $this->i18n->get_current_locale();
-            $this->i18n->load_language();
-        } else {
-            $lang = $this->uri->segment(3);
-            $this->i18n->set_current_locale($lang);
-        }
-        $this->load->view('ie6issue');
-        
-        
-    }
+
     function logout()
     {
        logtext('logout') ;
@@ -248,17 +242,10 @@ class Home extends CI_Controller
        print_r($this->session->userdata); 
        $this->session->sess_destroy();
        print_r($this->session->userdata); 
-       
-       
        redirect('/home/index');
-       // redirect('backend/admin');
-       
-
-    
-
-
     }
     
+
     function test()
     {
         $this->load->library('email');

@@ -1,5 +1,5 @@
 APP_PREFIX='cass'
-BASE_URL='http://114.113.88.2:8964/'
+BASE_URL='http://123.57.223.10/'
 TMP_DIR=BASE_URL+'tmp/';
 AJAX_ROOT=BASE_URL;
 HELP_DIR=AJAX_ROOT+'dbdocu/gethelp/';

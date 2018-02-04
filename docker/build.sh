@@ -1,1 +1,1 @@
-docker build -f ./Dockerfile -t  test1 .
+docker build -f ./Dockerfile -t  cass.web  .

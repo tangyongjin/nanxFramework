@@ -29,7 +29,8 @@ RUN apt-get -qq update && apt-get install -y \
   php5-xmlrpc \ 
   libapache2-mod-php5 \ 
   php5-cli  \
-  supervisor
+  supervisor \
+  mysql-client
 
 RUN a2enmod rewrite
 
@@ -51,6 +52,6 @@ RUN echo "Asia/Chongqing" > /etc/timezone
 
 WORKDIR /var/www/html
 
-EXPOSE 22 80 443
+EXPOSE 22 80 443  7000
 
 CMD ["supervisord", "-n"]
