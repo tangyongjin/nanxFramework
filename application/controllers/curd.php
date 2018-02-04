@@ -10,12 +10,8 @@ class Curd extends CI_Controller
      {
         
 
-       
-
          $post    = file_get_contents('php://input');
          $p       = (array) json_decode($post);
-     
-         // debug($p);
 
          $this->load->model('MCurd');
          $result=$this->MCurd->getActivityData($p);
