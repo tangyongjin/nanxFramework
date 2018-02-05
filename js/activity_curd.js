@@ -525,6 +525,7 @@ Act.prototype.getColModel=function(){
     });
     return cm;
 }
+
 Act.prototype.getMainStore=function(){
     if (this.activity_type=='table'){
         var mainStore=this.getStoreByTableAndField(this.table,this.storeField,this.cfg);
@@ -620,8 +621,7 @@ Act.prototype.filter2QueryCfg=function(cfg)
 
 Act.prototype.getStoreByTableAndField=function(basetable,fields,cfg){
     var whoami=this.whoami;
-    console.log(fields)
-    
+     
     if (this.id_order) {
         var id_order = this.id_order.id_order;
     } else {
@@ -639,9 +639,9 @@ Act.prototype.getStoreByTableAndField=function(basetable,fields,cfg){
     };
 
     var table_query_json=Ext.encode(table_query_obj);
-    console.log(table_query_json)
-    console.log(CURD_GETDATA_URL)
-    
+   
+    console.log( table_query_obj )
+
     var ds=new Ext.data.JsonStore({
         proxy:new Ext.data.HttpProxy({
             url:CURD_GETDATA_URL,
@@ -1306,8 +1306,11 @@ Act.prototype.editData=function(btn){
         Ext.Msg.alert(i18n.tips, i18n.choose_only_one_record);
         return false;
     }
+
     this.fixLayout('update',this);
     var all_fields_form=this.getLayoutedForms(this, 'update', userRecord[0]);
+
+
     var w=this.getLayoutWidth(all_fields_form)*1.0;
     var updateForm =new Ext.form.FormPanel({
         xtype:'form',
@@ -2137,8 +2140,11 @@ Act.prototype.actionWin = function(type,form,wincfg){
           var roots = form.find('nanx_type','root');
           for(var i=0;i<roots.length;i++)
           {
-
-            roots[i].getStore().load();
+         
+              console.log(roots[i])
+              console.log(roots[i].getStore())
+              alert('will load')
+              roots[i].getStore().load({params:{start:0,limit:pageSize}});
           }
       });
       

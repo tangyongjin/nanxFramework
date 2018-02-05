@@ -1038,7 +1038,8 @@ Fb.getTreeBtns=function(yy){
          emptyText: i18n.combo_choose,
          fieldLabel: cfg.label,
          forceSelection: true,
-         editable: false,
+         editable: true,
+         pageSize:pageSize,           //显示下拉列表的分页
          readOnly:_readOnly,
          name: com_id,
          width:cfg.width?cfg.width:200,
@@ -1048,13 +1049,15 @@ Fb.getTreeBtns=function(yy){
          nanx_type: cfg.nanx_type,
          level: cfg.level,
          border: false,
-         editable: false,
          mode: 'local',
          store: store
      };
-     var combo = new Ext.form.ComboBox(combox_cfg);
-     store.on('load', function() {
+     
 
+
+     var combo = new Ext.form.ComboBox(combox_cfg);
+      
+     store.on('load', function() {
          var p = Ext.getCmp(combox_cfg.id);
           if (cfg.ini) {
              p.setValue(cfg.ini);
@@ -1081,13 +1084,6 @@ Fb.getTreeBtns=function(yy){
          console.log(direct_slaves)
          for (var i = 0; i < direct_slaves.length; i++) {
              var ds = direct_slaves[i].getStore();
-
-            console.log('value_key_for_slave');
-
-             // var path='value';
-             // Fb.setStorePara(ds, path,current_v);
-             // var path='filter_value';
-             // Fb.setStorePara(ds, path,current_v);
              var path='query_cfg.lines.vset_'+i;
              Fb.setStorePara(ds, path,current_v);
              direct_slaves[i].getStore().load();
@@ -1095,8 +1091,6 @@ Fb.getTreeBtns=function(yy){
      });
 
      combo.on("select", function(c, record) {
-         
-
          Fb.setFollowFieldValue.createDelegate(this, [c, record, cfg], true)();
          var fm = c.findParentByType('form');
          var tmp_v = c.getValue();
@@ -1109,16 +1103,11 @@ Fb.getTreeBtns=function(yy){
          if (Ext.isEmpty(v)) {
              v = tmp_v;
          }
-
-
          
          var x_group_id = cfg.group_id;
          var level = cfg.level;
          var all_slaves = Fb.findSlaves(fm, x_group_id, level);
          var direct_slaves = Fb.findSlaves(fm, x_group_id, level, true);
-
-          
-
 
          for (var i = 0; i < all_slaves.length; i++) {
              all_slaves[i].getStore().clearData();
@@ -1153,7 +1142,7 @@ Fb.getTreeBtns=function(yy){
      } else {
          return combo;
      }
- };
+ }
 
 
 Fb.setJsonPath=function(obj,path, val) {
@@ -1332,31 +1321,42 @@ Fb.setJsonPath=function(obj,path, val) {
  }
 
 
-   Fb.getTriggerEditor = function(  one_col_cfg, row,readonly_flag,whoami_cfg) {
+   Fb.getDropdownOption=function (one_col_cfg){
+
+     var fields = [one_col_cfg.editor_cfg.trigger_cfg.list_field, one_col_cfg.editor_cfg.trigger_cfg.value_field];
+     var table = one_col_cfg.editor_cfg.trigger_cfg.combo_table;
+     var filter_cfg = {filter_field: one_col_cfg.editor_cfg.trigger_cfg.filter_field };
+     return {'table':table,'fields':fields,'filter_cfg':filter_cfg}
+
+   } 
+   
+
+   Fb.getColInitValue=function(one_col_cfg,row,whoami_cfg){
      
-     
+     var _ini='';
      var connected_value=  this.getTriggerWhoIsWho(one_col_cfg,whoami_cfg);
      if (connected_value){readonly_flag=true;} 
      ghost_field = 'ghost_' + one_col_cfg['field_e'];
+
      if (row) {   // edit mode
-         one_col_cfg.ini = row.json[ghost_field];
+        _ini = row.json[ghost_field];
      }
      else
      {
         if(connected_value){
-            one_col_cfg.ini=connected_value;
+             _ini=connected_value;
        }else
        {
-            one_col_cfg.ini=one_col_cfg.editor_cfg.default_v;
+            _ini=one_col_cfg.editor_cfg.default_v;
        }
      }
+     return _ini
+   }
+
+  //下拉字段
+   Fb.getDropdownlistEditor = function(  one_col_cfg, row,readonly_flag,whoami_cfg) {
        
-     var fields = [one_col_cfg.editor_cfg.trigger_cfg.list_field, one_col_cfg.editor_cfg.trigger_cfg.value_field];
-     var table = one_col_cfg.editor_cfg.trigger_cfg.combo_table;
-     var filter_cfg = {
-         filter_field: one_col_cfg.editor_cfg.trigger_cfg.filter_field
-     };
-     var combo_store = Act.prototype.getStoreByTableAndField(table, fields, filter_cfg);
+     one_col_cfg.ini=this.getColInitValue(one_col_cfg,row,whoami_cfg)
      one_col_cfg.id = one_col_cfg.field_e;
      one_col_cfg.valueField = one_col_cfg.editor_cfg.trigger_cfg.value_field;
      one_col_cfg.displayField = one_col_cfg.editor_cfg.trigger_cfg.list_field;
@@ -1369,6 +1369,10 @@ Fb.setJsonPath=function(obj,path, val) {
      }
      one_col_cfg.group_id = one_col_cfg.editor_cfg.trigger_cfg.group_id;
      one_col_cfg.detail_btn = true;
+
+     var dropdownOption=this.getDropdownOption(one_col_cfg)
+     var combo_store = Act.prototype.getStoreByTableAndField(dropdownOption.table, dropdownOption.fields, dropdownOption.filter_cfg);
+
      return this.getBasicCombo(one_col_cfg, combo_store,readonly_flag);
  }
 
@@ -1423,11 +1427,8 @@ Fb.getWhoami=function()
              
          }
      }
-
-      
-   //editCfg.editor_cfg.rowbasevalue=rowOriginalValue;   
+    
    editCfg.editor_cfg.ini=rowOriginalValue;   
-   //editCfg.editor_cfg.default_v=rowOriginalValue;
  }
 
 
@@ -1455,7 +1456,7 @@ Fb.getWhoami=function()
      }
 
      if (!Ext.isEmpty(one_col_cfg.editor_cfg.trigger_cfg)) {
-         return [Fb.getTriggerEditor(  one_col_cfg, row, readonly_flag,whoami_cfg )];
+         return [Fb.getDropdownlistEditor(  one_col_cfg, row, readonly_flag,whoami_cfg )];
      } 
      
      
@@ -1470,8 +1471,6 @@ Fb.getWhoami=function()
      }
 
      if (one_col_cfg.editor_cfg.edit_as_html == 1) {
-        // alert('hhh');
-         console.log(one_col_cfg);
          return [this.getHtmlEditor(one_col_cfg['field_e'], one_col_cfg['display_cfg'].field_c, one_col_cfg['editor_cfg']['ini']     )];
      }
 
@@ -1845,11 +1844,7 @@ Fb.getWhoami=function()
 
  Fb.getOperationForm = function(node, orginal_mcfg) {
 
-
-    var  mcfg = Fb.preProcessNodeAtt(orginal_mcfg, node);
-
-
-
+     var  mcfg = Fb.preProcessNodeAtt(orginal_mcfg, node);
      var layout = 'form';
      var forms = [];
      var needsend = ['id','group_id', 'table', 'hostby', 'column_definition', 'DDL'];
@@ -1941,12 +1936,7 @@ Fb.getWhoami=function()
          category_to_use: 'biz_cols'
      }
      if(meta5&&meta5.field_e)hostcfg.ini=meta5.field_e;
-     
-
-
-      var store = Fb.buildTreeStore(hostcfg);
-
-
+     var store = Fb.buildTreeStore(hostcfg);
      var host_combo = Fb.getBasicCombo(hostcfg, store);
      group_id = 'TR_' + cfg.serial;
      var combo_cfg = {
