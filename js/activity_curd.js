@@ -74,7 +74,7 @@ function Act(cfg) {
 }
 
 Act.prototype.init_all = function(cfg) {
-    console.log(cfg);
+  
     this.cfg = cfg;
     this.with_checkbox_col = cfg.hasOwnProperty('checkbox') ? cfg.checkbox : true;
     this.gridHeader = cfg.hasOwnProperty('gridheader') ? cfg.gridheader : false;
@@ -171,10 +171,7 @@ Act.prototype.showActivityWindow=function(){
             WaitMask.hide();
             var ret_json=Ext.util.JSON.decode(response.responseText);
             that.setcfg(ret_json);
-
-      //      alert(ret_json.activity_type);
-            console.log(ret_json)
-
+ 
            switch(ret_json.activity_type)
                 {
                 case 'html':
@@ -239,8 +236,6 @@ Act.prototype.createActivityGridPanel=function(){
                 }           
             },
             beforeedit:function(col){
-                console.log(this);
-                  console.log(col.record.data.config_key);
                 if (col.field=='id'){
                     return false;
                 }
@@ -1264,8 +1259,6 @@ Act.prototype.getLayoutWidth=function(x)
 
 Act.prototype.addData=function(){
     
-    console.log(this) ;
-
     var that=this;
     if (Ext.getCmp('add_win')){
         Ext.getCmp('add_win').close();
@@ -1273,8 +1266,6 @@ Act.prototype.addData=function(){
     this.fixLayout('add',this);
 
     var x=this.getLayoutedForms(this,'add',null);
-    console.log(x);
-
     var width=this.getLayoutWidth(x);
     var add_form = new Ext.form.FormPanel({
         xtype:'form',
@@ -1626,7 +1617,6 @@ Act.prototype.getBtns=function( ){
 Act.prototype.getFileBasedBtns=function(){
     var that=this;
     var public_btns=[];
-    console.log(this.cfg);
         if (this.cfg.file_type=='img'){
         public_btns.push({
             text:i18n.set_as_logo,
@@ -1781,7 +1771,6 @@ Act.prototype.delFile=function(grid){
 
 
 Act.prototype.getStandBtns=function(){
-    console.log(this.cfg);
     var publicBtns=this.getPublicBtns();
     var rowBasedActBtns=this.getRowBasedActBtns();
     var jsBtns=this.getJsBtns();
@@ -1818,7 +1807,6 @@ Act.prototype.getJsBtns=function(){
     var specialBtns=[];
     var btns=this.js_btns;
     var orgin_act=this;
-    console.log(orgin_act);
     for (var i=0;i<btns.length;i++){
         var obj={ctCls:'x-btn-over'};
         obj.text=btns[i].btn_name;
@@ -1971,9 +1959,6 @@ Act.prototype.showWindow = function(){
     
     var win_w=this.win_size_width||this.cfg.width;
     var win_h=this.win_size_height||this.cfg.height;
-
-    console.log(this.cfg)
-
 
     if (this.cfg.showwhere=='autowin'){
         this.cfg.tbar_type='stand';
@@ -2140,10 +2125,6 @@ Act.prototype.actionWin = function(type,form,wincfg){
           var roots = form.find('nanx_type','root');
           for(var i=0;i<roots.length;i++)
           {
-         
-              console.log(roots[i])
-              console.log(roots[i].getStore())
-              alert('will load')
               roots[i].getStore().load({params:{start:0,limit:pageSize}});
           }
       });
@@ -2220,19 +2201,12 @@ Act.prototype.FormAction=function(form){
              Fb.ajaxPostData(form.extra_url,dataSend,form.extra_fn);
              }
         }
-        else
-         { console.log ('waiting--->');
-           console.log (form.uptasks);
-           console.log(form.upload_errcount);
-         }
 }
 
 function isJson(str) {
     try {
         JSON.parse(str);
     } catch (e) {
-        console.log(e);
-
         return false;
     }
     return true;
@@ -2252,7 +2226,6 @@ function Act_service(acode,service_url,memo){
         handler:function(){
             Ext.Msg.confirm(i18n.confirm,i18n.confirm_execute,function(btn){
                 if (btn=='yes'){
-                    console.log('service called');
                     WaitMask.show();
                     Ext.Ajax.request({
                         url: AJAX_ROOT + service_url,

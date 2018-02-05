@@ -123,7 +123,7 @@ Fb.toggle_combo=function(togglefalg)
      var fname = field.value.split('/').pop();
      var ftype=Fb.getFileType(fname);
 
-     console.log(ftype)
+    
      if (ftype == 'img'){
          var box = {
              xtype: 'box',
@@ -177,10 +177,6 @@ Fb.toggle_combo=function(togglefalg)
                      form.uptasks++;
                      form.realupload = true;
                  }
-                 else
-                  {
-                     console.log('form not find???');
-                  }
              }
          }
      }, {
@@ -292,12 +288,8 @@ Fb.getTreeBtns=function(yy){
               
             
                 var tree=Ext.getCmp('menutree');
-                console.log(tree)
                 var sm=tree.getSelectionModel()
-                console.log(sm)
-                
                 var record = tree.getSelectionModel().getSelectedNode() 
-                 console.log(record)
                  if(record){
                      record.remove(true);
                  }
@@ -315,43 +307,19 @@ Fb.getTreeBtns=function(yy){
             ctCls:'x-btn-over',
             id:'pub_edit',
             handler:function(){
-
-
-
                 var tree=Ext.getCmp('menutree');
                 var currentNode=tree.getSelectionModel().getSelectedNode() || tree.root;
-                console.log(currentNode)
-
-                console.log( currentNode.hasChildNodes())
-               
             }
         });
-
-    
-
-     
     return public_btns;
 }
 
 
  Fb.getTreeGrid=function(cfg){
-    console.log(cfg);
-
-     
-
-
     var tree = new Ext.tree.TreePanel(
      {
-        // root with some static demo nodes
         root:{text:'root',leaf:false,activity_code:'',id:'root',expanded:false, children:[]}
-
-        // preloads 1st level children
-//        ,loader:new Ext.tree.TreeLoader({preloadChildren:true})
-
-        // enable DD
         ,enableDD:true
-
-        // set ddGroup - same as for grid
         ,ddGroup:'NANX_gridDD'
 
         ,id:'menutree'
@@ -380,7 +348,6 @@ Fb.getTreeBtns=function(yy){
 
                     // reset cancel flag
                     e.cancel = false;
-
                     // setup dropNode (it can be array of nodes)
                     e.dropNode = [];
                     var r;
@@ -388,9 +355,7 @@ Fb.getTreeBtns=function(yy){
 
                         // get record from selectons
                         r = e.data.selections[i];
-
                         // create node from record data
-                        console.log(r);
                         e.dropNode.push(this.loader.createNode({
                              text:r.get('text')
                             ,leaf:true,
@@ -417,7 +382,6 @@ Fb.getTreeBtns=function(yy){
             if (ed.editNode.leaf)
                 return false;
         });
-    console.log(tree);
     return tree;
  }
 
@@ -507,9 +471,6 @@ Fb.getTreeBtns=function(yy){
 
  
   Fb.getHtmlEditor = function(id, label, value) {
-
-     console.log(value);
-
      var htmlEditor = {
          xtype: "StarHtmleditor",
          fieldLabel: label,
@@ -598,8 +559,6 @@ Fb.getTreeBtns=function(yy){
  }
  
  Fb.addTriggerRow12_from_response = function(follow_cfg) {
-     console.log(follow_cfg);
-
      var current_form = Ext.getCmp('back_opform');
      for (var n = 0; n < follow_cfg.length; n++) {
          var field_2 = Fb.triggerRow12({
@@ -1014,7 +973,8 @@ Fb.getTreeBtns=function(yy){
 
 
  Fb.getBasicCombo = function(xcfg, store,_readOnly) {
-  var cfg=Fb.DeepClone(xcfg);
+
+   var cfg=Fb.DeepClone(xcfg);
    if ( _readOnly== undefined) {  
          _readOnly=false;  
     }  
@@ -1029,14 +989,6 @@ Fb.getTreeBtns=function(yy){
         cfg.serial=0;
      }
 
-
-
-
-
-
-
-     
-     console.log(cfg)
      var combox_cfg = {
          id: com_id,
          serial:cfg.serial,
@@ -1061,8 +1013,6 @@ Fb.getTreeBtns=function(yy){
          store: store,
          typeAhead: true,
          selectOnFocus: true
-    
-
      };
      
 
@@ -1071,37 +1021,37 @@ Fb.getTreeBtns=function(yy){
       
      store.on('load', function() {
          
-         var p = Ext.getCmp(combox_cfg.id);
+          var p = Ext.getCmp(combox_cfg.id);
+          
           if (cfg.ini) {
              p.setValue(cfg.ini);
+           
              cfg.ini = null;
+
          } else {
              p.setValue(p.getValue());
          }
+
+          p.setRawValue(cfg.raw_value); //显示下拉框的文本, 因为store分页,有可能不在当前page里面,所有强制设定
+
          var tfm = Ext.getCmp(combox_cfg.id).findParentByType('form');
          var tmp_v = combo.getValue();
-
          if (Ext.isEmpty(tmp_v)) {
-             console.log('return empty tmp_v');
+           
              return;
          }
 
          var current_rec = combo.findRecord(combo.valueField || combo.displayField, tmp_v);
-         
          if(!current_rec){
-            // alert('notFound') 
             return;
-        }else{
-            console.log(combo)
-            console.log(current_rec)
-        }
+         }
 
          var current_v = current_rec.json[cfg.value_key_for_slave] || combo.getValue();
          var x_group_id = combox_cfg.group_id;
          var level = combox_cfg.level;
          
          var direct_slaves = Fb.findSlaves(tfm, x_group_id, level, true);
-         console.log(direct_slaves)
+         
          for (var i = 0; i < direct_slaves.length; i++) {
              var ds = direct_slaves[i].getStore();
              var path='query_cfg.lines.vset_'+i;
@@ -1122,9 +1072,6 @@ Fb.getTreeBtns=function(yy){
          }
          
          var current_rec = c.findRecord(c.valueField || c.displayField, tmp_v);
-         
-         console.log(current_rec)
-
          var v = current_rec.json[cfg.value_key_for_slave];
          
          if (Ext.isEmpty(v)) {
@@ -1149,11 +1096,7 @@ Fb.getTreeBtns=function(yy){
          }
      });
      
-     combo.on("render", function(c, record){
-      c.el.applyStyles({
-     //           background : 'none #E6E6E6'
-             })
-     }) 
+      
 
      if (cfg.detail_btn) {
          var table = cfg.editor_cfg.trigger_cfg.combo_table;
@@ -1292,9 +1235,7 @@ Fb.setJsonPath=function(obj,path, val) {
  Fb.getDefaultEditor = function( master_act, oneFieldCfg,readonly_flag) {
 
     _hide=Fb.checkIdHidden(oneFieldCfg);
- 
-    console.log(oneFieldCfg);
-    var that=this;
+     var that=this;
      var f_width = Fb.getFieldWidth(oneFieldCfg);
      var defaultEditor = {
          fieldLabel: oneFieldCfg['display_cfg'].field_c,
@@ -1359,7 +1300,7 @@ Fb.setJsonPath=function(obj,path, val) {
    } 
    
 
-   Fb.getColInitValue=function(one_col_cfg,row,whoami_cfg){
+   Fb.getColInitValueAndRawValue=function(one_col_cfg,row,whoami_cfg){
      
      var _ini='';
      var connected_value=  this.getTriggerWhoIsWho(one_col_cfg,whoami_cfg);
@@ -1378,13 +1319,17 @@ Fb.setJsonPath=function(obj,path, val) {
             _ini=one_col_cfg.editor_cfg.default_v;
        }
      }
-     return _ini
+     return {'_ini':_ini,'_raw_value': row.data[one_col_cfg['field_e']]}  
    }
 
   //下拉字段
    Fb.getDropdownlistEditor = function(  one_col_cfg, row,readonly_flag,whoami_cfg) {
-       
-     one_col_cfg.ini=this.getColInitValue(one_col_cfg,row,whoami_cfg)
+     
+     var row_value= this.getColInitValueAndRawValue(one_col_cfg,row,whoami_cfg) 
+     one_col_cfg.ini=row_value._ini
+     one_col_cfg.raw_value=row_value._raw_value
+
+
      one_col_cfg.id = one_col_cfg.field_e;
      one_col_cfg.valueField = one_col_cfg.editor_cfg.trigger_cfg.value_field;
      one_col_cfg.displayField = one_col_cfg.editor_cfg.trigger_cfg.list_field;
@@ -1605,11 +1550,8 @@ Fb.getWhoami=function()
      if (fmdata.opcode && fmdata.opcode.indexOf('set_activity_pic') >= 0){
      
          var fileGrid=Ext.getCmp('grid_FILE');        
-         console.log(fileGrid);
          file_choosed=Act.prototype.getMediaGridValue(fileGrid);
-         console.log(file_choosed);
          var picname = file_choosed[0].split('/').pop();
-         console.log(picname);
          fmdata['activity_pic']=picname;
      }
 
@@ -1654,10 +1596,7 @@ Fb.getWhoami=function()
 
      var f = [];
      var root_cfg = item.root_combox;
-     
-     console.log(item);
-
-    
+      
     if(   item.hasOwnProperty('using_serial')){
      root_cfg.using_serial=true;
      root_cfg.serial=item.serial;
@@ -1952,9 +1891,7 @@ Fb.getWhoami=function()
 
  Fb.triggerRow12345 = function(cfg,meta5){
 
- console.log(cfg);
-    
-     var hostcfg = {
+    var hostcfg = {
          item_type: 'combo_list',
          id: 'field_e_' + cfg.serial,
          value: cfg.base_table,
@@ -2242,15 +2179,10 @@ Fb.setSingleField=function(jsondata, item) {
                    },
                  value:item.postfix ? field_v + item.postfix : field_v
              }; 
-             console.log(item)
 
              if ( item.hasOwnProperty('ini')){
                 f.value=item.ini
              }
-
-
-             console.log(f);
-
 
              if(item.inputType){f.inputType=item.inputType;}
              break;
