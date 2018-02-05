@@ -1259,7 +1259,7 @@ Act.prototype.getLayoutWidth=function(x)
      }
    w=Math.max(w,line_w); 
   } 
-  return w;
+  return w+186;
 }
 
 Act.prototype.addData=function(){
@@ -2173,6 +2173,8 @@ Act.prototype.actionWin = function(type,form,wincfg){
             handler:afterClick
         }]
     };
+
+      win_cfg.width=600;  
       if (type=="backend"){win_cfg.width=wincfg.width?wincfg.width:550}
       if(wincfg&&wincfg.viewonly){win_cfg.buttons[1].disabled=true;};    
       var win = new Ext.Window(win_cfg);

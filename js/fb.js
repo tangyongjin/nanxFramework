@@ -1042,7 +1042,7 @@ Fb.getTreeBtns=function(yy){
          pageSize:pageSize,           //显示下拉列表的分页
          readOnly:_readOnly,
          name: com_id,
-         width:cfg.width?cfg.width:200,
+         width:cfg.width?cfg.width+100:300,
          allowBlank: cfg.hasOwnProperty('allowBlank') ? cfg.allowBlank : true,
          style: cfg.style ? cfg.style : null,
          group_id: cfg.group_id ? cfg.group_id : 'RS_' + Ext.id(),
@@ -1135,7 +1135,6 @@ Fb.getTreeBtns=function(yy){
              fieldLabel: cfg['display_cfg'].field_c,
              layout: 'table',
              nanx_type: 'combo_with_detail',
-             width: 280,
              items: [combo, btn_detail]
          });
          return combowithdetail;
@@ -1207,7 +1206,7 @@ Fb.setJsonPath=function(obj,path, val) {
          xtype: 'textfield',
          fieldLabel: oneFieldCfg['display_cfg'].field_c,
          id: oneFieldCfg['field_e'],
-         width: 200,
+         width: 300,
          height: 25,
          value: rowOriginalValue,
          readOnly:true,
@@ -1217,9 +1216,9 @@ Fb.setJsonPath=function(obj,path, val) {
  }
 
  Fb.getFieldWidth = function(cfg) {
-     var f_width = 200;
+     var f_width = 300;
      if (cfg.display_cfg.field_width == null) {
-         f_width = 200;
+         f_width = 300;
      } else {
          f_width = cfg.display_cfg.field_width;
      }
