@@ -487,6 +487,7 @@ Fb.getTreeBtns=function(yy){
 
 
  Fb.getDirectComboEditor = function(jsonarray) {
+ 
      return {
          xtype: 'combo',
          store: new Ext.data.JsonStore({
@@ -501,6 +502,7 @@ Fb.getTreeBtns=function(yy){
          triggerAction: 'all',
          lazyRender: true
      };
+ 
  }
 
  
@@ -1027,6 +1029,12 @@ Fb.getTreeBtns=function(yy){
         cfg.serial=0;
      }
 
+
+
+
+
+
+
      
      console.log(cfg)
      var combox_cfg = {
@@ -1040,7 +1048,7 @@ Fb.getTreeBtns=function(yy){
          forceSelection: true,
          editable: true,
          pageSize:pageSize,           //显示下拉列表的分页
-         readOnly:_readOnly,
+         // readOnly:_readOnly,
          name: com_id,
          width:cfg.width?cfg.width+100:300,
          allowBlank: cfg.hasOwnProperty('allowBlank') ? cfg.allowBlank : true,
@@ -1048,9 +1056,13 @@ Fb.getTreeBtns=function(yy){
          group_id: cfg.group_id ? cfg.group_id : 'RS_' + Ext.id(),
          nanx_type: cfg.nanx_type,
          level: cfg.level,
-         border: false,
-         mode: 'local',
-         store: store
+         border: true,
+         mode: 'remote',
+         store: store,
+         typeAhead: true,
+         selectOnFocus: true
+    
+
      };
      
 
@@ -1058,6 +1070,7 @@ Fb.getTreeBtns=function(yy){
      var combo = new Ext.form.ComboBox(combox_cfg);
       
      store.on('load', function() {
+         
          var p = Ext.getCmp(combox_cfg.id);
           if (cfg.ini) {
              p.setValue(cfg.ini);
@@ -1069,13 +1082,20 @@ Fb.getTreeBtns=function(yy){
          var tmp_v = combo.getValue();
 
          if (Ext.isEmpty(tmp_v)) {
-             console.log('return 1111!!!!');
+             console.log('return empty tmp_v');
              return;
          }
+
          var current_rec = combo.findRecord(combo.valueField || combo.displayField, tmp_v);
+         
          if(!current_rec){
+            // alert('notFound') 
             return;
+        }else{
+            console.log(combo)
+            console.log(current_rec)
         }
+
          var current_v = current_rec.json[cfg.value_key_for_slave] || combo.getValue();
          var x_group_id = combox_cfg.group_id;
          var level = combox_cfg.level;
@@ -1090,7 +1110,9 @@ Fb.getTreeBtns=function(yy){
          }
      });
 
+
      combo.on("select", function(c, record) {
+
          Fb.setFollowFieldValue.createDelegate(this, [c, record, cfg], true)();
          var fm = c.findParentByType('form');
          var tmp_v = c.getValue();
@@ -1098,8 +1120,13 @@ Fb.getTreeBtns=function(yy){
          if (Ext.isEmpty(tmp_v)) {
              return;
          }
+         
          var current_rec = c.findRecord(c.valueField || c.displayField, tmp_v);
+         
+         console.log(current_rec)
+
          var v = current_rec.json[cfg.value_key_for_slave];
+         
          if (Ext.isEmpty(v)) {
              v = tmp_v;
          }
@@ -1169,6 +1196,8 @@ Fb.setJsonPath=function(obj,path, val) {
          store.baseParams.value = value;
      }
  }
+
+
 
  Fb.buildTreeStore = function(treecfg) {
      baseParaObj = {};

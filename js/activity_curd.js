@@ -640,7 +640,6 @@ Act.prototype.getStoreByTableAndField=function(basetable,fields,cfg){
 
     var table_query_json=Ext.encode(table_query_obj);
    
-    console.log( table_query_obj )
 
     var ds=new Ext.data.JsonStore({
         proxy:new Ext.data.HttpProxy({
@@ -996,6 +995,7 @@ Act.prototype.getSerachPanel=function(table,storeId,winid){
                     limit:pageSize
                 }
             });
+
             delete ds.proxy.conn.jsonData.nanx_query_cfg;
         }
     });

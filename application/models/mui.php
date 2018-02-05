@@ -84,6 +84,15 @@ class MUI extends CI_Model
   );
 
  $bs_url = $this->config->item('base_url');
+
+ // $bs_url='1111'; 
+
+if( substr($bs_url, -1)=="/" ){
+   
+   $bs_url=substr($bs_url, 0, -1);
+}
+
+
  while(list($key,$value)=each($cfg))
  {
  	for($index=0;$index< count($cfg[$key]['css']);$index++)
@@ -123,15 +132,16 @@ class MUI extends CI_Model
      }
  
    $bs_url = $this->config->item('base_url');
+   
    if(!($flag=='login'))
      {
      $app_js = $this->getPluginJs();
      foreach ($app_js as $one) 
-     {
+      {
      	$jsfile=$one['jsfile'];
-      $js .= "<script type='text/javascript' src=$bs_url/js/upload/$jsfile></script>";
-     }
-     }
+      $js .= "<script type='text/javascript' src={$bs_url}js/upload/$jsfile></script>";
+      }
+    }
   return array('js'=> $js, 'css'=> $css);
  }
  
