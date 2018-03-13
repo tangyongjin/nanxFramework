@@ -1303,23 +1303,28 @@ Fb.setJsonPath=function(obj,path, val) {
    Fb.getColInitValueAndRawValue=function(one_col_cfg,row,whoami_cfg){
      
      var _ini='';
+     var _raw='';
      var connected_value=  this.getTriggerWhoIsWho(one_col_cfg,whoami_cfg);
      if (connected_value){readonly_flag=true;} 
      ghost_field = 'ghost_' + one_col_cfg['field_e'];
 
      if (row) {   // edit mode
         _ini = row.json[ghost_field];
+        _raw=row.data[one_col_cfg['field_e']]
      }
      else
      {
         if(connected_value){
              _ini=connected_value;
+             _raw=null;
        }else
        {
             _ini=one_col_cfg.editor_cfg.default_v;
+            _raw=null;
        }
      }
-     return {'_ini':_ini,'_raw_value': row.data[one_col_cfg['field_e']]}  
+     console.log(row);
+     return {'_ini':_ini,'_raw_value':  _raw}  
    }
 
   //下拉字段

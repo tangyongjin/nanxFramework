@@ -1,6 +1,5 @@
 <?php 
 
-$config['eidfolder']   ='cass';
 // $config['webroot']= $_SERVER['DOCUMENT_ROOT'];
 // $config['base_url']   ='';
 // $config['index_page'] = 'index.php';
@@ -19,6 +18,8 @@ $config['eidfolder']   ='cass';
 // $config['function_trigger']		= 'm';
 // $config['directory_trigger']	= 'd'; 
 // $config['log_threshold'] =0;
+
+$config['base_url'] = 'http://61.232.6.35:9002';
 $config['log_path'] = '/var/www/html/logs';
 $config['log_date_format'] = 'Y-m-d H:i:s';
 // $config['cache_path'] = '';

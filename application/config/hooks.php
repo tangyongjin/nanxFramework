@@ -10,6 +10,16 @@
 |
 */
 
+ 
+$hook['post_controller_constructor'][] 
+=array( 
+'class'=>'Logger', 
+'function'=>'mlog', 
+'filename'=>'logger.php', 
+'filepath'=>'hooks'); 
+
+
+
 $hook['post_controller_constructor'][] 
 =array( 
 'class'=>'Acl', 
@@ -17,7 +27,6 @@ $hook['post_controller_constructor'][]
 'filename'=>'acl.php', 
 'filepath'=>'hooks'); 
 
- 
 $hook['post_controller_constructor'][] = array(
                                 'class'    => 'I18n',
                                 'function' => 'auto_load_language',
@@ -26,6 +35,8 @@ $hook['post_controller_constructor'][] = array(
                                 );
 
 
+
+ 
 
 /* End of file hooks.php */
 /* Location: ./application/config/hooks.php */

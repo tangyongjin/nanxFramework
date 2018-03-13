@@ -48,11 +48,11 @@
 
 $active_group = 'default';
 $active_record = TRUE;
-$db['default']['hostname'] = '127.0.0.1';
+$db['default']['hostname'] = '61.232.6.35';
 $db['default']['username'] = 'root';
-$db['default']['port'] = '3377';
-$db['default']['password'] = 'xcen396t';
-$db['default']['database'] = 'db_ugf';
+$db['default']['port'] = '3306';
+$db['default']['password'] = 'cnix@1234';
+$db['default']['database'] = 'parkos';
 $db['default']['dbdriver'] = 'mysqli';
 $db['default']['dbprefix'] = '';
 $db['default']['pconnect'] = FALSE;

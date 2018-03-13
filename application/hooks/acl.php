@@ -9,56 +9,58 @@ class ACL
     
     function check_login()
     {
-
-      $user = $this->CI->session->userdata('user');
-      $eid= $this->CI->session->userdata('eid');
-    
-      if (empty($user)){return false;} 
-      if (empty($eid)){return false;} 
-      $CI=&get_instance();
-      $this_eid=$CI->config->item('eidfolder');
-      if($eid==$this_eid){return true;}else{return false;}
-      return false;
+       $CI=&get_instance();
+       $session_id = $this->CI->session->userdata('session_id');
+       $user = $this->CI->session->userdata('user');
+       $alluserdata=$this->CI->session->all_userdata();
+       if (empty($user)){return false;} 
+       return true;
     }
     
     function filter()
     {
- 
-    	  $this->CI = & get_instance();
-        $url = $_SERVER['REQUEST_URI'];
+       
+       
+        $this->CI = & get_instance();
+        
+
+        //无论url是否有index.php,先替换掉index.php
+       
+        $url = str_replace( '/index.php','', $_SERVER['REQUEST_URI']);
+        
+       
+
         $arr = explode('/', $url);
 
-
-        
+        // debug($arr);  
         $arr = array_slice($arr, array_search('index.php', $arr) + 1, count($arr));
         $this->url_model = isset($arr[0]) ? $arr[0] : '';
         $this->url_method = isset($arr[1]) ? $arr[1] : 'index';
         $this->url_param = isset($arr[2]) ? $arr[2] : '';
+ 
+       
+   
 
-        // debug($_SERVER['REQUEST_URI']);
-        // print_r($url);
-        // print_r($arr);die;
-
-
-        if(in_array($this->url_method,array('logger','login','dologin','logout')))
+        if(in_array($this->url_method,array('auto_load_language','logger','listEvent','login','ie6issue','dologin','logout','writelog','showlog','clearlog','writelog')))
         {  
-          return;
+          return true;
         }
-        
+
         $is_login= $this->check_login();
 
         if(!$is_login) 
         { 
-            $CI=&get_instance();
-        	  $bs_url=$CI->config->item('base_url');
-            redirect('home/login');
-
-            // header("Location:{$bs_url}home/login");
-          }
+            logtext('check_login failed, will return;');
+            
+            $bs_url= $this->CI->config->item('base_url');
+            header("Location:$bs_url/home/login");
+            return false ;             
+        }
          else 
         {
-          return;
+          return  true;
         }
     }
 }
+
 ?>

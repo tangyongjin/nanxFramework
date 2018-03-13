@@ -4,6 +4,11 @@ if (!defined('BASEPATH'))
 class Home extends CI_Controller
 {
  
+
+    function abc(){
+        echo "abc";
+    }
+
     function index()
     {
 
@@ -147,22 +152,14 @@ class Home extends CI_Controller
                 $result['msg']  = '';
                 $result['user'] = $p['account'];
                 
-                $eid = $this->config->item('eidfolder');
                 $user_logged=$p['account'];
                 
-                logtext("after longin, eid is $eid,user is $user_logged  ");
 
-                $this->session->set_userdata('eid', $eid);
                 $this->session->set_userdata('user', $user_logged);
                  
                 $this->db->where('user',$user_logged);
                 $user_roles= $this->db->get('nanx_user_role_assign')->result_array();
-
-                // debug($user_roles);die;
                 $this->session->set_userdata('roles', $user_roles);
-              
-               
-
                 echo json_encode($result);
                 return;
             } else {
@@ -188,9 +185,9 @@ class Home extends CI_Controller
 
         $this->load->model('MUserRole');
         $this->load->model('MSystempara');
-        $eid = $this->config->item('eidfolder');
+        // $eid = $this->config->item('eidfolder');
  
-        $session_data['eid']=$eid;
+        // $session_data['eid']=$eid;
         $session_data['user']=$user;
         // $session_data['user']='admin';
            
@@ -236,13 +233,12 @@ class Home extends CI_Controller
 
     function logout()
     {
-       logtext('logout') ;
-       echo "will logout";
+       
 
        print_r($this->session->userdata); 
        $this->session->sess_destroy();
        print_r($this->session->userdata); 
-       redirect('/home/index');
+       redirect('home/login');
     }
     
 
