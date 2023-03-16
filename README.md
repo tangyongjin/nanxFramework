@@ -13,4 +13,9 @@ It provides a standard set of buttons for directly offering editing, deleting, a
 
 The data source can be defined as a database table or SQL, which will greatly reduce the workload of CRUD tasks.
 
-## Documents(Chinese Version)
+## Screen Shots (Chinese Version)
+
+![image info](./Documents/chinese/nanx_table_prodlist.png)
+
+![image info](./Documents/chinese/nanx_create_table_activity_1.png)
+![image info](./Documents/chinese/nanx_add_trigger_group_2.png)
