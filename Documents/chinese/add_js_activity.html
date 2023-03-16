@@ -1,0 +1,24 @@
+<div class=back_help>
+<h1>操作:添加活动[基于JS]</h1>
+<div class=operation_desc>创建一个基于Javascript的活动,Javascript文件可以由开发人员提供</div>
+<div class=back_item_list><h1 class=back_items>字段说明:</h1><table class=thin-table><tr>
+<td>活动代码(英文)</td>
+<td><div clsss=field_desc>此活动的代码,必须使用英文</div></td></tr><tr>
+<td>活动说明</td>
+<td><div clsss=field_desc>此活动的名称,该名称也将作为主工作区的名称.</div></td></tr><tr>
+<td>选择JS文件</td>
+<td><div clsss=field_desc>选择一个javascript文件上载.</div></td></tr><tr>
+<td>入口函数</td>
+<td><div clsss=field_desc>javascript文件的入口函数,系统将自动运行这个入口函数</div></td></tr></table></div>
+<div class=back_demo></div>
+<div class=back_notice>注意事项:</div>
+</div><div class=operation_notice>javascript文件有固定的格式要求,
+  必须以NANXplugin.prototype.your_function_name=function()开始
+  <br/>一个最简单的示范代码如下:<br/><br/>
+ <div style='color:blue;'> 
+  NANXplugin.prototype.entry_fun=function()<br/>
+{<br/>
+	alert('called');<br/>
+}
+</div>
+  </div>
